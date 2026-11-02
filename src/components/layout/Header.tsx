@@ -79,9 +79,11 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <ButtonLink href="/simulateur" size="sm" arrow className="hidden sm:inline-flex">
-              Simuler mon budget
-            </ButtonLink>
+            <div className="hidden sm:block">
+              <ButtonLink href="/simulateur" size="sm" arrow>
+                Simuler mon budget
+              </ButtonLink>
+            </div>
             <button
               ref={toggleRef}
               type="button"

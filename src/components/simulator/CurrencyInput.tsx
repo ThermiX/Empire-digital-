@@ -7,7 +7,7 @@ import { formatNumber } from "@/lib/format";
 
 type CurrencyInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
-  "value" | "onChange" | "type" | "inputMode" | "max" | "step"
+  "value" | "onChange" | "type" | "inputMode" | "max" | "step" | "size"
 > & {
   value: number;
   onValueChange: (value: number) => void;
@@ -16,7 +16,7 @@ type CurrencyInputProps = Omit<
   step?: number;
   suffix?: string;
   inputClassName?: string;
-  size?: "md" | "lg";
+  fieldSize?: "md" | "lg";
 };
 
 /** Place le curseur après le n-ième chiffre de la chaîne formatée. */
@@ -44,7 +44,7 @@ export function CurrencyInput({
   suffix = "FCFA",
   className,
   inputClassName,
-  size = "md",
+  fieldSize = "md",
   onBlur,
   onKeyDown,
   ...rest
@@ -125,7 +125,7 @@ export function CurrencyInput({
         }}
         className={cn(
           "field-input pr-[4.2rem] text-right font-semibold tabular-nums tracking-[-0.01em]",
-          size === "lg" && "py-3.5 text-xl",
+          fieldSize === "lg" && "py-3.5 text-xl",
           inputClassName,
         )}
         {...rest}

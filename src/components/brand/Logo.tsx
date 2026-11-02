@@ -40,7 +40,7 @@ export function Logo({
       <LogoMark className="transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:rotate-[-8deg]" />
       <span
         className={cn(
-          "text-[1.08rem] font-bold tracking-[-0.035em]",
+          "whitespace-nowrap text-[1.08rem] font-bold tracking-[-0.035em]",
           tone === "dark" ? "text-white" : "text-ink",
         )}
       >
