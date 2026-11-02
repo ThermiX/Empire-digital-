@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run",
+    "guides": "node scripts/generate-guides.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.42.2",
