@@ -305,7 +305,6 @@ export function ExpenseEditor({
         <AnimatePresence initial={false}>
           {state.expenses.map((line, i) => {
             const Icon = CATEGORY_ICONS[line.category];
-            const share = summary.totalIncome > 0 ? line.amount / summary.totalIncome : 0;
             const name = line.label || `dépense ${i + 1}`;
             return (
               <m.li
@@ -335,14 +334,8 @@ export function ExpenseEditor({
                     onChange={(e) =>
                       update({ type: "expense/update", id: line.id, patch: { label: e.target.value } })
                     }
-                    className="field-input border-transparent bg-paper pr-12 font-medium hover:border-line sm:pr-4"
+                    className="field-input border-transparent bg-paper font-medium hover:border-line"
                   />
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[0.72rem] font-semibold tabular-nums text-subtle sm:hidden"
-                  >
-                    {share > 0 ? formatPercent(share) : ""}
-                  </span>
                 </div>
                 <button
                   type="button"
