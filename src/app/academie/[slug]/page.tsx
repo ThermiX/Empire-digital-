@@ -17,8 +17,6 @@ import { ARTICLES, getAdjacentArticles, getArticle, getCategory, getRelatedArtic
 import { formatDateFr } from "@/lib/format";
 import { siteConfig } from "@/lib/site";
 
-export const dynamicParams = false;
-
 export function generateStaticParams() {
   return ARTICLES.map((a) => ({ slug: a.slug }));
 }
