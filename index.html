@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Argent Clair</title>
+  <meta name="description" content="Des guides simples pour gérer ton salaire, épargner et préparer ton avenir financier, avec des exemples en FCFA.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <a class="brand" href="#">Argent Clair</a>
+    <nav class="nav">
+      <a href="#guides">Les guides</a>
+      <a href="#calcul">Calculer</a>
+      <a href="#questions">Questions</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero wrap">
+    <p class="kicker">Finances personnelles, Afrique francophone.</p>
+    <h1>Ton salaire arrive le 30, et le 10 il n’en reste plus rien.</h1>
+    <p class="lead">On connaît tous ce mois-là. Argent Clair propose des guides courts et concrets pour savoir où passe ton argent, mettre un peu de côté et arrêter de subir la fin du mois. Les exemples sont en FCFA et parlent de vraies situations, comme la tontine, le Mobile Money ou l’aide à la famille.</p>
+    <div class="hero-actions">
+      <a class="btn" href="#guides">Voir les guides.</a>
+      <a class="link" href="#calcul">Faire le calcul 50/30/20.</a>
+    </div>
+  </section>
+
+  <section class="note wrap">
+    <p>Pas de promesse de richesse rapide ici. On parle d’habitudes, de petits montants réguliers et de décisions que tu peux prendre dès ce soir.</p>
+  </section>
+
+  <section id="guides" class="guides wrap">
+    <h2>Les guides.</h2>
+
+    <article class="guide">
+      <img src="https://images.chariowcdn.com/cdn-cgi/image/format=auto,onerror=redirect,quality=medium-high,slow-connection-quality=50/https://assets.chariowcdn.com/assets/store_yse4ek53ur1a/ZLb3JjwR8cyLiF6nJ0UMqedLEEaH1JqnqNw1e663.png" alt="Couverture du guide pratique Argent Clair." loading="lazy">
+      <div class="guide-body">
+        <p class="tag">Gratuit.</p>
+        <h3>Le guide pratique pour gérer ton salaire.</h3>
+        <p>Quinze pages pour poser les bases. Tu y trouves sept étapes pour suivre tes dépenses, la règle 50/30/20 avec un exemple chiffré, une méthode pour calculer ton fonds d’urgence et un comparatif simple entre tontine, épargne bancaire et placements.</p>
+        <p>Il se termine par un plan d’action sur 30 jours et une liste de points à vérifier avant d’investir le moindre franc.</p>
+        <p class="price"><strong>0 FCFA.</strong> Téléchargement immédiat.</p>
+        <a class="btn" href="https://llwzfxjf.mychariow.store" target="_blank" rel="noopener">Télécharger le guide.</a>
+      </div>
+    </article>
+
+    <article class="guide">
+      <img src="https://images.chariowcdn.com/cdn-cgi/image/format=auto,onerror=redirect,quality=medium-high,slow-connection-quality=50/https://assets.chariowcdn.com/assets/store_yse4ek53ur1a/9Iqr6VUsIXvCsN4CvA8pqdRgzvVhSHr5psNcxme7.jpg" alt="Couverture du Kit Budget 30 jours." loading="lazy">
+      <div class="guide-body">
+        <p class="tag">Le kit complet.</p>
+        <h3>Kit Budget 30 jours, reprends le contrôle de ton argent.</h3>
+        <p>Un PDF de 45 pages avec un plan jour par jour et des cases à cocher. Environ dix minutes par jour suffisent.</p>
+        <ul>
+          <li>Un démarrage en quinze minutes et un petit test pour savoir par où commencer.</li>
+          <li>Un budget 50/30/20 à remplir et un suivi quotidien des dépenses.</li>
+          <li>Vingt-sept chapitres sur les dettes, la tontine, le Mobile Money, les arnaques, l’inflation et les revenus irréguliers.</li>
+          <li>Un plan pour anticiper la rentrée scolaire, les fêtes et les cérémonies.</li>
+          <li>Un règlement de tontine à signer et des messages prêts à copier pour réclamer un prêt ou refuser avec respect.</li>
+        </ul>
+        <p class="price"><s>5 000 FCFA</s> <strong>2 500 FCFA.</strong> Prix de lancement jusqu’au 9 novembre.</p>
+        <a class="btn" href="https://llwzfxjf.mychariow.store" target="_blank" rel="noopener">Commencer le kit.</a>
+      </div>
+    </article>
+  </section>
+
+  <section id="calcul" class="calc">
+    <div class="wrap calc-inner">
+      <div>
+        <h2>Fais le calcul avec ton propre salaire.</h2>
+        <p>La règle 50/30/20 est un point de départ, pas une loi. La moitié va aux besoins, comme le loyer, la nourriture et le transport. Trente pour cent vont aux envies. Les vingt pour cent restants vont à l’épargne ou au remboursement des dettes.</p>
+        <p class="small">Si tes besoins dépassent déjà la moitié de ton revenu, ce n’est pas un échec. C’est juste l’information dont tu as besoin pour savoir où agir.</p>
+      </div>
+      <form class="calc-box" onsubmit="return false">
+        <label for="salaire">Ton revenu mensuel en FCFA.</label>
+        <input id="salaire" type="number" inputmode="numeric" min="0" step="1000" value="150000">
+        <dl>
+          <div><dt>Besoins, 50 %.</dt><dd id="r50"></dd></div>
+          <div><dt>Envies, 30 %.</dt><dd id="r30"></dd></div>
+          <div><dt>Épargne, 20 %.</dt><dd id="r20"></dd></div>
+        </dl>
+      </form>
+    </div>
+  </section>
+
+  <section class="steps wrap">
+    <h2>Par où commencer, concrètement.</h2>
+    <ol>
+      <li><strong>Note tout pendant une semaine.</strong> Chaque dépense, même le crédit de 500 FCFA. Un cahier suffit.</li>
+      <li><strong>Sépare ce qui est obligatoire du reste.</strong> Tu verras vite où l’argent fuit sans que tu t’en rendes compte.</li>
+      <li><strong>Mets de côté dès que le salaire tombe.</strong> Même un petit montant, avant de payer quoi que ce soit d’autre.</li>
+      <li><strong>Construis un fonds d’urgence.</strong> C’est lui qui t’évite d’emprunter au premier imprévu.</li>
+    </ol>
+  </section>
+
+  <section id="questions" class="faq wrap">
+    <h2>Questions fréquentes.</h2>
+    <details>
+      <summary>Comment je reçois le guide après le paiement.</summary>
+      <p>Le fichier PDF est disponible au téléchargement juste après l’achat. Tu peux le lire sur ton téléphone, il a un sommaire cliquable, ou l’imprimer.</p>
+    </details>
+    <details>
+      <summary>Est-ce que c’est adapté si mon revenu change chaque mois.</summary>
+      <p>Oui. Le kit a un chapitre entier sur les revenus irréguliers, pour les commerçants, les indépendants et ceux qui font des petits boulots.</p>
+    </details>
+    <details>
+      <summary>Est-ce que c’est un conseil financier.</summary>
+      <p>Non. Ce sont des contenus éducatifs. Les montants des exemples sont fictifs et servent à expliquer les calculs. Ils ne remplacent pas un conseil personnalisé et ne garantissent aucun résultat.</p>
+    </details>
+    <details>
+      <summary>Comment je peux poser une question.</summary>
+      <p>Tu peux nous écrire au +227 82 79 55 25 ou nous suivre sur TikTok, au compte automax.ia.</p>
+    </details>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <p><strong>Argent Clair.</strong> Des guides simples pour mieux gérer ton argent, depuis le Niger.</p>
+    <p class="small">Contenus éducatifs uniquement. Aucun rendement n’est garanti.</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var input = document.getElementById('salaire');
+    var fmt = new Intl.NumberFormat('fr-FR');
+    function update() {
+      var v = Math.max(0, Number(input.value) || 0);
+      document.getElementById('r50').textContent = fmt.format(Math.round(v * 0.5)) + ' FCFA.';
+      document.getElementById('r30').textContent = fmt.format(Math.round(v * 0.3)) + ' FCFA.';
+      document.getElementById('r20').textContent = fmt.format(Math.round(v * 0.2)) + ' FCFA.';
+    }
+    input.addEventListener('input', update);
+    update();
+  })();
+</script>
+</body>
+</html>
