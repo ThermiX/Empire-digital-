@@ -1,6 +1,23 @@
 /* Argent Clair · feuille de style
    Mobile d’abord. Aucune image : tout est en CSS et SVG. */
 
+/* Poppins hébergée sur le site (pas de Google Fonts) : plus rapide,
+   aucune donnée envoyée à un tiers. Licence SIL Open Font License. */
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("fonts/poppins-500.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("fonts/poppins-800.woff2") format("woff2");
+}
+
 /* Police de secours calibrée sur Poppins : évite que la page « saute »
    quand la vraie police arrive (connexion lente). */
 @font-face {
