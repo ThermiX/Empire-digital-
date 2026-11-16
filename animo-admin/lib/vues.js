@@ -3,15 +3,15 @@
 //  icônes, badges de statut, badge DÉMO, liens de filtres.
 // =============================================================
 
-// Menu de navigation : [rubrique, adresse, libellé, icône]
+// Menu de navigation : [rubrique, adresse, libellé, icône, section du menu ordinateur]
 const NAV = [
-  ['tableau', '/', 'Accueil', 'accueil'],
-  ['clients', '/clients', 'Clients', 'clients'],
-  ['commandes', '/commandes', 'Vidéos', 'videos'],
-  ['paiements', '/paiements', 'Paiements', 'paiements'],
-  ['gabarits', '/gabarits', 'Gabarits', 'gabarits'],
-  ['offres', '/offres', 'Offres', 'offres'],
-  ['parametres', '/parametres', 'Paramètres', 'parametres'],
+  ['tableau', '/', 'Accueil', 'accueil', 'Général'],
+  ['clients', '/clients', 'Clients', 'clients', 'Activité'],
+  ['commandes', '/commandes', 'Vidéos', 'videos', 'Activité'],
+  ['paiements', '/paiements', 'Paiements', 'paiements', 'Activité'],
+  ['gabarits', '/gabarits', 'Gabarits', 'gabarits', 'Catalogue'],
+  ['offres', '/offres', 'Offres', 'offres', 'Catalogue'],
+  ['parametres', '/parametres', 'Paramètres', 'parametres', 'Compte'],
 ];
 
 // Statuts : [libellé, couleur, icône] — la couleur n'est jamais seule,

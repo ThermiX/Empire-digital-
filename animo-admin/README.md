@@ -1,7 +1,8 @@
 # Animo — espace administrateur
 
 Admin du SaaS **Animo** (vidéos promo animées pour commerces et créateurs d'Afrique francophone).
-Pensé d'abord pour le téléphone, puis l'ordinateur. Tout en français, montants en FCFA.
+Thème sombre (inspiration tableaux de bord SaaS type Whop), identité Animo : violet électrique + corail, police Inter.
+Pensé d’abord pour le téléphone, puis l’ordinateur. Tout en français, montants en FCFA.
 
 ![Aperçu téléphone](docs/apercu-telephone.png)
 

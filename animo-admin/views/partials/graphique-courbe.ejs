@@ -1,0 +1,60 @@
+<%#
+  Courbe (aire) sur 30 jours — utilisée pour les revenus.
+  Variables : g (voir lib/graphique.js), id (unique), titreGraph, resume.
+  - la courbe est dessinée côté serveur (SVG étiré en largeur, trait de 2 px fixe)
+  - une 2e couche SVG porte la grille et les zones à toucher (une par jour)
+  - toucher/survoler un jour affiche la valeur, un repère et un point (public/js/app.js)
+  - le tableau "jour par jour" donne tous les chiffres sans graphique
+%>
+<% const H = 140; const L = 300; const n = g.colonnes.length;
+   const pts = g.colonnes.map((c, i) => [((i + 0.5) * L / n).toFixed(2), (H - c.proportion * H).toFixed(2)]);
+   const trait = 'M' + pts.map((p) => p.join(',')).join(' L');
+   const aire = `M${pts[0][0]},${H} L` + pts.map((p) => p.join(',')).join(' L') + ` L${pts[n - 1][0]},${H} Z`; %>
+<div data-graph>
+  <div class="graph-zone">
+    <div class="graph-axe" aria-hidden="true">
+      <span class="graduation haut"><%= g.graduations.haut %></span>
+      <span class="graduation milieu"><%= g.graduations.milieu %></span>
+      <span class="graduation bas">0</span>
+    </div>
+    <div class="graph-trace">
+      <svg class="graph-courbe" viewBox="0 0 <%= L %> <%= H %>" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="degrade-<%= id %>" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7c4dff" stop-opacity="0.38"/>
+            <stop offset="1" stop-color="#7c4dff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="<%= aire %>" fill="url(#degrade-<%= id %>)"/>
+        <path class="trait" d="<%= trait %>"/>
+      </svg>
+      <svg class="graph-svg" width="100%" height="<%= H %>" role="img" aria-label="<%= titreGraph %>, 30 derniers jours : <%= resume %>">
+        <line class="grille" x1="0" x2="100%" y1="0.5" y2="0.5"/>
+        <line class="grille" x1="0" x2="100%" y1="<%= H / 2 %>" y2="<%= H / 2 %>"/>
+        <line class="ligne-base" x1="0" x2="100%" y1="<%= H - 0.5 %>" y2="<%= H - 0.5 %>"/>
+        <% g.colonnes.forEach((c) => { %>
+        <g class="colonne" tabindex="0" data-libelle="<%= c.aujourdhui ? "Aujourd'hui" : c.libelle %>" data-texte="<%= c.texte %>" data-proportion="<%= c.proportion.toFixed(4) %>" aria-label="<%= c.libelle %> : <%= c.texte %>">
+          <rect class="zone" x="<%= c.x.toFixed(3) %>%" y="0" width="<%= c.largeur.toFixed(3) %>%" height="<%= H %>"/>
+        </g>
+        <% }) %>
+      </svg>
+      <span class="graph-repere" hidden></span>
+      <span class="graph-point" hidden></span>
+      <div class="graph-bulle" hidden></div>
+    </div>
+    <div class="graph-dates" aria-hidden="true">
+      <span><%= g.debut %></span><span><%= g.milieu %></span><span>Aujourd'hui</span>
+    </div>
+  </div>
+  <details class="graph-tableau">
+    <summary>Voir les chiffres jour par jour</summary>
+    <table>
+      <thead><tr><th scope="col">Jour</th><th scope="col"><%= titreGraph %></th></tr></thead>
+      <tbody>
+        <% g.colonnes.slice().reverse().forEach((c) => { %>
+        <tr><td><%= c.aujourdhui ? "Aujourd'hui" : c.libelle %></td><td><%= c.texte %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </details>
+</div>

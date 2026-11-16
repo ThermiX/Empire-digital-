@@ -1,54 +1,70 @@
-<%# PAGE 1 — Tableau de bord %>
+<%# PAGE 1 — Tableau de bord (style sombre : carte revenus + courbe, indicateurs, à traiter) %>
 <%- include('partials/haut') %>
 
-<div class="tete-page">
+<div class="tete-page empilable">
   <div>
     <p class="surtitre"><%= f.dateLongue() %></p>
     <h1>Bonjour 👋</h1>
   </div>
+  <% if (existeDemo) { %>
+  <%# Les données DÉMO ne sont jamais mélangées aux vrais chiffres sans le dire %>
+  <div class="bascule-vue" role="group" aria-label="Chiffres affichés">
+    <a href="/" class="<%= avecDemo ? '' : 'active' %>" <%- avecDemo ? '' : 'aria-current="true"' %>>Chiffres réels</a>
+    <a href="/?vue=demo" class="<%= avecDemo ? 'active' : '' %>" <%- avecDemo ? 'aria-current="true"' : '' %>>Avec la DÉMO</a>
+  </div>
+  <% } %>
 </div>
 
-<% if (existeDemo) { %>
-<%# Les données DÉMO ne sont jamais mélangées aux vrais chiffres sans le dire %>
-<div class="bascule-vue" role="group" aria-label="Chiffres affichés">
-  <a href="/" class="<%= avecDemo ? '' : 'active' %>" <%- avecDemo ? '' : 'aria-current="true"' %>>Chiffres réels</a>
-  <a href="/?vue=demo" class="<%= avecDemo ? 'active' : '' %>" <%- avecDemo ? 'aria-current="true"' : '' %>>Avec la DÉMO</a>
-</div>
 <% if (avecDemo) { %>
 <div class="bandeau-demo" role="note"><%- icone('alerte') %><span><strong>DÉMO</strong> — ces chiffres incluent des données fictives de démonstration. Ce ne sont pas vos vrais résultats.</span></div>
 <% } %>
-<% } %>
 
+<%# ---- Revenus du mois + courbe 30 jours ---- %>
 <section class="hero" aria-label="Revenus du mois">
-  <div class="hero-haut"><%- icone('paiements') %><span>Revenus du mois</span><% if (avecDemo) { %><span class="badge-demo">DÉMO</span><% } %></div>
+  <div class="hero-haut"><%- icone('paiements') %><span>Revenus du mois</span><%- badgeDemo(avecDemo) %></div>
   <p class="hero-chiffre"><%= f.fcfa(chiffres.revenusMois) %></p>
-  <p class="hero-bas"><%= f.moisEnCours() %> · <%= f.pluriel(chiffres.paiementsMois, 'paiement validé', 'paiements validés') %></p>
+  <div class="hero-bas">
+    <% if (variations.revenus) { %>
+    <span class="variation <%= variations.revenus.sens %>"><%= variations.revenus.texte %></span>
+    <span>vs même période en <%= moisPrecedent %></span>
+    <% } %>
+    <span><%= f.pluriel(chiffres.paiementsMois, 'paiement validé', 'paiements validés') %> en <%= f.moisEnCours() %></span>
+  </div>
+  <%- include('partials/graphique-courbe', {
+        g: graphiqueRevenus,
+        id: 'revenus',
+        titreGraph: 'Revenus validés' + (avecDemo ? ' (DÉMO incluse)' : ''),
+        resume: f.fcfa(graphiqueRevenus.total) + ' en 30 jours',
+      }) %>
 </section>
 
+<%# ---- Indicateurs ---- %>
 <section class="tuiles" aria-label="Chiffres clés">
   <a class="tuile" href="/clients">
-    <span class="tuile-icone violet"><%- icone('clients') %></span>
-    <span class="tuile-label">Clients <%- badgeDemo(avecDemo) %></span>
+    <span class="tuile-haut"><span class="tuile-icone violet"><%- icone('clients') %></span><span class="tuile-label">Clients</span><%- badgeDemo(avecDemo) %></span>
     <strong class="tuile-valeur"><%= f.nombre(chiffres.clients) %></strong>
-    <span class="tuile-detail">dont <%= f.nombre(chiffres.essais) %> en essai</span>
+    <span class="tuile-detail">
+      <% if (chiffres.nouveauxClients) { %><span class="variation hausse">↑ +<%= f.nombre(chiffres.nouveauxClients) %></span>ce mois<% } else { %>aucun nouveau ce mois<% } %>
+    </span>
   </a>
   <a class="tuile" href="/clients?statut=actif">
-    <span class="tuile-icone violet"><%- icone('check') %></span>
-    <span class="tuile-label">Abonnés actifs <%- badgeDemo(avecDemo) %></span>
+    <span class="tuile-haut"><span class="tuile-icone violet"><%- icone('check') %></span><span class="tuile-label">Abonnés actifs</span><%- badgeDemo(avecDemo) %></span>
     <strong class="tuile-valeur"><%= f.nombre(chiffres.actifs) %></strong>
-    <span class="tuile-detail">abonnement payé en cours</span>
+    <span class="tuile-detail">
+      <%= chiffres.clients ? `${Math.round((chiffres.actifs / chiffres.clients) * 100)} % des clients` : '—' %> · <%= f.nombre(chiffres.essais) %> en essai
+    </span>
   </a>
   <a class="tuile" href="/commandes?statut=terminee">
-    <span class="tuile-icone corail"><%- icone('videos') %></span>
-    <span class="tuile-label">Vidéos aujourd'hui <%- badgeDemo(avecDemo) %></span>
+    <span class="tuile-haut"><span class="tuile-icone corail"><%- icone('videos') %></span><span class="tuile-label">Vidéos aujourd'hui</span><%- badgeDemo(avecDemo) %></span>
     <strong class="tuile-valeur"><%= f.nombre(chiffres.videosJour) %></strong>
-    <span class="tuile-detail">fabriquées et terminées</span>
+    <span class="tuile-detail"><span class="variation <%= variations.videosJour.sens %>"><%= variations.videosJour.texte %></span>vs hier</span>
   </a>
   <a class="tuile" href="/commandes?statut=terminee">
-    <span class="tuile-icone corail"><%- icone('graphique') %></span>
-    <span class="tuile-label">Vidéos ce mois <%- badgeDemo(avecDemo) %></span>
+    <span class="tuile-haut"><span class="tuile-icone corail"><%- icone('graphique') %></span><span class="tuile-label">Vidéos ce mois</span><%- badgeDemo(avecDemo) %></span>
     <strong class="tuile-valeur"><%= f.nombre(chiffres.videosMois) %></strong>
-    <span class="tuile-detail"><%= f.moisEnCours() %></span>
+    <span class="tuile-detail">
+      <% if (variations.videosMois) { %><span class="variation <%= variations.videosMois.sens %>"><%= variations.videosMois.texte %></span>vs <%= moisPrecedent %><% } else { %><%= f.moisEnCours() %><% } %>
+    </span>
   </a>
 </section>
 
@@ -66,44 +82,41 @@
 </section>
 <% } %>
 
-<section class="carte" aria-labelledby="titre-a-traiter">
-  <h2 class="carte-titre" id="titre-a-traiter">À traiter <%- badgeDemo(avecDemo) %></h2>
-  <% const total = aTraiter.paiements + aTraiter.attente + aTraiter.echecs + aTraiter.bientotExpires; %>
-  <% if (!total) { %>
-  <p class="aide">Rien à traiter pour le moment ✅</p>
-  <% } else { %>
-  <div class="actions-liste">
-    <a class="action-ligne" href="/paiements?statut=en_attente">
-      <span class="pastille-chiffre <%= aTraiter.paiements ? 'chaude' : '' %>"><%= aTraiter.paiements %></span>
-      <span>Paiements à valider</span><%- icone('chevron') %>
-    </a>
-    <a class="action-ligne" href="/commandes?statut=en_attente">
-      <span class="pastille-chiffre <%= aTraiter.attente ? 'chaude' : '' %>"><%= aTraiter.attente %></span>
-      <span>Vidéos en attente de rendu</span><%- icone('chevron') %>
-    </a>
-    <a class="action-ligne" href="/commandes?statut=echec">
-      <span class="pastille-chiffre <%= aTraiter.echecs ? 'chaude' : '' %>"><%= aTraiter.echecs %></span>
-      <span>Vidéos en échec</span><%- icone('chevron') %>
-    </a>
-    <a class="action-ligne" href="/clients?statut=bientot">
-      <span class="pastille-chiffre <%= aTraiter.bientotExpires ? 'chaude' : '' %>"><%= aTraiter.bientotExpires %></span>
-      <span>Abonnements qui finissent dans 3 jours</span><%- icone('chevron') %>
-    </a>
-  </div>
-  <% } %>
-</section>
-
-<section class="grille-graph" aria-label="30 derniers jours">
+<div class="grille-graph">
+  <%# ---- Vidéos fabriquées (colonnes) ---- %>
   <%- include('partials/graphique', {
         g: graphiqueVideos,
         titreGraph: 'Vidéos fabriquées' + (avecDemo ? ' (DÉMO incluse)' : ''),
         resume: f.pluriel(graphiqueVideos.total, 'vidéo') + ' en 30 jours',
       }) %>
-  <%- include('partials/graphique', {
-        g: graphiqueRevenus,
-        titreGraph: 'Revenus validés' + (avecDemo ? ' (DÉMO incluse)' : ''),
-        resume: f.fcfa(graphiqueRevenus.total) + ' en 30 jours',
-      }) %>
-</section>
+
+  <%# ---- À traiter ---- %>
+  <section class="carte" aria-labelledby="titre-a-traiter">
+    <h2 class="carte-titre" id="titre-a-traiter">À traiter <%- badgeDemo(avecDemo) %></h2>
+    <% const total = aTraiter.paiements + aTraiter.attente + aTraiter.echecs + aTraiter.bientotExpires; %>
+    <% if (!total) { %>
+    <p class="aide">Rien à traiter pour le moment ✅</p>
+    <% } else { %>
+    <div class="actions-liste">
+      <a class="action-ligne" href="/paiements?statut=en_attente">
+        <span class="pastille-chiffre <%= aTraiter.paiements ? 'chaude' : '' %>"><%= aTraiter.paiements %></span>
+        <span>Paiements à valider</span><%- icone('chevron') %>
+      </a>
+      <a class="action-ligne" href="/commandes?statut=en_attente">
+        <span class="pastille-chiffre <%= aTraiter.attente ? 'chaude' : '' %>"><%= aTraiter.attente %></span>
+        <span>Vidéos en attente de rendu</span><%- icone('chevron') %>
+      </a>
+      <a class="action-ligne" href="/commandes?statut=echec">
+        <span class="pastille-chiffre <%= aTraiter.echecs ? 'chaude' : '' %>"><%= aTraiter.echecs %></span>
+        <span>Vidéos en échec</span><%- icone('chevron') %>
+      </a>
+      <a class="action-ligne" href="/clients?statut=bientot">
+        <span class="pastille-chiffre <%= aTraiter.bientotExpires ? 'chaude' : '' %>"><%= aTraiter.bientotExpires %></span>
+        <span>Abonnements qui finissent dans 3 jours</span><%- icone('chevron') %>
+      </a>
+    </div>
+    <% } %>
+  </section>
+</div>
 
 <%- include('partials/bas') %>

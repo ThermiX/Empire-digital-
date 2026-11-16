@@ -124,6 +124,17 @@ function dateLongue(jour = aujourdhui()) {
   return `${nomJour} ${j} ${MOIS_LONGS[m - 1]} ${a}`;
 }
 
+/** "2026-11-16" → "nov." */
+function moisCourt(jour = aujourdhui()) {
+  return MOIS_COURTS[Number(String(jour).slice(5, 7)) - 1];
+}
+
+/** Premier jour du mois précédent : "2026-11-16" → "2026-10-01" */
+function debutMoisPrecedent(jour = aujourdhui()) {
+  const [a, m] = String(jour).split('-').map(Number);
+  return new Date(Date.UTC(a, m - 2, 1)).toISOString().slice(0, 10);
+}
+
 /** "novembre 2026" */
 function moisEnCours() {
   const [a, m] = aujourdhui().split('-').map(Number);
@@ -200,6 +211,8 @@ module.exports = {
   quand,
   dateLongue,
   moisEnCours,
+  moisCourt,
+  debutMoisPrecedent,
   duree,
   normaliserWhatsapp,
   telephone,

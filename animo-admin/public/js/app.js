@@ -159,7 +159,24 @@
   $$('[data-graph]').forEach((graphique) => {
     const bulle = $('.graph-bulle', graphique);
     const trace = $('.graph-trace', graphique);
+    // Courbe uniquement : repère vertical + point sur la courbe
+    const repere = $('.graph-repere', graphique);
+    const point = $('.graph-point', graphique);
+    const colonnes = $$('.colonne', graphique);
     let active = null;
+
+    // Centre horizontal d'une colonne, en pixels dans la zone du graphique
+    const centre = (colonne) => {
+      const zone = $('.zone', colonne).getBoundingClientRect();
+      return zone.left + zone.width / 2 - trace.getBoundingClientRect().left;
+    };
+    // Place le point sur la courbe (la courbe va de 0 en bas à 1 en haut)
+    const placerPoint = (colonne) => {
+      if (!point || !colonne) return;
+      point.style.left = `${centre(colonne)}px`;
+      point.style.top = `${trace.offsetHeight * (1 - Number(colonne.dataset.proportion || 0))}px`;
+      point.hidden = false;
+    };
 
     const montrer = (colonne) => {
       if (!colonne || colonne === active) return;
@@ -173,17 +190,25 @@
       jour.textContent = colonne.dataset.libelle;
       bulle.replaceChildren(valeur, jour);
       bulle.hidden = false;
-      const zone = $('.zone', colonne).getBoundingClientRect();
-      const cadre = trace.getBoundingClientRect();
       const demi = bulle.offsetWidth / 2;
-      const x = Math.max(demi, Math.min(cadre.width - demi, zone.left + zone.width / 2 - cadre.left));
-      bulle.style.left = `${x}px`;
+      const x = centre(colonne);
+      bulle.style.left = `${Math.max(demi, Math.min(trace.offsetWidth - demi, x))}px`;
+      if (repere) {
+        repere.style.left = `${x}px`;
+        repere.hidden = false;
+      }
+      placerPoint(colonne);
     };
     const cacher = () => {
       active?.classList.remove('survol');
       active = null;
       bulle.hidden = true;
+      if (repere) repere.hidden = true;
+      placerPoint(colonnes[colonnes.length - 1]); // le point revient sur aujourd'hui
     };
+    // Au chargement (et si l'écran tourne) : point sur la dernière valeur
+    placerPoint(colonnes[colonnes.length - 1]);
+    window.addEventListener('resize', () => (active ? placerPoint(active) : placerPoint(colonnes[colonnes.length - 1])));
 
     $$('.colonne', graphique).forEach((colonne) => {
       colonne.addEventListener('focus', () => montrer(colonne));
