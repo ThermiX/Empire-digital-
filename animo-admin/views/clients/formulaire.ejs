@@ -1,0 +1,69 @@
+<%# PAGE 2 — Ajouter / modifier un client %>
+<%- include('../partials/haut') %>
+<% const e = (champ) => erreurs[champ] ? 'en-erreur' : ''; %>
+
+<div>
+  <a class="retour" href="<%= nouveau ? '/clients' : `/clients/${leClient.id}` %>"><%- icone('retour') %><%= nouveau ? 'Clients' : leClient.nom %></a>
+  <h1><%= nouveau ? 'Nouveau client' : 'Modifier le client' %> <%- badgeDemo(leClient.est_demo) %></h1>
+</div>
+
+<form class="carte formulaire" method="post" action="<%= nouveau ? '/clients' : `/clients/${leClient.id}` %>">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+  <% if (Object.keys(erreurs).length) { %>
+  <div class="flash erreur" role="alert"><%- icone('alerte') %><span>Vérifiez les champs en rouge.</span></div>
+  <% } %>
+
+  <div class="champ <%= e('nom') %>">
+    <label for="nom">Nom du client ou du commerce</label>
+    <input id="nom" name="nom" type="text" required maxlength="120" value="<%= leClient.nom || '' %>" placeholder="Ex. : Boutique Awa Mode" autocomplete="off">
+    <% if (erreurs.nom) { %><span class="message-erreur"><%= erreurs.nom %></span><% } %>
+  </div>
+
+  <div class="champ <%= e('whatsapp') %>">
+    <label for="whatsapp">Numéro WhatsApp</label>
+    <input id="whatsapp" name="whatsapp" type="tel" inputmode="tel" required value="<%= leClient.whatsapp_saisi || '' %>" placeholder="Ex. : 07 00 00 00 00" autocomplete="off">
+    <span class="aide">Sans indicatif, on ajoute +<%= parametres.indicatif_pays %> (modifiable dans Paramètres). Pour un autre pays : +221…, +237…</span>
+    <% if (erreurs.whatsapp) { %><span class="message-erreur"><%= erreurs.whatsapp %></span><% } %>
+  </div>
+
+  <div class="champ">
+    <label for="activite">Activité <span class="facultatif">(facultatif)</span></label>
+    <input id="activite" name="activite" type="text" maxlength="80" value="<%= leClient.activite || '' %>" placeholder="Ex. : Boutique de vêtements, restaurant, créatrice…">
+  </div>
+
+  <div class="champ">
+    <label for="ville">Ville <span class="facultatif">(facultatif)</span></label>
+    <input id="ville" name="ville" type="text" maxlength="80" value="<%= leClient.ville || '' %>" placeholder="Ex. : Abidjan">
+  </div>
+
+  <div class="champ <%= e('offre_id') %>">
+    <label for="offre_id">Offre souhaitée <span class="facultatif">(facultatif)</span></label>
+    <select id="offre_id" name="offre_id">
+      <option value="">— Aucune pour l'instant —</option>
+      <% offres.forEach((o) => { %>
+      <option value="<%= o.id %>" <%= Number(leClient.offre_id) === o.id ? 'selected' : '' %>><%= o.nom %> — <%= f.fcfa(o.prix_fcfa) %><%= o.est_demo ? ' (DÉMO)' : '' %></option>
+      <% }) %>
+    </select>
+    <% if (nouveau) { %><span class="aide">Le client commence en essai gratuit de <%= parametres.duree_essai_jours %> jours. Il devient « actif » quand vous validez son paiement ou cliquez sur « Activer ».</span><% } %>
+    <% if (erreurs.offre_id) { %><span class="message-erreur"><%= erreurs.offre_id %></span><% } %>
+  </div>
+
+  <div class="champ">
+    <label for="notes">Notes <span class="facultatif">(facultatif, visibles par vous seul)</span></label>
+    <textarea id="notes" name="notes" maxlength="2000" placeholder="Préférences, remarques…"><%= leClient.notes || '' %></textarea>
+  </div>
+
+  <button class="btn btn-principal btn-bloc" type="submit"><%- icone('check') %><%= nouveau ? 'Ajouter le client' : 'Enregistrer' %></button>
+</form>
+
+<% if (!nouveau) { %>
+<form class="carte formulaire" method="post" action="/clients/<%= leClient.id %>/supprimer" data-confirmer="Supprimer définitivement <%= leClient.nom %>, ses commandes et ses paiements non validés ?">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <h2 class="carte-titre">Supprimer ce client</h2>
+  <p class="aide">Pour une erreur de saisie ou un client test. Impossible s'il a des paiements validés : suspendez-le plutôt.</p>
+  <button class="btn btn-danger" type="submit"><%- icone('poubelle') %>Supprimer</button>
+</form>
+<% } %>
+
+<%- include('../partials/bas') %>

@@ -1,0 +1,142 @@
+<%# PAGE 7 — Paramètres : marque, WhatsApp, message auto, sécurité, données DÉMO %>
+<%- include('partials/haut') %>
+<% const e = (champ) => erreurs[champ] ? 'en-erreur' : ''; %>
+
+<div class="tete-page">
+  <div>
+    <h1>Paramètres</h1>
+    <p class="sous-titre">Connecté en tant que <strong><%= admin.email %></strong></p>
+  </div>
+</div>
+
+<div class="grille-2">
+  <%# ---- Marque & messages ---- %>
+  <form class="carte formulaire large" method="post" action="/parametres">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <h2 class="carte-titre">Marque et WhatsApp</h2>
+
+    <% if (Object.keys(erreurs).length) { %>
+    <div class="flash erreur" role="alert"><%- icone('alerte') %><span>Vérifiez les champs en rouge.</span></div>
+    <% } %>
+
+    <div class="champ <%= e('nom_marque') %>">
+      <label for="nom_marque">Nom de la marque</label>
+      <input id="nom_marque" name="nom_marque" type="text" required maxlength="60" value="<%= valeurs.nom_marque %>">
+      <% if (erreurs.nom_marque) { %><span class="message-erreur"><%= erreurs.nom_marque %></span><% } %>
+    </div>
+
+    <div class="champ <%= e('whatsapp_contact') %>">
+      <label for="whatsapp_contact">Numéro WhatsApp de contact</label>
+      <input id="whatsapp_contact" name="whatsapp_contact" type="tel" inputmode="tel" maxlength="30" value="<%= /^\+\d+$/.test(valeurs.whatsapp_contact) ? f.telephone(valeurs.whatsapp_contact) : valeurs.whatsapp_contact %>" placeholder="Ex. : +225 07 00 00 00 00">
+      <span class="aide">Affiché aux clients (page vidéo et message {contact}).</span>
+      <% if (erreurs.whatsapp_contact) { %><span class="message-erreur"><%= erreurs.whatsapp_contact %></span><% } %>
+    </div>
+
+    <div class="formulaire-ligne">
+      <div class="champ <%= e('indicatif_pays') %>">
+        <label for="indicatif_pays">Indicatif pays</label>
+        <input id="indicatif_pays" name="indicatif_pays" type="text" inputmode="numeric" maxlength="4" required value="<%= valeurs.indicatif_pays %>">
+      </div>
+      <div class="champ <%= e('duree_essai_jours') %>">
+        <label for="duree_essai_jours">Essai gratuit (jours)</label>
+        <input id="duree_essai_jours" name="duree_essai_jours" type="number" inputmode="numeric" min="1" max="60" required value="<%= valeurs.duree_essai_jours %>">
+      </div>
+    </div>
+    <span class="aide">Indicatif ajouté aux numéros saisis sans « + » : 225 Côte d'Ivoire, 221 Sénégal, 237 Cameroun, 229 Bénin, 228 Togo, 223 Mali, 226 Burkina Faso…</span>
+    <% if (erreurs.indicatif_pays) { %><span class="message-erreur"><%= erreurs.indicatif_pays %></span><% } %>
+    <% if (erreurs.duree_essai_jours) { %><span class="message-erreur"><%= erreurs.duree_essai_jours %></span><% } %>
+
+    <div class="champ <%= e('message_video_prete') %>">
+      <label for="message_video_prete">Message envoyé au client quand sa vidéo est prête</label>
+      <textarea id="message_video_prete" name="message_video_prete" rows="8" maxlength="1500" required
+                data-apercu-message="apercu-message" data-exemple="<%= JSON.stringify(exemple) %>"><%= valeurs.message_video_prete %></textarea>
+      <div class="variables" aria-label="Variables à insérer">
+        <% ['nom', 'gabarit', 'lien', 'marque', 'contact', 'numero'].forEach((v) => { %>
+        <button type="button" data-inserer="{<%= v %>}">{<%= v %>}</button>
+        <% }) %>
+      </div>
+      <span class="aide">{nom} nom du client · {gabarit} nom du gabarit · {lien} lien de la vidéo · {marque} votre marque · {contact} votre WhatsApp · {numero} n° de commande</span>
+      <% if (erreurs.message_video_prete) { %><span class="message-erreur"><%= erreurs.message_video_prete %></span><% } %>
+    </div>
+
+    <div class="champ">
+      <span class="etiquette">Aperçu</span>
+      <p class="message-apercu" id="apercu-message"><%= apercu %></p>
+    </div>
+
+    <button class="btn btn-principal btn-bloc" type="submit"><%- icone('check') %>Enregistrer</button>
+  </form>
+
+  <%# ---- Sécurité ---- %>
+  <section class="carte formulaire">
+    <h2 class="carte-titre">Sécurité</h2>
+    <p class="aide"><%- icone('cadenas') %> Déconnexion automatique après <strong><%= config.inactiviteMinutes %> minutes</strong> sans activité (réglable dans le fichier <code>.env</code>).</p>
+
+    <form class="formulaire" method="post" action="/parametres/mot-de-passe">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="champ <%= erreursMdp.actuel ? 'en-erreur' : '' %>">
+        <label for="actuel">Mot de passe actuel</label>
+        <input id="actuel" name="actuel" type="password" autocomplete="current-password" required>
+        <% if (erreursMdp.actuel) { %><span class="message-erreur"><%= erreursMdp.actuel %></span><% } %>
+      </div>
+      <div class="champ <%= erreursMdp.nouveau ? 'en-erreur' : '' %>">
+        <label for="nouveau">Nouveau mot de passe <span class="facultatif">(10 caractères minimum)</span></label>
+        <input id="nouveau" name="nouveau" type="password" autocomplete="new-password" minlength="10" required>
+        <% if (erreursMdp.nouveau) { %><span class="message-erreur"><%= erreursMdp.nouveau %></span><% } %>
+      </div>
+      <div class="champ <%= erreursMdp.confirmation ? 'en-erreur' : '' %>">
+        <label for="confirmation">Retapez le nouveau mot de passe</label>
+        <input id="confirmation" name="confirmation" type="password" autocomplete="new-password" minlength="10" required>
+        <% if (erreursMdp.confirmation) { %><span class="message-erreur"><%= erreursMdp.confirmation %></span><% } %>
+      </div>
+      <button class="btn btn-secondaire" type="submit"><%- icone('cadenas') %>Changer le mot de passe</button>
+    </form>
+
+    <hr class="separateur">
+    <form method="post" action="/parametres/sessions/fermer">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <p class="aide">Autres appareils connectés : <strong><%= autresSessions %></strong></p>
+      <button class="btn btn-secondaire btn-petit" type="submit" <%= autresSessions ? '' : 'disabled' %>>Déconnecter les autres appareils</button>
+    </form>
+
+    <hr class="separateur">
+    <form method="post" action="/deconnexion">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <button class="btn btn-danger btn-bloc" type="submit"><%- icone('sortie') %>Se déconnecter</button>
+    </form>
+  </section>
+
+  <%# ---- Données DÉMO ---- %>
+  <section class="carte formulaire" id="demo">
+    <h2 class="carte-titre">Données de démonstration <span class="badge-demo">DÉMO</span></h2>
+    <p class="aide">Des clients, vidéos et paiements <strong>fictifs</strong> pour voir l'app remplie. Ils portent tous le badge DÉMO et ne sont pas comptés dans vos chiffres réels.</p>
+    <% if (demo.total) { %>
+    <p>Présentes : <%= demo.clients %> clients, <%= demo.commandes %> commandes, <%= demo.paiements %> paiements, <%= demo.gabarits %> gabarits, <%= demo.offres %> offres.</p>
+    <form method="post" action="/parametres/demo/supprimer" data-confirmer="Supprimer toutes les données DÉMO ? Vos vraies données ne sont pas touchées.">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <button class="btn btn-danger btn-bloc" type="submit"><%- icone('poubelle') %>Supprimer les données DÉMO</button>
+    </form>
+    <% } else { %>
+    <form method="post" action="/parametres/demo/charger">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <button class="btn btn-secondaire btn-bloc" type="submit"><%- icone('oeil') %>Charger les données DÉMO</button>
+    </form>
+    <% } %>
+  </section>
+
+  <%# ---- Journal ---- %>
+  <section class="carte large">
+    <h2 class="carte-titre">Dernières actions</h2>
+    <% if (!journal.length) { %>
+    <p class="aide">Rien pour l'instant.</p>
+    <% } else { %>
+    <ul class="journal">
+      <% journal.forEach((j) => { %>
+      <li><strong><%= j.action %></strong><% if (j.details) { %><%= ` — ${j.details}` %><% } %><span><%= f.dateHeure(j.le) %><%= j.email ? ` · ${j.email}` : '' %></span></li>
+      <% }) %>
+    </ul>
+    <% } %>
+  </section>
+</div>
+
+<%- include('partials/bas') %>

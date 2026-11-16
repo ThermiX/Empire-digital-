@@ -1,0 +1,60 @@
+<%# PAGE 3 — Commandes de vidéos (liste filtrable) %>
+<%- include('../partials/haut') %>
+
+<div class="tete-page">
+  <div>
+    <h1>Vidéos</h1>
+    <p class="sous-titre"><%= f.pluriel(pages.total, 'commande') %><%= q || statut ? ' trouvées' : '' %></p>
+  </div>
+  <a class="btn btn-principal" href="/commandes/nouvelle"><%- icone('ajouter') %><span>Nouvelle commande</span></a>
+</div>
+
+<form class="recherche" method="get" action="/commandes" role="search">
+  <%- icone('recherche') %>
+  <input type="search" name="q" value="<%= q %>" placeholder="Client, gabarit ou n° de commande" aria-label="Rechercher une commande" enterkeyhint="search">
+  <% if (statut) { %><input type="hidden" name="statut" value="<%= statut %>"><% } %>
+</form>
+
+<nav class="puces" aria-label="Filtrer par statut">
+  <a class="puce <%= statut ? '' : 'active' %>" href="/commandes<%= qs({ q }) %>">Toutes</a>
+  <% for (const [cle, libelle] of Object.entries(STATUTS)) { %>
+  <a class="puce <%= statut === cle ? 'active' : '' %> <%= ['en_attente', 'echec'].includes(cle) ? 'chaude' : '' %>" href="/commandes<%= qs({ q, statut: cle }) %>">
+    <%= libelle %> <span class="puce-n"><%= compteurs[cle] || 0 %></span>
+  </a>
+  <% } %>
+</nav>
+
+<% if (!commandes.length) { %>
+<section class="carte vide">
+  <%- icone('videos') %>
+  <strong><%= q || statut ? 'Aucune commande trouvée' : 'Pas encore de commande' %></strong>
+  <p><%= q || statut ? 'Essayez un autre filtre.' : 'Les commandes de vos clients apparaîtront ici. Vous pouvez aussi en saisir une à la main.' %></p>
+</section>
+<% } else { %>
+<section class="carte liste">
+  <% commandes.forEach((c) => { %>
+  <a class="ligne" href="/commandes/<%= c.id %>">
+    <% if (c.gabarit_miniature) { %>
+    <img class="miniature" src="/fichiers/miniatures/<%= c.gabarit_miniature %>" alt="" loading="lazy">
+    <% } else { %>
+    <span class="miniature"><%- icone('videos') %></span>
+    <% } %>
+    <span class="ligne-corps">
+      <span class="ligne-titre"><span class="nom">#<%= c.id %> · <%= c.client_nom %></span><%- badgeDemo(c.est_demo) %></span>
+      <span class="ligne-sous">
+        <%= c.gabarit_nom || 'Gabarit supprimé' %>
+        <% if (c.statut === 'terminee') { %> · <%= c.envoye_le ? 'envoyée ✓' : 'pas encore envoyée' %><% } %>
+        <% if (c.statut === 'echec' && c.erreur) { %> · <%= c.erreur %><% } %>
+      </span>
+    </span>
+    <span class="ligne-fin">
+      <%- badgeStatut('commande', c.statut) %>
+      <span class="ligne-date"><%= f.quand(c.cree_le) %></span>
+    </span>
+  </a>
+  <% }) %>
+</section>
+<%- include('../partials/pagination') %>
+<% } %>
+
+<%- include('../partials/bas') %>

@@ -1,0 +1,9 @@
+<%# Page d'erreur (introuvable, action refusée, erreur serveur) %>
+<%- include('partials/haut') %>
+<section class="carte vide">
+  <%- icone('alerte') %>
+  <strong><%= titre %></strong>
+  <p><%= message %></p>
+  <a class="btn btn-principal" href="/"><%- icone('accueil') %>Retour à l'accueil</a>
+</section>
+<%- include('partials/bas') %>

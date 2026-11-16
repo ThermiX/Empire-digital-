@@ -1,0 +1,91 @@
+<%# PAGE 5 — Enregistrer un paiement reçu %>
+<%- include('../partials/haut') %>
+<% const e = (champ) => erreurs[champ] ? 'en-erreur' : ''; %>
+
+<div>
+  <a class="retour" href="/paiements"><%- icone('retour') %>Paiements</a>
+  <h1>Enregistrer un paiement</h1>
+</div>
+
+<%# Le jeton CSRF est dans l'adresse car le formulaire peut envoyer une capture %>
+<form class="carte formulaire" method="post" action="/paiements?_csrf=<%= csrf %>" enctype="multipart/form-data">
+  <% if (Object.keys(erreurs).length) { %>
+  <div class="flash erreur" role="alert"><%- icone('alerte') %><span>Vérifiez les champs en rouge<%= valeurs.valider || erreurs.preuve ? ' (et choisissez à nouveau la capture)' : '' %>.</span></div>
+  <% } %>
+
+  <div class="champ <%= e('client_id') %>">
+    <label for="client_id">Client</label>
+    <select id="client_id" name="client_id" required>
+      <option value="">— Choisir —</option>
+      <% clients.forEach((c) => { %>
+      <option value="<%= c.id %>" <%= Number(valeurs.client_id) === c.id ? 'selected' : '' %>><%= c.nom %> · <%= f.telephone(c.whatsapp) %><%= c.est_demo ? ' (DÉMO)' : '' %></option>
+      <% }) %>
+    </select>
+    <% if (erreurs.client_id) { %><span class="message-erreur"><%= erreurs.client_id %></span><% } %>
+  </div>
+
+  <div class="champ <%= e('offre_id') %>">
+    <label for="offre_id">Offre payée</label>
+    <select id="offre_id" name="offre_id" data-remplir-montant="montant">
+      <option value="">— Aucune (autre paiement) —</option>
+      <% offres.forEach((o) => { %>
+      <option value="<%= o.id %>" data-prix="<%= o.prix_fcfa %>" <%= Number(valeurs.offre_id) === o.id ? 'selected' : '' %>><%= o.nom %> — <%= f.fcfa(o.prix_fcfa) %><%= o.est_demo ? ' (DÉMO)' : '' %></option>
+      <% }) %>
+    </select>
+    <% if (erreurs.offre_id) { %><span class="message-erreur"><%= erreurs.offre_id %></span><% } %>
+  </div>
+
+  <div class="champ <%= e('montant') %>">
+    <label for="montant">Montant reçu (FCFA)</label>
+    <input id="montant" name="montant" type="text" inputmode="numeric" required value="<%= valeurs.montant || '' %>" placeholder="Ex. : 15 000" autocomplete="off">
+    <% if (erreurs.montant) { %><span class="message-erreur"><%= erreurs.montant %></span><% } %>
+  </div>
+
+  <div class="formulaire-ligne">
+    <div class="champ <%= e('moyen') %>">
+      <label for="moyen">Moyen</label>
+      <select id="moyen" name="moyen">
+        <% config.moyensPaiement.forEach((m) => { %>
+        <option <%= valeurs.moyen === m ? 'selected' : '' %>><%= m %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="champ <%= e('date_paiement') %>">
+      <label for="date_paiement">Date</label>
+      <input id="date_paiement" name="date_paiement" type="date" required max="<%= f.aujourdhui() %>" value="<%= valeurs.date_paiement %>">
+    </div>
+  </div>
+  <% if (erreurs.date_paiement) { %><span class="message-erreur"><%= erreurs.date_paiement %></span><% } %>
+
+  <div class="champ">
+    <label for="reference">Référence de la transaction <span class="facultatif">(facultatif)</span></label>
+    <input id="reference" name="reference" type="text" maxlength="80" value="<%= valeurs.reference || '' %>" placeholder="Ex. : MP241116.1234.A56789" autocomplete="off">
+  </div>
+
+  <div class="champ">
+    <label for="numero_payeur">Numéro qui a payé <span class="facultatif">(facultatif)</span></label>
+    <input id="numero_payeur" name="numero_payeur" type="tel" inputmode="tel" maxlength="30" value="<%= valeurs.numero_payeur || '' %>" placeholder="Ex. : 07 00 00 00 00">
+  </div>
+
+  <div class="champ <%= e('preuve') %>">
+    <label for="preuve">Capture de preuve <span class="facultatif">(obligatoire pour valider)</span></label>
+    <input id="preuve" name="preuve" type="file" accept="image/jpeg,image/png,image/webp" data-apercu="apercu-preuve">
+    <img id="apercu-preuve" class="apercu-image" alt="Aperçu de la capture" hidden>
+    <% if (erreurs.preuve) { %><span class="message-erreur"><%= erreurs.preuve %></span><% } %>
+  </div>
+
+  <label class="case">
+    <input type="checkbox" name="valider" value="oui" <%= valeurs.valider ? 'checked' : '' %>>
+    <span>J'ai vérifié : valider tout de suite
+      <small>Le paiement est validé et l'abonnement du client activé ou prolongé selon l'offre.</small></span>
+  </label>
+
+  <div class="champ">
+    <label for="note">Note <span class="facultatif">(facultatif)</span></label>
+    <input id="note" name="note" type="text" maxlength="1000" value="<%= valeurs.note || '' %>">
+  </div>
+
+  <button class="btn btn-principal btn-bloc" type="submit" data-texte-envoi="Enregistrement…"><%- icone('check') %>Enregistrer le paiement</button>
+</form>
+
+<%- include('../partials/bas') %>

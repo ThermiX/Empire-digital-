@@ -1,0 +1,154 @@
+<%# PAGE 3 — Fiche commande : aperçu, télécharger, renvoyer au client, relancer le rendu %>
+<%- include('../partials/haut') %>
+<% const ICONES_CHAMPS = { texte: 'texte', logo: 'logo', couleurs: 'couleurs', photos: 'photos', voix: 'voix' }; %>
+
+<div>
+  <a class="retour" href="/commandes"><%- icone('retour') %>Vidéos</a>
+  <h1>Commande #<%= commande.id %></h1>
+  <div class="titre-avec-badges">
+    <%- badgeStatut('commande', commande.statut) %> <%- badgeDemo(commande.est_demo) %>
+    <span class="aide">créée <%= f.quand(commande.cree_le) %></span>
+  </div>
+</div>
+
+<div class="grille-2">
+  <%# ---- Aperçu de la vidéo ---- %>
+  <section class="carte formulaire">
+    <h2 class="carte-titre">Aperçu</h2>
+    <% if (commande.fichier_video) { %>
+    <video class="lecteur" src="/fichiers/videos/<%= commande.fichier_video %>" controls playsinline preload="metadata"></video>
+    <div class="boutons">
+      <a class="btn btn-secondaire" href="/commandes/<%= commande.id %>/telecharger"><%- icone('telecharger') %>Télécharger</a>
+      <button type="button" class="btn btn-secondaire" hidden
+              data-partager-video="/fichiers/videos/<%= commande.fichier_video %>"
+              data-nom-fichier="video-<%= commande.id %>.<%= commande.fichier_video.split('.').pop() %>"
+              data-texte="<%= message %>"><%- icone('partager') %>Partager le fichier</button>
+    </div>
+    <% } else { %>
+    <div class="attente-video">
+      <%- icone(commande.statut === 'echec' ? 'alerte' : 'horloge') %>
+      <% if (commande.statut === 'echec') { %>
+      <strong>Le rendu a échoué</strong>
+      <span><%= commande.erreur || 'Aucune explication enregistrée.' %></span>
+      <% } else if (commande.statut === 'en_cours') { %>
+      <strong>Rendu en cours…</strong>
+      <span>La vidéo apparaîtra ici une fois terminée.</span>
+      <% } else { %>
+      <strong>Vidéo pas encore fabriquée</strong>
+      <span>Elle est dans la file de rendu. Vous pouvez aussi la joindre vous-même ci-dessous.</span>
+      <% } %>
+    </div>
+    <% } %>
+  </section>
+
+  <%# ---- Envoi au client ---- %>
+  <section class="carte formulaire">
+    <h2 class="carte-titre">Client</h2>
+    <dl class="infos">
+      <dt>Nom</dt>
+      <dd><a href="/clients/<%= commande.client_id %>"><%= commande.client_nom %></a></dd>
+      <dt>WhatsApp</dt>
+      <dd><%= f.telephone(commande.client_whatsapp) %></dd>
+      <dt>Dernier envoi</dt>
+      <dd data-dernier-envoi><%= commande.envoye_le ? f.dateHeure(commande.envoye_le) : 'Jamais' %></dd>
+    </dl>
+    <% if (commande.fichier_video) { %>
+    <a class="btn btn-whatsapp btn-bloc" href="<%= lienWhatsApp %>" target="_blank" rel="noopener" data-noter-envoi="/commandes/<%= commande.id %>/envoye">
+      <%- icone('whatsapp') %><%= commande.envoye_le ? 'Renvoyer au client' : 'Envoyer au client' %>
+    </a>
+    <button type="button" class="btn btn-secondaire btn-bloc" data-copier="<%= lienVideo %>"><%- icone('copier') %>Copier le lien de la vidéo</button>
+    <details>
+      <summary class="aide">Voir le message WhatsApp qui sera envoyé</summary>
+      <p class="message-apercu"><%= message %></p>
+      <p class="aide">Modifiable dans <a href="/parametres">Paramètres</a>. Le lien ne fonctionne pour le client que si l'app est en ligne (adresse publique).</p>
+    </details>
+    <% } else { %>
+    <p class="aide">Le bouton « Envoyer au client » apparaîtra quand la vidéo sera prête.</p>
+    <a class="btn btn-secondaire btn-bloc" href="<%= lienWhatsApp.split('?')[0] %>" target="_blank" rel="noopener"><%- icone('whatsapp') %>Écrire au client</a>
+    <% } %>
+  </section>
+
+  <%# ---- Rendu ---- %>
+  <section class="carte formulaire">
+    <h2 class="carte-titre">Rendu</h2>
+    <dl class="infos">
+      <dt>Gabarit</dt>
+      <dd><%= commande.gabarit_nom || 'Gabarit supprimé' %></dd>
+      <% if (commande.duree_secondes) { %>
+      <dt>Durée · format</dt>
+      <dd><%= f.duree(commande.duree_secondes) %> · <%= commande.format || '—' %></dd>
+      <% } %>
+      <dt>Terminée le</dt>
+      <dd><%= f.dateHeure(commande.termine_le) %></dd>
+      <dt>Relances</dt>
+      <dd><%= commande.nb_rendus %></dd>
+    </dl>
+
+    <form method="post" action="/commandes/<%= commande.id %>/relancer" data-confirmer="Relancer le rendu de la commande #<%= commande.id %> ? Elle repasse « en attente ».">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <button class="btn btn-corail btn-bloc" type="submit"><%- icone('relancer') %>Relancer le rendu</button>
+    </form>
+
+    <hr class="separateur">
+
+    <%# Le jeton CSRF est dans l'adresse car le formulaire envoie un fichier %>
+    <form class="formulaire" method="post" action="/commandes/<%= commande.id %>/video?_csrf=<%= csrf %>" enctype="multipart/form-data">
+      <div class="champ">
+        <label for="video"><%= commande.fichier_video ? 'Remplacer la vidéo finale' : 'Joindre la vidéo finale' %></label>
+        <input id="video" name="video" type="file" accept="video/mp4,video/webm" required>
+        <span class="aide">MP4 ou WebM, <%= config.tailleMaxVideoMo %> Mo maximum. La commande passe « Terminée ».</span>
+      </div>
+      <button class="btn btn-principal btn-bloc" type="submit" data-texte-envoi="Envoi de la vidéo…"><%- icone('telecharger') %>Enregistrer la vidéo</button>
+    </form>
+
+    <details>
+      <summary class="aide">Changer le statut à la main</summary>
+      <form class="formulaire" method="post" action="/commandes/<%= commande.id %>/statut">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="champ">
+          <label for="statut">Nouveau statut</label>
+          <select id="statut" name="statut">
+            <% for (const [cle, libelle] of Object.entries(STATUTS)) { %>
+            <option value="<%= cle %>" <%= cle === commande.statut ? 'selected' : '' %>><%= libelle %></option>
+            <% } %>
+          </select>
+        </div>
+        <div class="champ">
+          <label for="erreur">Explication si « Échec » <span class="facultatif">(facultatif)</span></label>
+          <input id="erreur" name="erreur" type="text" maxlength="500" value="<%= commande.erreur || '' %>" placeholder="Ex. : photo trop floue">
+        </div>
+        <button class="btn btn-secondaire" type="submit">Changer le statut</button>
+      </form>
+    </details>
+  </section>
+
+  <%# ---- Ce que le client a rempli ---- %>
+  <section class="carte">
+    <h2 class="carte-titre">Contenu fourni par le client</h2>
+    <% const entrees = Object.entries(contenu); %>
+    <% if (!entrees.length) { %>
+    <p class="aide">Aucun contenu enregistré.</p>
+    <% } else { %>
+    <dl class="contenu-client">
+      <% entrees.forEach(([libelle, valeur]) => {
+           const champ = champs.find((c) => c.libelle === libelle);
+           const texteValeur = Array.isArray(valeur) ? valeur.join(', ') : String(valeur ?? ''); %>
+      <div>
+        <dt><%- icone(ICONES_CHAMPS[champ?.type] || 'texte') %><%= libelle %></dt>
+        <dd>
+          <% if (champ?.type === 'couleurs') { %>
+            <% texteValeur.split(',').map((x) => x.trim()).forEach((couleur) => { %>
+              <% if (estCouleur(couleur)) { %>
+              <span class="nuancier"><svg width="22" height="22" aria-hidden="true"><rect width="22" height="22" fill="<%= couleur %>"/></svg><%= couleur %></span>
+              <% } else { %><%= couleur %><% } %>
+            <% }) %>
+          <% } else { %><span class="texte-libre"><%= texteValeur %></span><% } %>
+        </dd>
+      </div>
+      <% }) %>
+    </dl>
+    <% } %>
+  </section>
+</div>
+
+<%- include('../partials/bas') %>

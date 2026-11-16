@@ -1,0 +1,7 @@
+<%# Message affiché une fois après une action (succès ou erreur) %>
+<% if (locals.flash) { %>
+<div class="flash <%= flash.type === 'erreur' ? 'erreur' : 'succes' %>" role="<%= flash.type === 'erreur' ? 'alert' : 'status' %>">
+  <%- icone(flash.type === 'erreur' ? 'alerte' : 'check') %>
+  <span><%= flash.message %></span>
+</div>
+<% } %>

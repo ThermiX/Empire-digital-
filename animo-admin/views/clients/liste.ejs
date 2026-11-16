@@ -1,0 +1,60 @@
+<%# PAGE 2 — Liste des clients (recherche + filtres par statut) %>
+<%- include('../partials/haut') %>
+
+<div class="tete-page">
+  <div>
+    <h1>Clients</h1>
+    <p class="sous-titre"><%= f.pluriel(pages.total, 'client') %><%= q || statut ? ' trouvés' : '' %></p>
+  </div>
+  <a class="btn btn-principal" href="/clients/nouveau"><%- icone('ajouter') %><span>Nouveau client</span></a>
+</div>
+
+<form class="recherche" method="get" action="/clients" role="search">
+  <%- icone('recherche') %>
+  <input type="search" name="q" value="<%= q %>" placeholder="Nom, ville ou numéro WhatsApp" aria-label="Rechercher un client" enterkeyhint="search">
+  <% if (statut) { %><input type="hidden" name="statut" value="<%= statut %>"><% } %>
+</form>
+
+<nav class="puces" aria-label="Filtrer par statut">
+  <a class="puce <%= statut ? '' : 'active' %>" href="/clients<%= qs({ q }) %>">Tous</a>
+  <% for (const [cle, libelle] of Object.entries(STATUTS)) { %>
+  <a class="puce <%= statut === cle ? 'active' : '' %>" href="/clients<%= qs({ q, statut: cle }) %>">
+    <%= libelle %> <span class="puce-n"><%= compteurs[cle] || 0 %></span>
+  </a>
+  <% } %>
+  <a class="puce <%= statut === 'bientot' ? 'active' : '' %>" href="/clients<%= qs({ q, statut: 'bientot' }) %>">Finissent dans 3 jours</a>
+</nav>
+
+<% if (!clients.length) { %>
+<section class="carte vide">
+  <%- icone('clients') %>
+  <% if (q || statut) { %>
+  <strong>Aucun client trouvé</strong>
+  <p>Essayez une autre recherche ou un autre filtre.</p>
+  <a class="btn btn-secondaire" href="/clients">Voir tous les clients</a>
+  <% } else { %>
+  <strong>Pas encore de client</strong>
+  <p>Ajoutez votre premier client pour suivre son abonnement et ses vidéos.</p>
+  <a class="btn btn-principal" href="/clients/nouveau"><%- icone('ajouter') %>Ajouter un client</a>
+  <% } %>
+</section>
+<% } else { %>
+<section class="carte liste">
+  <% clients.forEach((c) => { %>
+  <a class="ligne" href="/clients/<%= c.id %>">
+    <span class="avatar"><%= f.initiales(c.nom) %></span>
+    <span class="ligne-corps">
+      <span class="ligne-titre"><span class="nom"><%= c.nom %></span><%- badgeDemo(c.est_demo) %></span>
+      <span class="ligne-sous"><%= f.telephone(c.whatsapp) %></span>
+      <span class="ligne-sous"><%= c.offre_nom || 'Sans offre' %> · inscrit le <%= f.date(c.date_inscription) %></span>
+    </span>
+    <span class="ligne-fin">
+      <%- badgeStatut('client', c.statut) %>
+    </span>
+  </a>
+  <% }) %>
+</section>
+<%- include('../partials/pagination') %>
+<% } %>
+
+<%- include('../partials/bas') %>

@@ -1,0 +1,58 @@
+<%# PAGE 4 — Gabarits de vidéos %>
+<%- include('../partials/haut') %>
+<% const ICONES_CHAMPS = { texte: 'texte', logo: 'logo', couleurs: 'couleurs', photos: 'photos', voix: 'voix' }; %>
+
+<div class="tete-page">
+  <div>
+    <h1>Gabarits</h1>
+    <p class="sous-titre">Modèles de vidéos que vos clients personnalisent.</p>
+  </div>
+  <a class="btn btn-principal" href="/gabarits/nouveau"><%- icone('ajouter') %><span>Nouveau gabarit</span></a>
+</div>
+
+<% if (!gabarits.length) { %>
+<section class="carte vide">
+  <%- icone('gabarits') %>
+  <strong>Pas encore de gabarit</strong>
+  <p>Créez votre premier modèle : nom, durée, miniature et champs à remplir par le client.</p>
+  <a class="btn btn-principal" href="/gabarits/nouveau"><%- icone('ajouter') %>Créer un gabarit</a>
+</section>
+<% } else { %>
+<div class="grille-cartes">
+  <% gabarits.forEach((g) => { %>
+  <article class="carte carte-gabarit <%= g.actif ? '' : 'inactif' %>" id="gabarit-<%= g.id %>">
+    <% if (g.miniature) { %>
+    <img class="miniature" src="/fichiers/miniatures/<%= g.miniature %>" alt="Miniature de <%= g.nom %>" loading="lazy">
+    <% } else { %>
+    <span class="miniature"><%- icone('videos') %></span>
+    <% } %>
+    <div class="carte-gabarit-corps">
+      <h2><%= g.nom %> <%- badgeDemo(g.est_demo) %></h2>
+      <div class="titre-avec-badges">
+        <% if (g.actif) { %><span class="badge vert"><%- icone('check') %>Actif</span><% } else { %><span class="badge gris"><%- icone('pause') %>Désactivé</span><% } %>
+        <span class="aide"><%= f.duree(g.duree_secondes) %> · <%= g.format || '—' %></span>
+      </div>
+      <div class="types-champs" aria-label="Champs à remplir">
+        <% g.champs.forEach((c) => { %>
+        <span class="type-champ" title="<%= config.typesChamps[c.type] %><%= c.obligatoire ? ' (obligatoire)' : '' %>"><%- icone(ICONES_CHAMPS[c.type] || 'texte') %><%= c.libelle %><%= c.obligatoire ? ' *' : '' %></span>
+        <% }) %>
+        <% if (!g.champs.length) { %><span class="aide">Aucun champ</span><% } %>
+      </div>
+      <span class="aide"><%= f.pluriel(g.nb_commandes, 'commande') %></span>
+      <div class="boutons">
+        <a class="btn btn-secondaire btn-petit" href="/gabarits/<%= g.id %>/modifier"><%- icone('modifier') %>Modifier</a>
+        <form method="post" action="/gabarits/<%= g.id %>/basculer">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="btn btn-petit <%= g.actif ? 'btn-danger' : 'btn-principal' %>" type="submit">
+            <%- icone(g.actif ? 'pause' : 'check') %><%= g.actif ? 'Désactiver' : 'Activer' %>
+          </button>
+        </form>
+      </div>
+    </div>
+  </article>
+  <% }) %>
+</div>
+<p class="aide">* champ obligatoire pour le client. Un gabarit désactivé n'est plus proposé, mais ses anciennes commandes restent.</p>
+<% } %>
+
+<%- include('../partials/bas') %>

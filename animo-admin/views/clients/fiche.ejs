@@ -1,0 +1,146 @@
+<%# PAGE 2 — Fiche client : abonnement, actions, historique vidéos et paiements %>
+<%- include('../partials/haut') %>
+
+<div>
+  <a class="retour" href="/clients"><%- icone('retour') %>Clients</a>
+  <div class="identite">
+    <span class="avatar grand"><%= f.initiales(leClient.nom) %></span>
+    <div>
+      <h1><%= leClient.nom %></h1>
+      <div class="titre-avec-badges">
+        <%- badgeStatut('client', leClient.statut) %> <%- badgeDemo(leClient.est_demo) %>
+        <span class="aide"><%= [leClient.activite, leClient.ville].filter(Boolean).join(' · ') %></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="boutons">
+  <a class="btn btn-whatsapp" href="<%= lienWhatsApp %>" target="_blank" rel="noopener"><%- icone('whatsapp') %><%= f.telephone(leClient.whatsapp) %></a>
+  <a class="btn btn-secondaire" href="/clients/<%= leClient.id %>/modifier"><%- icone('modifier') %>Modifier</a>
+</div>
+
+<div class="grille-2">
+  <%# ---- Abonnement + actions ---- %>
+  <section class="carte">
+    <h2 class="carte-titre">Abonnement</h2>
+    <dl class="infos">
+      <dt>Offre</dt>
+      <dd><%= leClient.offre_nom ? `${leClient.offre_nom} · ${f.fcfa(leClient.offre_prix)}` : 'Aucune' %></dd>
+      <dt><%= leClient.statut === 'essai' ? "Fin de l'essai" : 'Fin de période' %></dt>
+      <dd>
+        <%= f.date(leClient.fin_abonnement) %>
+        <% if (joursRestants !== null && joursRestants > 0) { %><br><span class="aide"><%= f.pluriel(joursRestants, 'jour restant', 'jours restants') %></span><% } %>
+        <% if (joursRestants !== null && joursRestants <= 0) { %><br><span class="aide">terminée</span><% } %>
+      </dd>
+      <dt>Inscrit le</dt>
+      <dd><%= f.date(leClient.date_inscription) %></dd>
+      <dt>Total payé</dt>
+      <dd><%= f.fcfa(totalPaye) %></dd>
+    </dl>
+
+    <% if (leClient.videos_par_mois) { %>
+    <div class="quota">
+      <div class="quota-ligne"><span>Vidéos ce mois</span><strong><%= videosMois %> / <%= leClient.videos_par_mois %></strong></div>
+      <progress class="<%= videosMois >= leClient.videos_par_mois ? 'plein' : '' %>" max="<%= leClient.videos_par_mois %>" value="<%= Math.min(videosMois, leClient.videos_par_mois) %>"><%= videosMois %> sur <%= leClient.videos_par_mois %></progress>
+    </div>
+    <% } else { %>
+    <p class="aide">Vidéos commandées ce mois : <strong><%= videosMois %></strong></p>
+    <% } %>
+
+    <hr class="separateur">
+
+    <div class="formulaire">
+      <% if (leClient.statut !== 'actif') { %>
+      <%# ACTIVER %>
+      <form class="formulaire-ligne" method="post" action="/clients/<%= leClient.id %>/activer">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="champ">
+          <label for="offre_activer">Activer avec l'offre</label>
+          <select id="offre_activer" name="offre_id" required>
+            <% if (!offres.length) { %><option value="">Créez d'abord une offre</option><% } %>
+            <% offres.forEach((o) => { %>
+            <option value="<%= o.id %>" <%= o.id === leClient.offre_id ? 'selected' : '' %>><%= o.nom %> — <%= f.fcfa(o.prix_fcfa) %> / <%= o.duree_jours %> j<%= o.est_demo ? ' (DÉMO)' : '' %></option>
+            <% }) %>
+          </select>
+        </div>
+        <button class="btn btn-principal" type="submit" <%= offres.length ? '' : 'disabled' %>><%- icone('check') %>Activer</button>
+      </form>
+      <% } %>
+
+      <%# PROLONGER %>
+      <form class="formulaire-ligne" method="post" action="/clients/<%= leClient.id %>/prolonger">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="champ">
+          <label for="jours">Prolonger de</label>
+          <select id="jours" name="jours">
+            <% [3, 7, 15, 30, 60, 90].forEach((j) => { %>
+            <option value="<%= j %>" <%= j === (leClient.duree_jours || 30) ? 'selected' : '' %>><%= j %> jours</option>
+            <% }) %>
+          </select>
+        </div>
+        <button class="btn btn-secondaire" type="submit"><%- icone('calendrier') %>Prolonger</button>
+      </form>
+
+      <% if (leClient.statut !== 'suspendu') { %>
+      <%# SUSPENDRE %>
+      <form method="post" action="/clients/<%= leClient.id %>/suspendre" data-confirmer="Suspendre <%= leClient.nom %> ? Il ne pourra plus commander de vidéos.">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn-danger btn-bloc" type="submit"><%- icone('pause') %>Suspendre</button>
+      </form>
+      <% } else { %>
+      <p class="aide">Client suspendu : choisissez une offre et « Activer » pour le débloquer. S'il lui reste des jours payés, ils sont conservés.</p>
+      <% } %>
+    </div>
+  </section>
+
+  <%# ---- Paiements ---- %>
+  <section class="carte liste">
+    <h2 class="carte-titre ligne">Paiements <a href="/paiements/nouveau?client_id=<%= leClient.id %>"><%- icone('ajouter') %> Enregistrer</a></h2>
+    <% if (!paiements.length) { %>
+    <p class="aide ligne">Aucun paiement pour l'instant.</p>
+    <% } %>
+    <% paiements.forEach((p) => { %>
+    <a class="ligne" href="/paiements/<%= p.id %>">
+      <span class="ligne-corps">
+        <span class="ligne-titre ligne-montant"><span class="nom"><%= f.fcfa(p.montant_fcfa) %></span><%- badgeDemo(p.est_demo) %></span>
+        <span class="ligne-sous"><%= p.moyen %><%= p.offre_nom ? ' · ' + p.offre_nom : '' %></span>
+      </span>
+      <span class="ligne-fin">
+        <%- badgeStatut('paiement', p.statut) %>
+        <span class="ligne-date"><%= f.date(p.date_paiement) %></span>
+      </span>
+    </a>
+    <% }) %>
+  </section>
+
+  <%# ---- Vidéos ---- %>
+  <section class="carte liste large">
+    <h2 class="carte-titre ligne">Vidéos <a href="/commandes/nouvelle?client_id=<%= leClient.id %>"><%- icone('ajouter') %> Nouvelle commande</a></h2>
+    <% if (!commandes.length) { %>
+    <p class="aide ligne">Aucune vidéo commandée pour l'instant.</p>
+    <% } %>
+    <% commandes.forEach((c) => { %>
+    <a class="ligne" href="/commandes/<%= c.id %>">
+      <span class="miniature"><%- icone('videos') %></span>
+      <span class="ligne-corps">
+        <span class="ligne-titre"><span class="nom">#<%= c.id %> · <%= c.gabarit_nom || 'Gabarit supprimé' %></span><%- badgeDemo(c.est_demo) %></span>
+        <span class="ligne-sous"><%= c.envoye_le ? `Envoyée ${f.quand(c.envoye_le)}` : c.statut === 'terminee' ? 'Pas encore envoyée' : '' %></span>
+      </span>
+      <span class="ligne-fin">
+        <%- badgeStatut('commande', c.statut) %>
+        <span class="ligne-date"><%= f.quand(c.cree_le) %></span>
+      </span>
+    </a>
+    <% }) %>
+  </section>
+
+  <% if (leClient.notes) { %>
+  <section class="carte large">
+    <h2 class="carte-titre">Notes</h2>
+    <p class="contenu-client"><%= leClient.notes %></p>
+  </section>
+  <% } %>
+</div>
+
+<%- include('../partials/bas') %>

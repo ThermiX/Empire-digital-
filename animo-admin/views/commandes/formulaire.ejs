@@ -1,0 +1,46 @@
+<%# PAGE 3 — Saisir une commande à la main (ex. : demande reçue sur WhatsApp) %>
+<%- include('../partials/haut') %>
+<% const e = (champ) => erreurs[champ] ? 'en-erreur' : ''; %>
+
+<div>
+  <a class="retour" href="/commandes"><%- icone('retour') %>Vidéos</a>
+  <h1>Nouvelle commande</h1>
+  <p class="sous-titre">Pour une demande reçue par WhatsApp ou par téléphone.</p>
+</div>
+
+<form class="carte formulaire" method="post" action="/commandes">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+  <div class="champ <%= e('client_id') %>">
+    <label for="client_id">Client</label>
+    <select id="client_id" name="client_id" required>
+      <option value="">— Choisir —</option>
+      <% clients.forEach((c) => { %>
+      <option value="<%= c.id %>" <%= Number(valeurs.client_id) === c.id ? 'selected' : '' %>><%= c.nom %><%= c.est_demo ? ' (DÉMO)' : '' %></option>
+      <% }) %>
+    </select>
+    <% if (!clients.length) { %><span class="aide">Aucun client. <a href="/clients/nouveau">Ajoutez-en un d'abord</a>.</span><% } %>
+    <% if (erreurs.client_id) { %><span class="message-erreur"><%= erreurs.client_id %></span><% } %>
+  </div>
+
+  <div class="champ <%= e('gabarit_id') %>">
+    <label for="gabarit_id">Gabarit</label>
+    <select id="gabarit_id" name="gabarit_id" required>
+      <option value="">— Choisir —</option>
+      <% gabarits.forEach((g) => { %>
+      <option value="<%= g.id %>" <%= Number(valeurs.gabarit_id) === g.id ? 'selected' : '' %>><%= g.nom %> (<%= f.duree(g.duree_secondes) %>)<%= g.est_demo ? ' (DÉMO)' : '' %></option>
+      <% }) %>
+    </select>
+    <% if (!gabarits.length) { %><span class="aide">Aucun gabarit actif. <a href="/gabarits/nouveau">Créez-en un</a>.</span><% } %>
+    <% if (erreurs.gabarit_id) { %><span class="message-erreur"><%= erreurs.gabarit_id %></span><% } %>
+  </div>
+
+  <div class="champ">
+    <label for="brief">Brief <span class="facultatif">(textes, prix, couleurs… ce que le client a demandé)</span></label>
+    <textarea id="brief" name="brief" maxlength="3000" placeholder="Ex. : Promo -20 % sur les robes wax, prix 12 500 FCFA, couleurs violet et or. Photos reçues sur WhatsApp."><%= valeurs.brief || '' %></textarea>
+  </div>
+
+  <button class="btn btn-principal btn-bloc" type="submit"><%- icone('check') %>Créer la commande</button>
+</form>
+
+<%- include('../partials/bas') %>

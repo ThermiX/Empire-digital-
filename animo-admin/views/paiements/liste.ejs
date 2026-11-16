@@ -1,0 +1,61 @@
+<%# PAGE 5 — Paiements en FCFA %>
+<%- include('../partials/haut') %>
+
+<div class="tete-page">
+  <div>
+    <h1>Paiements</h1>
+    <p class="sous-titre">Mobile Money vérifié à la main.</p>
+  </div>
+  <a class="btn btn-principal" href="/paiements/nouveau"><%- icone('ajouter') %><span>Enregistrer</span></a>
+</div>
+
+<section class="carte">
+  <p class="aide">Encaissé en <%= f.moisEnCours() %> (paiements validés)</p>
+  <p class="chiffre-cle"><%= f.fcfa(totaux.reel || 0) %></p>
+  <% if (totaux.demo) { %>
+  <p class="aide"><%- badgeDemo(1) %> + <%= f.fcfa(totaux.demo) %> de paiements fictifs, non comptés ci-dessus.</p>
+  <% } %>
+</section>
+
+<form class="recherche" method="get" action="/paiements" role="search">
+  <%- icone('recherche') %>
+  <input type="search" name="q" value="<%= q %>" placeholder="Client, référence ou numéro payeur" aria-label="Rechercher un paiement" enterkeyhint="search">
+  <% if (statut) { %><input type="hidden" name="statut" value="<%= statut %>"><% } %>
+</form>
+
+<nav class="puces" aria-label="Filtrer par statut">
+  <a class="puce <%= statut ? '' : 'active' %>" href="/paiements<%= qs({ q }) %>">Tous</a>
+  <% for (const [cle, libelle] of Object.entries(STATUTS)) { %>
+  <a class="puce <%= statut === cle ? 'active' : '' %> <%= cle === 'en_attente' ? 'chaude' : '' %>" href="/paiements<%= qs({ q, statut: cle }) %>">
+    <%= libelle %> <span class="puce-n"><%= compteurs[cle] || 0 %></span>
+  </a>
+  <% } %>
+</nav>
+
+<% if (!paiements.length) { %>
+<section class="carte vide">
+  <%- icone('paiements') %>
+  <strong><%= q || statut ? 'Aucun paiement trouvé' : 'Pas encore de paiement' %></strong>
+  <p><%= q || statut ? 'Essayez un autre filtre.' : 'Quand un client paie par Mobile Money, enregistrez son paiement ici puis validez-le avec la capture.' %></p>
+</section>
+<% } else { %>
+<section class="carte liste">
+  <% paiements.forEach((p) => { %>
+  <a class="ligne" href="/paiements/<%= p.id %>">
+    <span class="avatar <%= p.statut === 'en_attente' ? 'corail' : '' %>"><%- icone('paiements') %></span>
+    <span class="ligne-corps">
+      <span class="ligne-titre"><span class="nom"><%= p.client_nom %></span><%- badgeDemo(p.est_demo) %></span>
+      <span class="ligne-sous"><%= p.moyen %><%= p.reference ? ` · réf. ${p.reference}` : '' %><%= p.offre_nom ? ` · ${p.offre_nom}` : '' %></span>
+    </span>
+    <span class="ligne-fin">
+      <span class="ligne-montant"><%= f.fcfa(p.montant_fcfa) %></span>
+      <%- badgeStatut('paiement', p.statut) %>
+      <span class="ligne-date"><%= f.date(p.date_paiement) %></span>
+    </span>
+  </a>
+  <% }) %>
+</section>
+<%- include('../partials/pagination') %>
+<% } %>
+
+<%- include('../partials/bas') %>

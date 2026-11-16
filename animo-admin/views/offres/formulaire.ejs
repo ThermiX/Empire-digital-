@@ -1,0 +1,56 @@
+<%# PAGE 6 — Créer / modifier une offre %>
+<%- include('../partials/haut') %>
+<% const e = (champ) => erreurs[champ] ? 'en-erreur' : ''; %>
+<% const prixAffiche = offre.prix_saisi !== undefined ? offre.prix_saisi : (offre.prix_fcfa !== undefined && offre.prix_fcfa !== null ? f.nombre(offre.prix_fcfa) : ''); %>
+
+<div>
+  <a class="retour" href="/offres"><%- icone('retour') %>Offres</a>
+  <h1><%= nouveau ? 'Nouvelle offre' : "Modifier l'offre" %> <%- badgeDemo(offre.est_demo) %></h1>
+</div>
+
+<form class="carte formulaire" method="post" action="<%= nouveau ? '/offres' : `/offres/${offre.id}` %>">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+  <div class="champ <%= e('nom') %>">
+    <label for="nom">Nom de l'offre</label>
+    <input id="nom" name="nom" type="text" required maxlength="80" value="<%= offre.nom || '' %>" placeholder="Ex. : Pro">
+    <% if (erreurs.nom) { %><span class="message-erreur"><%= erreurs.nom %></span><% } %>
+  </div>
+
+  <div class="champ <%= e('prix_fcfa') %>">
+    <label for="prix_fcfa">Prix (FCFA)</label>
+    <input id="prix_fcfa" name="prix_fcfa" type="text" inputmode="numeric" required value="<%= prixAffiche %>" placeholder="Ex. : 15 000" autocomplete="off">
+    <% if (erreurs.prix_fcfa) { %><span class="message-erreur"><%= erreurs.prix_fcfa %></span><% } %>
+  </div>
+
+  <div class="formulaire-ligne">
+    <div class="champ <%= e('videos_par_mois') %>">
+      <label for="videos_par_mois">Vidéos par mois</label>
+      <input id="videos_par_mois" name="videos_par_mois" type="number" inputmode="numeric" min="0" max="1000" required value="<%= offre.videos_par_mois ?? '' %>" placeholder="Ex. : 15">
+    </div>
+    <div class="champ <%= e('duree_jours') %>">
+      <label for="duree_jours">Durée (jours)</label>
+      <input id="duree_jours" name="duree_jours" type="number" inputmode="numeric" min="1" max="366" required value="<%= offre.duree_jours ?? 30 %>">
+    </div>
+  </div>
+  <% if (erreurs.videos_par_mois) { %><span class="message-erreur"><%= erreurs.videos_par_mois %></span><% } %>
+  <% if (erreurs.duree_jours) { %><span class="message-erreur"><%= erreurs.duree_jours %></span><% } %>
+
+  <div class="champ">
+    <label for="description">Description <span class="facultatif">(facultatif)</span></label>
+    <textarea id="description" name="description" maxlength="500" placeholder="Ex. : Idéal pour les boutiques qui publient chaque semaine."><%= offre.description || '' %></textarea>
+  </div>
+
+  <label class="case">
+    <input type="checkbox" name="active" value="oui" <%= offre.active ? 'checked' : '' %>>
+    <span>Proposée aux clients<small>Décochez pour la retirer sans toucher aux abonnés actuels.</small></span>
+  </label>
+
+  <% if (!nouveau) { %>
+  <p class="aide">Changer le prix ne modifie pas les paiements déjà enregistrés.</p>
+  <% } %>
+
+  <button class="btn btn-principal btn-bloc" type="submit"><%- icone('check') %><%= nouveau ? "Créer l'offre" : 'Enregistrer' %></button>
+</form>
+
+<%- include('../partials/bas') %>

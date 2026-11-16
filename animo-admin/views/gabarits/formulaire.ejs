@@ -1,0 +1,90 @@
+<%# PAGE 4 — Ajouter / modifier un gabarit (avec miniature et champs client) %>
+<%- include('../partials/haut') %>
+<% const e = (champ) => erreurs[champ] ? 'en-erreur' : ''; %>
+<% const action = nouveau ? '/gabarits' : `/gabarits/${gabarit.id}`; %>
+
+<%# Une ligne "champ client" : type + libellé + obligatoire %>
+<% const ligneChamp = (c) => { %>
+  <div class="ligne-champ">
+    <input name="champ_libelle[]" type="text" maxlength="80" value="<%= c.libelle %>" placeholder="Libellé vu par le client (ex. : Prix promo)" aria-label="Libellé du champ">
+    <select name="champ_type[]" aria-label="Type de champ">
+      <% for (const [cle, libelle] of Object.entries(config.typesChamps)) { %>
+      <option value="<%= cle %>" <%= c.type === cle ? 'selected' : '' %>><%= libelle %></option>
+      <% } %>
+    </select>
+    <select name="champ_obligatoire[]" aria-label="Obligatoire ?">
+      <option value="oui" <%= c.obligatoire ? 'selected' : '' %>>Obligatoire</option>
+      <option value="non" <%= c.obligatoire ? '' : 'selected' %>>Facultatif</option>
+    </select>
+    <button type="button" class="btn btn-danger retirer-champ" aria-label="Retirer ce champ" title="Retirer ce champ"><%- icone('croix') %></button>
+  </div>
+<% } %>
+
+<div>
+  <a class="retour" href="/gabarits"><%- icone('retour') %>Gabarits</a>
+  <h1><%= nouveau ? 'Nouveau gabarit' : 'Modifier le gabarit' %> <%- badgeDemo(gabarit.est_demo) %></h1>
+</div>
+
+<%# Le jeton CSRF est dans l'adresse car le formulaire envoie un fichier %>
+<form class="carte formulaire" method="post" action="<%= action %>?_csrf=<%= csrf %>" enctype="multipart/form-data">
+  <% if (Object.keys(erreurs).length) { %>
+  <div class="flash erreur" role="alert"><%- icone('alerte') %><span>Vérifiez les champs en rouge<%= erreurs.miniature ? ' (et choisissez à nouveau la miniature)' : '' %>.</span></div>
+  <% } %>
+
+  <div class="champ <%= e('nom') %>">
+    <label for="nom">Nom du gabarit</label>
+    <input id="nom" name="nom" type="text" required maxlength="100" value="<%= gabarit.nom || '' %>" placeholder="Ex. : Promo flash">
+    <% if (erreurs.nom) { %><span class="message-erreur"><%= erreurs.nom %></span><% } %>
+  </div>
+
+  <div class="champ">
+    <label for="description">Description <span class="facultatif">(facultatif)</span></label>
+    <textarea id="description" name="description" maxlength="1000" placeholder="À quoi sert ce gabarit ? Pour quel type de commerce ?"><%= gabarit.description || '' %></textarea>
+  </div>
+
+  <div class="formulaire-ligne">
+    <div class="champ <%= e('duree_secondes') %>">
+      <label for="duree_secondes">Durée (secondes)</label>
+      <input id="duree_secondes" name="duree_secondes" type="number" inputmode="numeric" min="3" max="600" required value="<%= gabarit.duree_secondes || 15 %>">
+    </div>
+    <div class="champ">
+      <label for="format">Format</label>
+      <select id="format" name="format">
+        <% config.formats.forEach((fmt) => { %>
+        <option <%= gabarit.format === fmt ? 'selected' : '' %>><%= fmt %></option>
+        <% }) %>
+      </select>
+    </div>
+  </div>
+  <% if (erreurs.duree_secondes) { %><span class="message-erreur"><%= erreurs.duree_secondes %></span><% } %>
+
+  <div class="champ <%= e('miniature') %>">
+    <span class="etiquette">Miniature <span class="facultatif">(image JPG, PNG ou WebP, 5 Mo max)</span></span>
+    <% if (gabarit.miniature) { %>
+    <img class="apercu-image" src="/fichiers/miniatures/<%= gabarit.miniature %>" alt="Miniature actuelle">
+    <label class="case"><input type="checkbox" name="retirer_miniature" value="oui">Retirer la miniature actuelle</label>
+    <% } %>
+    <input id="miniature" name="miniature" type="file" accept="image/jpeg,image/png,image/webp" aria-label="Choisir une miniature" data-apercu="apercu-miniature">
+    <img id="apercu-miniature" class="apercu-image" alt="Aperçu de la nouvelle miniature" hidden>
+    <% if (erreurs.miniature) { %><span class="message-erreur"><%= erreurs.miniature %></span><% } %>
+  </div>
+
+  <fieldset class="champ groupe-champs">
+    <legend class="etiquette">Champs que le client remplit</legend>
+    <p class="aide">Texte (nom, prix, slogan…), logo, couleurs, photos, voix off. Les lignes sans libellé sont ignorées.</p>
+    <div class="champs-gabarit" id="champs-gabarit">
+      <% lignes.forEach((c) => { ligneChamp(c); }) %>
+    </div>
+    <template id="modele-champ"><% ligneChamp({ type: 'texte', libelle: '', obligatoire: true }); %></template>
+    <button type="button" class="btn btn-secondaire" id="ajouter-champ"><%- icone('ajouter') %>Ajouter un champ</button>
+  </fieldset>
+
+  <label class="case">
+    <input type="checkbox" name="actif" value="oui" <%= gabarit.actif ? 'checked' : '' %>>
+    <span>Actif<small>Proposé aux clients dès maintenant.</small></span>
+  </label>
+
+  <button class="btn btn-principal btn-bloc" type="submit"><%- icone('check') %><%= nouveau ? 'Créer le gabarit' : 'Enregistrer' %></button>
+</form>
+
+<%- include('../partials/bas') %>

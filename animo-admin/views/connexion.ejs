@@ -1,0 +1,37 @@
+<%# Page de connexion (admin uniquement) %>
+<%- include('partials/haut') %>
+<div class="connexion">
+  <div class="connexion-marque">
+    <img src="/img/logo.svg" alt="" width="60" height="60">
+    <h1><%= parametres.nom_marque %> <span class="pastille-admin">admin</span></h1>
+    <p>Espace réservé à l'administrateur.</p>
+  </div>
+
+  <form class="carte formulaire" method="post" action="/connexion">
+    <% if (info) { %>
+    <div class="flash info" role="status"><%- icone('cadenas') %><span><%= info %></span></div>
+    <% } %>
+    <% if (erreur) { %>
+    <div class="flash erreur" role="alert"><%- icone('alerte') %><span><%= erreur %></span></div>
+    <% } %>
+    <% if (aucunAdmin) { %>
+    <div class="flash info"><%- icone('alerte') %><span>Aucun compte administrateur pour l'instant. Dans le terminal du serveur, lancez <code>npm run creer-admin</code>.</span></div>
+    <% } %>
+
+    <input type="hidden" name="suite" value="<%= suite %>">
+    <div class="champ">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="none" required value="<%= email %>" <%= email ? '' : 'autofocus' %>>
+    </div>
+    <div class="champ">
+      <label for="mot_de_passe">Mot de passe</label>
+      <div class="mdp">
+        <input id="mot_de_passe" name="mot_de_passe" type="password" autocomplete="current-password" required <%= email ? 'autofocus' : '' %>>
+        <button type="button" class="voir-mdp" data-voir-mdp="mot_de_passe">Voir</button>
+      </div>
+    </div>
+    <button class="btn btn-principal btn-bloc" type="submit"><%- icone('cadenas') %>Se connecter</button>
+    <p class="aide centre">Déconnexion automatique après <%= config.inactiviteMinutes %> minutes sans activité.</p>
+  </form>
+</div>
+<%- include('partials/bas') %>

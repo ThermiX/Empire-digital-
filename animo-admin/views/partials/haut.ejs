@@ -1,0 +1,63 @@
+<%#
+  Haut commun à toutes les pages.
+  Si l'admin est connecté : menu latéral (ordinateur) + en-tête (téléphone).
+  Sinon (connexion, page vidéo publique) : page simple.
+%>
+<% const modeAdmin = locals.admin && !locals.pagePublique; %>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6D28FF">
+  <meta name="robots" content="noindex, nofollow">
+  <% if (modeAdmin) { %><meta name="csrf" content="<%= csrf %>"><% } %>
+  <title><%= titre %> · <%= parametres.nom_marque %><%= locals.pagePublique ? '' : ' admin' %></title>
+  <link rel="preload" href="/polices/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="/img/icone.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/icone-180.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <script src="/js/app.js" defer></script>
+</head>
+<body data-inactivite="<%= modeAdmin ? inactiviteMs : 0 %>">
+<%- include('icones') %>
+<% if (modeAdmin) { %>
+<div class="appli">
+  <aside class="barre-laterale">
+    <a class="marque" href="/">
+      <img src="/img/logo.svg" alt="" width="34" height="34">
+      <span><%= parametres.nom_marque %></span>
+      <span class="pastille-admin">admin</span>
+    </a>
+    <nav aria-label="Menu principal">
+      <% NAV.forEach(([cle, lien, libelle, ic]) => { %>
+      <a class="lien-nav <%= locals.rubrique === cle ? 'actif' : '' %>" href="<%= lien %>" <%- locals.rubrique === cle ? 'aria-current="page"' : '' %>>
+        <%- icone(ic) %><%= libelle %>
+        <% const n = (locals.alertes || {})[cle] || 0; %>
+        <% if (n) { %><span class="compteur"><%= n %></span><% } %>
+      </a>
+      <% }) %>
+    </nav>
+    <div class="bas-laterale">
+      <p class="email-admin"><%= admin.email %></p>
+      <form method="post" action="/deconnexion">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button type="submit"><%- icone('sortie') %>Se déconnecter</button>
+      </form>
+    </div>
+  </aside>
+  <div class="contenu">
+    <header class="entete">
+      <a class="marque" href="/">
+        <img src="/img/logo.svg" alt="" width="34" height="34">
+        <span><%= parametres.nom_marque %></span>
+        <span class="pastille-admin">admin</span>
+      </a>
+      <a class="avatar-admin" href="/parametres" title="Paramètres — <%= admin.email %>" aria-label="Paramètres du compte"><%= admin.email.slice(0, 1).toUpperCase() %></a>
+    </header>
+    <main class="page" id="contenu">
+      <%- include('flash') %>
+<% } else { %>
+<main class="page page-seule">
+<% } %>

@@ -1,0 +1,102 @@
+<%# PAGE 5 — Détail d'un paiement + « Valider le paiement » avec capture de preuve %>
+<%- include('../partials/haut') %>
+
+<div>
+  <a class="retour" href="/paiements"><%- icone('retour') %>Paiements</a>
+  <h1><%= f.fcfa(paiement.montant_fcfa) %></h1>
+  <div class="titre-avec-badges">
+    <%- badgeStatut('paiement', paiement.statut) %> <%- badgeDemo(paiement.est_demo) %>
+    <span class="aide">Paiement #<%= paiement.id %></span>
+  </div>
+</div>
+
+<div class="grille-2">
+  <section class="carte">
+    <h2 class="carte-titre">Détails</h2>
+    <dl class="infos">
+      <dt>Client</dt>
+      <dd><a href="/clients/<%= paiement.client_id %>"><%= paiement.client_nom %></a></dd>
+      <dt>Montant</dt>
+      <dd><%= f.fcfa(paiement.montant_fcfa) %></dd>
+      <dt>Offre</dt>
+      <dd><%= paiement.offre_nom ? `${paiement.offre_nom} (${f.fcfa(paiement.offre_prix)})` : 'Aucune' %></dd>
+      <dt>Moyen</dt>
+      <dd><%= paiement.moyen %></dd>
+      <dt>Référence</dt>
+      <dd><%= paiement.reference || '—' %></dd>
+      <dt>Numéro payeur</dt>
+      <dd><%= paiement.numero_payeur || '—' %></dd>
+      <dt>Date du paiement</dt>
+      <dd><%= f.date(paiement.date_paiement) %></dd>
+      <% if (paiement.traite_le) { %>
+      <dt><%= paiement.statut === 'valide' ? 'Validé le' : 'Traité le' %></dt>
+      <dd><%= f.dateHeure(paiement.traite_le) %><%= paiement.traite_par_email ? ` par ${paiement.traite_par_email}` : '' %></dd>
+      <% } %>
+      <% if (paiement.note) { %>
+      <dt>Note</dt>
+      <dd><%= paiement.note %></dd>
+      <% } %>
+    </dl>
+    <% if (paiement.offre_nom && paiement.montant_fcfa !== paiement.offre_prix) { %>
+    <p class="flash info" role="note"><%- icone('alerte') %><span>Le montant reçu est différent du prix de l'offre (<%= f.fcfa(paiement.offre_prix) %>).</span></p>
+    <% } %>
+  </section>
+
+  <section class="carte formulaire">
+    <h2 class="carte-titre">Capture de preuve</h2>
+    <% if (paiement.preuve) { %>
+    <a class="preuve" href="/fichiers/preuves/<%= paiement.preuve %>" target="_blank" rel="noopener">
+      <img src="/fichiers/preuves/<%= paiement.preuve %>" alt="Capture de preuve du paiement #<%= paiement.id %>">
+    </a>
+    <span class="aide">Touchez l'image pour l'agrandir.</span>
+    <% } else { %>
+    <p class="aide"><%= paiement.est_demo ? 'Pas de capture (paiement DÉMO).' : 'Aucune capture pour l’instant.' %></p>
+    <% } %>
+  </section>
+
+  <% if (paiement.statut === 'en_attente') { %>
+  <%# ---- VALIDER ---- %>
+  <section class="carte large">
+    <h2 class="carte-titre">Valider le paiement</h2>
+    <form class="formulaire" method="post" action="/paiements/<%= paiement.id %>/valider?_csrf=<%= csrf %>" enctype="multipart/form-data">
+      <ol class="aide">
+        <li>Vérifiez sur votre téléphone (SMS ou appli <%= paiement.moyen %>) que <strong><%= f.fcfa(paiement.montant_fcfa) %></strong> sont bien arrivés.</li>
+        <li>Ajoutez la capture d'écran de la transaction.</li>
+      </ol>
+      <div class="champ">
+        <label for="preuve">Capture de preuve <%= paiement.preuve ? '(une capture est déjà jointe)' : '' %></label>
+        <input id="preuve" name="preuve" type="file" accept="image/jpeg,image/png,image/webp" <%= paiement.preuve ? '' : 'required' %> data-apercu="apercu-preuve">
+        <img id="apercu-preuve" class="apercu-image" alt="Aperçu de la capture" hidden>
+      </div>
+      <div class="champ">
+        <label for="reference">Référence de la transaction <span class="facultatif">(facultatif)</span></label>
+        <input id="reference" name="reference" type="text" maxlength="80" value="<%= paiement.reference || '' %>" placeholder="Ex. : MP241116.1234.A56789" autocomplete="off">
+      </div>
+      <% if (paiement.offre_nom) { %>
+      <label class="case">
+        <input type="checkbox" name="appliquer" value="oui" checked>
+        <span>Activer / prolonger l'abonnement de <%= paiement.client_nom %>
+          <small>Offre <%= paiement.offre_nom %> : +<%= paiement.duree_jours %> jours (à la suite de la période en cours s'il en a une).</small></span>
+      </label>
+      <% } else { %>
+      <p class="aide">Ce paiement n'est lié à aucune offre : l'abonnement du client ne sera pas modifié. Utilisez « Activer » sur sa fiche si besoin.</p>
+      <% } %>
+      <button class="btn btn-principal btn-bloc" type="submit" data-texte-envoi="Validation…"><%- icone('check') %>Valider le paiement</button>
+    </form>
+
+    <hr class="separateur">
+
+    <%# ---- REFUSER ---- %>
+    <form class="formulaire-ligne" method="post" action="/paiements/<%= paiement.id %>/refuser" data-confirmer="Refuser ce paiement de <%= f.fcfa(paiement.montant_fcfa) %> ?">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="champ">
+        <label for="motif">Motif du refus</label>
+        <input id="motif" name="motif" type="text" maxlength="500" placeholder="Ex. : argent non reçu">
+      </div>
+      <button class="btn btn-danger" type="submit"><%- icone('croix') %>Refuser</button>
+    </form>
+  </section>
+  <% } %>
+</div>
+
+<%- include('../partials/bas') %>

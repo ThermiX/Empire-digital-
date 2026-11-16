@@ -1,0 +1,43 @@
+<%# Bas commun : barre de navigation du téléphone + alerte de déconnexion automatique %>
+<% const modeAdmin = locals.admin && !locals.pagePublique; %>
+<% if (modeAdmin) { %>
+    </main>
+  </div>
+</div>
+
+<nav class="barre-bas" aria-label="Menu">
+  <% NAV.slice(0, 4).forEach(([cle, lien, libelle, ic]) => { %>
+  <a href="<%= lien %>" class="<%= locals.rubrique === cle ? 'actif' : '' %>" <%- locals.rubrique === cle ? 'aria-current="page"' : '' %>>
+    <%- icone(ic) %><span><%= libelle %></span>
+    <% const n = (locals.alertes || {})[cle] || 0; %>
+    <% if (n) { %><span class="compteur"><%= n > 99 ? '99+' : n %></span><% } %>
+  </a>
+  <% }) %>
+  <details class="<%= ['gabarits', 'offres', 'parametres'].includes(locals.rubrique) ? 'actif' : '' %>">
+    <summary><%- icone('plus-menu') %><span>Plus</span></summary>
+    <div class="menu-plus">
+      <% NAV.slice(4).forEach(([cle, lien, libelle, ic]) => { %>
+      <a href="<%= lien %>" class="<%= locals.rubrique === cle ? 'actif' : '' %>"><%- icone(ic) %><%= libelle %></a>
+      <% }) %>
+      <form method="post" action="/deconnexion">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button type="submit"><%- icone('sortie') %>Se déconnecter</button>
+      </form>
+    </div>
+  </details>
+</nav>
+
+<%# Formulaire utilisé par la déconnexion automatique %>
+<form id="form-deconnexion" method="post" action="/deconnexion" hidden>
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <input type="hidden" name="raison" value="inactivite">
+</form>
+<div class="alerte-session" id="alerte-session" role="alert" hidden>
+  <p>Par sécurité, déconnexion dans <strong id="alerte-secondes">60</strong> s.</p>
+  <button type="button" class="btn btn-principal btn-petit" id="rester-connecte">Rester connecté</button>
+</div>
+<% } else { %>
+</main>
+<% } %>
+</body>
+</html>

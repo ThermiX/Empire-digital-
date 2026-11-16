@@ -1,0 +1,49 @@
+<%# PAGE 6 — Offres d'abonnement %>
+<%- include('../partials/haut') %>
+
+<div class="tete-page">
+  <div>
+    <h1>Offres</h1>
+    <p class="sous-titre">Vos abonnements : prix en FCFA et vidéos par mois.</p>
+  </div>
+  <a class="btn btn-principal" href="/offres/nouvelle"><%- icone('ajouter') %><span>Nouvelle offre</span></a>
+</div>
+
+<% if (!offres.length) { %>
+<section class="carte vide">
+  <%- icone('offres') %>
+  <strong>Pas encore d'offre</strong>
+  <p>Créez vos abonnements (ex. : Découverte, Pro, Business) avec leur prix et leur nombre de vidéos par mois.</p>
+  <a class="btn btn-principal" href="/offres/nouvelle"><%- icone('ajouter') %>Créer une offre</a>
+</section>
+<% } else { %>
+<div class="grille-cartes">
+  <% offres.forEach((o) => { %>
+  <article class="carte carte-offre <%= o.active ? '' : 'inactif' %>" id="offre-<%= o.id %>">
+    <div class="titre-avec-badges">
+      <h2><%= o.nom %></h2>
+      <%- badgeDemo(o.est_demo) %>
+      <% if (o.active) { %><span class="badge vert"><%- icone('check') %>Proposée</span><% } else { %><span class="badge gris"><%- icone('pause') %>Retirée</span><% } %>
+    </div>
+    <p class="prix"><%= f.fcfa(o.prix_fcfa) %> <small>/ <%= o.duree_jours %> jours</small></p>
+    <ul class="liste-avantages">
+      <li><%- icone('videos') %><%= f.pluriel(o.videos_par_mois, 'vidéo') %> par mois</li>
+      <li><%- icone('clients') %><%= f.pluriel(o.nb_actifs, 'abonné actif', 'abonnés actifs') %> (<%= o.nb_clients %> au total)</li>
+    </ul>
+    <% if (o.description) { %><p class="aide texte-libre"><%= o.description %></p><% } %>
+    <div class="boutons">
+      <a class="btn btn-secondaire btn-petit" href="/offres/<%= o.id %>/modifier"><%- icone('modifier') %>Modifier</a>
+      <form method="post" action="/offres/<%= o.id %>/basculer">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn-petit <%= o.active ? 'btn-danger' : 'btn-principal' %>" type="submit">
+          <%- icone(o.active ? 'pause' : 'check') %><%= o.active ? 'Retirer' : 'Proposer' %>
+        </button>
+      </form>
+    </div>
+  </article>
+  <% }) %>
+</div>
+<p class="aide">Une offre retirée n'est plus proposée aux nouveaux clients ; ceux qui l'ont déjà la gardent.</p>
+<% } %>
+
+<%- include('../partials/bas') %>

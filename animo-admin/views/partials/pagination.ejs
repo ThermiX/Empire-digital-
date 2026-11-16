@@ -1,0 +1,12 @@
+<%# Liens "Précédent / Suivant" sous une liste (variable : pages) %>
+<% if (pages.pages > 1) { %>
+<nav class="pagination" aria-label="Pages">
+  <% if (pages.page > 1) { %>
+  <a class="btn btn-secondaire btn-petit" href="<%= pages.lien(pages.page - 1) %>"><%- icone('retour') %>Précédent</a>
+  <% } else { %><span></span><% } %>
+  <span>Page <%= pages.page %> / <%= pages.pages %></span>
+  <% if (pages.page < pages.pages) { %>
+  <a class="btn btn-secondaire btn-petit" href="<%= pages.lien(pages.page + 1) %>">Suivant<%- icone('chevron') %></a>
+  <% } else { %><span></span><% } %>
+</nav>
+<% } %>

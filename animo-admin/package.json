@@ -1,0 +1,23 @@
+{
+  "name": "animo-admin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Espace administrateur d'Animo : clients, vidéos, gabarits, paiements en FCFA.",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server.js",
+    "creer-admin": "node --disable-warning=ExperimentalWarning scripts/creer-admin.js",
+    "demo": "node --disable-warning=ExperimentalWarning scripts/demo.js charger",
+    "demo:supprimer": "node --disable-warning=ExperimentalWarning scripts/demo.js supprimer"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.2.8",
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "multer": "^2.5.0"
+  }
+}

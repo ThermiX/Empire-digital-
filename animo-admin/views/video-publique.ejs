@@ -1,0 +1,26 @@
+<%# Page envoyée au client par WhatsApp : sa vidéo + bouton télécharger. Aucune donnée admin ici. %>
+<%- include('partials/haut', { pagePublique: true }) %>
+<div class="video-publique">
+  <div class="marque">
+    <img src="/img/logo.svg" alt="" width="34" height="34">
+    <span><%= parametres.nom_marque %></span>
+  </div>
+
+  <% if (!commande) { %>
+  <section class="carte vide">
+    <%- icone('videos') %>
+    <strong>Vidéo introuvable</strong>
+    <p>Ce lien n'est plus valable. Demandez un nouveau lien sur WhatsApp.</p>
+  </section>
+  <% } else { %>
+  <section class="carte formulaire">
+    <h1>Votre vidéo est prête 🎬</h1>
+    <video class="lecteur" src="/v/<%= jeton %>/video" controls playsinline preload="metadata"></video>
+    <a class="btn btn-principal btn-bloc" href="/v/<%= jeton %>/video?telecharger=1"><%- icone('telecharger') %>Télécharger la vidéo</a>
+    <% if (parametres.whatsapp_contact) { %>
+    <a class="btn btn-secondaire btn-bloc" href="https://wa.me/<%= parametres.whatsapp_contact.replace(/\D/g, '') %>" rel="noopener"><%- icone('whatsapp') %>Nous écrire sur WhatsApp</a>
+    <% } %>
+  </section>
+  <% } %>
+</div>
+<%- include('partials/bas', { pagePublique: true }) %>
