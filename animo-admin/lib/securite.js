@@ -97,6 +97,10 @@ function lireCookie(req, nom) {
 }
 
 function optionsCookie(req) {
+  // Mode aperçu (panneau intégré, en HTTPS) : le cookie doit fonctionner dans un cadre
+  if (config.modeApercu && req.secure) {
+    return { httpOnly: true, sameSite: 'none', secure: true, partitioned: true, path: '/' };
+  }
   return {
     httpOnly: true, // invisible pour le JavaScript de la page
     sameSite: 'lax', // pas envoyé par les formulaires d'autres sites
@@ -130,7 +134,7 @@ function ouvrirSession(req, res, adminId) {
 /** Ferme la session en cours */
 function fermerSession(req, res) {
   if (req.session) db.executer('DELETE FROM sessions WHERE id_hash = ?', req.session.id_hash);
-  res.clearCookie(NOM_COOKIE, { path: '/' });
+  res.clearCookie(NOM_COOKIE, optionsCookie(req));
 }
 
 /**
@@ -148,7 +152,7 @@ function chargerSession(req, res, next) {
     empreinte(jeton),
   );
   if (!session) {
-    res.clearCookie(NOM_COOKIE, { path: '/' });
+    res.clearCookie(NOM_COOKIE, optionsCookie(req));
     return next();
   }
 
@@ -157,7 +161,7 @@ function chargerSession(req, res, next) {
   const tropVieille = t - session.cree_le > config.sessionMaxHeures * 3600 * 1000;
   if (inactive || tropVieille) {
     db.executer('DELETE FROM sessions WHERE id_hash = ?', session.id_hash);
-    res.clearCookie(NOM_COOKIE, { path: '/' });
+    res.clearCookie(NOM_COOKIE, optionsCookie(req));
     req.sessionExpiree = true;
     return next();
   }
@@ -236,16 +240,16 @@ function entetes(req, res, next) {
       "script-src 'self'",
       "connect-src 'self'",
       "form-action 'self'",
-      "frame-ancestors 'none'",
+      config.modeApercu ? 'frame-ancestors *' : "frame-ancestors 'none'",
       "base-uri 'none'",
       "object-src 'none'",
     ].join('; '),
     'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'same-origin',
     'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
     'Cross-Origin-Opener-Policy': 'same-origin',
   });
+  if (!config.modeApercu) res.set('X-Frame-Options', 'DENY'); // interdit l'affichage dans un cadre
   if (req.secure) res.set('Strict-Transport-Security', 'max-age=31536000');
   next();
 }

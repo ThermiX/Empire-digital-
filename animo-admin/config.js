@@ -36,6 +36,10 @@ const config = {
   // (Render, Railway, Nginx…) : les cookies deviennent "Secure".
   derriereProxy: oui(env.DERRIERE_PROXY),
 
+  // UNIQUEMENT pour un aperçu intégré (ex. : panneau d'aperçu de l'app Claude) :
+  // autorise l'affichage de l'admin dans un cadre (iframe). Laisser à "non" en production.
+  modeApercu: oui(env.MODE_APERCU),
+
   // Adresse publique de l'app (sert à fabriquer le lien vidéo envoyé au client).
   // Exemple : https://admin.animo.africa — vide = adresse utilisée dans le navigateur.
   urlPublique: (env.URL_PUBLIQUE || '').replace(/\/+$/, ''),

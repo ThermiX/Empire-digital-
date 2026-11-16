@@ -17,7 +17,7 @@ const { creerAdminDepuisEnv } = require('./scripts/creer-admin');
 
 const app = express();
 app.disable('x-powered-by');
-if (config.derriereProxy) app.set('trust proxy', 1);
+if (config.derriereProxy || config.modeApercu) app.set('trust proxy', true);
 
 // Pages HTML : moteur EJS (dossier views/)
 app.set('view engine', 'ejs');
