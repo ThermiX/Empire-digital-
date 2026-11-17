@@ -38,7 +38,7 @@ def build_csp(html: str, for_header: bool) -> str:
         "font-src https://fonts.gstatic.com",
         "img-src 'self' data:",
         "media-src 'self'",
-        "connect-src 'none'",
+        "connect-src 'self'",   # le service de paiement du même site (/api/checkout)
         "object-src 'none'",
         "base-uri 'none'",
         "form-action 'none'",

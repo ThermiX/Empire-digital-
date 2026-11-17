@@ -6,7 +6,7 @@
 
   <!-- Sécurité : politique de contenu (CSP). Les empreintes (sha256) des blocs de style et de script sont
        recalculées par « python3 tools/update-csp.py » : à relancer après toute modification du CSS ou du JavaScript. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-MuQ3zUdVQ9aJ21tYBZzXqSQaowVdtsZy5Yg7YwvTMMM=' https://cdnjs.cloudflare.com; style-src 'sha256-sfeOZnuOOvDEfyjRanLoC4N1J8MFHIZH5F6E9tFNXt0=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-XSC1dsbvtlwJmoPHRxxzEDbJyV3almssar2p+XNNMyc=' https://cdnjs.cloudflare.com; style-src 'sha256-hWAuf1MLE6QPINHqIoQMCrVRRofF/SkoleU3eXEUj1U=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="color-scheme" content="light">
 
@@ -836,6 +836,40 @@
     .chip:hover { background: var(--paper); color: var(--ink); }
     .chip svg { width: 20px; height: 20px; }
     .viewer .icon-btn:hover { background: var(--paper); color: var(--ink); }
+
+    /* ---- Boîtes de paiement ---- */
+    .modal {
+      width: min(540px, 100% - 24px); max-width: none; max-height: calc(100% - 24px); margin: auto; padding: 0; border: 0;
+      border-radius: 24px; background: var(--paper); color: var(--ink); overflow: auto;
+      opacity: 0; transform: translateY(18px) scale(.98); transition: opacity .35s, transform .6s var(--ease-out);
+    }
+    .modal::backdrop { background: rgba(17, 17, 17, .72); }
+    .modal.is-on { opacity: 1; transform: none; }
+    .modal-panel { display: grid; gap: 20px; padding: clamp(22px, 4vw, 36px); }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .modal-sum { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    .sum-plan { font: 800 clamp(1.75rem, 1.4rem + 1.4vw, 2.25rem)/1 var(--font-display); letter-spacing: -.04em; }
+    .sum-price { font: 800 clamp(1.5rem, 1.2rem + 1.2vw, 2rem)/1 var(--font-display); letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+    .sum-price small { font: 500 .8125rem/1 var(--font-text); letter-spacing: 0; color: var(--ink-mute); margin-left: .4em; }
+    .modal-note, .modal-fine { font-size: .9375rem; color: var(--ink-mute); max-width: none; }
+    .modal-fine { font-size: .8125rem; }
+    .modal-error { padding: 12px 14px; border-radius: 12px; background: #F3D9D3; color: #6B1E10; font-size: .9375rem; max-width: none; }
+    .modal-error[hidden] { display: none; }
+    .modal input[type="text"], .modal input[type="email"] {
+      width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--ink-mute); border-radius: 0;
+      color: var(--ink); font: 600 1.125rem/1.4 var(--font-text); padding: 10px 0; transition: border-color .3s;
+    }
+    .modal input[type="text"]:focus, .modal input[type="email"]:focus { border-bottom-color: var(--gold-dark); }
+    .modal input[aria-invalid="true"] { border-bottom-color: #B3261E; }
+    .modal .choices--zones { grid-template-columns: 1fr 1fr; }
+    .modal .choice span { border-color: var(--line); min-height: 52px; padding: 8px 14px; }
+    .modal .choice:hover span { border-color: var(--ink-mute); }
+    .modal .choice input:checked + span { border-color: var(--gold-dark); background: rgba(201, 161, 74, .16); }
+    .modal .choice input:focus-visible + span { outline-color: var(--ink); }
+    .modal .btn[disabled] { opacity: .65; pointer-events: none; }
+    .pr-headline { font: 800 clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem)/1.1 var(--font-display); letter-spacing: -.04em; max-width: none; }
+    .pr-ref { font: 500 .8125rem/1.5 var(--font-mono); letter-spacing: .08em; padding: 12px 14px; border: 1px dashed var(--ink-mute); border-radius: 12px; word-break: break-all; user-select: all; -webkit-user-select: all; max-width: none; }
+    .pr-ref[hidden], .modal [hidden] { display: none; }
 
     /* =====================================================================
        12. TARIFS
@@ -1750,6 +1784,56 @@
     <svg aria-hidden="true" focusable="false"><use href="#i-wa"/></svg>
   </a>
 
+  <!-- Paiement : s’ouvre depuis les boutons d’offre quand « checkoutEndpoint » est renseigné -->
+  <dialog class="modal" id="checkout" aria-labelledby="co-title">
+    <form class="modal-panel" id="checkout-form" novalidate>
+      <div class="modal-head">
+        <p class="label" id="co-title">Paiement</p>
+        <button class="icon-btn" id="co-close" type="button" aria-label="Fermer le paiement"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="modal-sum">
+        <p class="sum-plan" id="co-plan">Pro</p>
+        <p class="sum-price"><span id="co-price">20&nbsp;000</span>&nbsp;F <small>pour 1 mois</small></p>
+      </div>
+      <p class="modal-note">Paiement unique pour un mois, sans prélèvement automatique.</p>
+      <div class="field-row">
+        <div class="field"><label class="label" for="co-first">Prénom</label><input id="co-first" name="first_name" type="text" maxlength="60" autocomplete="given-name" required></div>
+        <div class="field"><label class="label" for="co-last">Nom</label><input id="co-last" name="last_name" type="text" maxlength="60" autocomplete="family-name" required></div>
+      </div>
+      <div class="field"><label class="label" for="co-email">Adresse e-mail</label><input id="co-email" name="email" type="email" maxlength="120" autocomplete="email" inputmode="email" required></div>
+      <fieldset class="field">
+        <legend class="label">Votre zone</legend>
+        <div class="choices choices--zones">
+          <label class="choice"><input type="radio" name="zone" value="ouest" checked><span>Afrique de l’Ouest</span></label>
+          <label class="choice"><input type="radio" name="zone" value="centre"><span>Afrique centrale</span></label>
+        </div>
+      </fieldset>
+      <p class="modal-error" id="co-error" role="alert" hidden></p>
+      <button class="btn btn--gold btn--block" id="co-submit" type="submit">
+        <span class="btn-t" id="co-submit-t">Payer</span>
+        <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
+      </button>
+      <p class="modal-fine">Vous serez redirigé vers la page de paiement de notre prestataire, Moneroo, pour choisir votre moyen de paiement. <a class="ulink" id="co-wa" href="#creer" hidden>Un souci&nbsp;? Écrivez-nous sur WhatsApp.</a></p>
+    </form>
+  </dialog>
+
+  <!-- Retour de paiement : le statut est vérifié auprès du serveur, jamais lu dans l’adresse -->
+  <dialog class="modal" id="pay-result" aria-labelledby="pr-title">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <p class="label" id="pr-title">Paiement</p>
+        <button class="icon-btn" id="pr-close" type="button" aria-label="Fermer"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <p class="pr-headline" id="pr-headline" aria-live="polite">Vérification du paiement…</p>
+      <p class="modal-note" id="pr-text"></p>
+      <p class="pr-ref" id="pr-ref" hidden></p>
+      <a class="btn btn--gold btn--block" id="pr-wa" href="#creer" hidden>
+        <span class="btn-t">Envoyer ma référence sur WhatsApp</span>
+        <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
+      </a>
+    </div>
+  </dialog>
+
   <!-- Visionneuse vidéo -->
   <dialog class="viewer is-dark" id="viewer" aria-label="Lecteur vidéo">
     <div class="viewer-inner">
@@ -1775,6 +1859,7 @@
     "displayNumber": "",
     "email": "",
     "appUrl": "",
+    "checkoutEndpoint": "/api/checkout",
     "paymentLinks": { "Essentiel": "", "Pro": "", "Business": "" },
     "termsUrl": "",
     "privacyUrl": ""
@@ -1819,6 +1904,8 @@
         display: typeof raw.displayNumber === 'string' ? raw.displayNumber.trim().slice(0, 24) : '',
         email: typeof raw.email === 'string' && /^[^\s@<>"'()]+@[^\s@<>"'()]+\.[^\s@<>"'()]+$/.test(raw.email.trim()) ? raw.email.trim() : '',
         app: safeUrl(raw.appUrl),
+        // Service de paiement du même site (chemin uniquement, jamais une adresse externe)
+        checkout: typeof raw.checkoutEndpoint === 'string' && /^\/[A-Za-z0-9\/_.-]{1,80}$/.test(raw.checkoutEndpoint) ? raw.checkoutEndpoint : '',
         pay: {},
         terms: safeUrl(raw.termsUrl, true),
         privacy: safeUrl(raw.privacyUrl, true)
@@ -1858,10 +1945,11 @@
         const act = a.getAttribute('data-act');
         if (act === 'studio') return;
         const r = resolveAct(act);
-        if (!r) return;
-        setExternal(a, r.href);
         const t = $('[data-t-pay]', a);
-        if (t) t.textContent = r.pay ? t.getAttribute('data-t-pay') : t.getAttribute('data-t-wa');
+        const isPlan = act.indexOf('plan:') === 0;
+        // Avec le service de paiement, le bouton devient « Payer l’offre … »
+        if (t && isPlan) t.textContent = (cfg.checkout || (r && r.pay)) ? t.getAttribute('data-t-pay') : t.getAttribute('data-t-wa');
+        if (r) setExternal(a, r.href);
       });
       $$('[data-wa-display]').forEach(el => { if (cfg.display) { el.textContent = cfg.display; el.classList.remove('todo'); } });
       if (cfg.email) {
@@ -1927,10 +2015,11 @@
       const desktopMq = window.matchMedia('(min-width: 900px)');
       let menuOpen = false;
       let viewerOpen = false;
+      let modalOpen = false;
       const fab = $('#fab');
       const hideZones = new Set();
       let pastHero = false;
-      function updateFab() { fab.classList.toggle('is-visible', pastHero && hideZones.size === 0 && !menuOpen && !viewerOpen); }
+      function updateFab() { fab.classList.toggle('is-visible', pastHero && hideZones.size === 0 && !menuOpen && !viewerOpen && !modalOpen); }
 
       function setMenu(open) {
         menuOpen = open;
@@ -2196,6 +2285,125 @@
         vid.addEventListener('pause', () => setPlayUI(false));
         btnSound.addEventListener('click', () => { vid.muted = !vid.muted; setSoundUI(); });
         vid.addEventListener('timeupdate', () => { if (vid.duration) bar.style.transform = 'scaleX(' + (vid.currentTime / vid.duration) + ')'; });
+      })();
+
+      /* =================================================================
+         9 bis. PAIEMENT : boîte de paiement et écran de retour
+         Le navigateur n’envoie que le nom de l’offre, la zone et l’identité du client.
+         Le montant est fixé par le serveur, et le statut est vérifié auprès de lui.
+         ================================================================= */
+      (function payments() {
+        const dlg = $('#checkout'), res = $('#pay-result');
+        if (!cfg.checkout || !dlg || !res || typeof dlg.showModal !== 'function') return;
+
+        const PRICES = { Essentiel: 10000, Pro: 20000, Business: 30000 };
+        const form = $('#checkout-form'), err = $('#co-error'), submit = $('#co-submit'), submitT = $('#co-submit-t');
+        const first = $('#co-first'), last = $('#co-last'), email = $('#co-email');
+        const waLink = $('#co-wa');
+        let plan = '', opener = null, busy = false;
+        const NAME_RE = /^[\p{L}\p{M}][\p{L}\p{M}'’. -]{0,59}$/u;
+        const EMAIL_RE = /^[^\s@<>"'()\\,;:]{1,64}@[^\s@<>"'()\\,;:]{1,200}\.[^\s@<>"'()\\,;:]{2,24}$/;
+
+        function show(d) {
+          modalOpen = true; updateFab();
+          root.classList.add('is-locked');
+          d.showModal();
+          requestAnimationFrame(() => d.classList.add('is-on'));
+        }
+        function hide(d, focusBack) {
+          d.classList.remove('is-on');
+          setTimeout(() => {
+            if (d.open) d.close();
+            modalOpen = false; updateFab();
+            root.classList.toggle('is-locked', menuOpen);
+            if (focusBack && opener) opener.focus();
+          }, reduceMotion.matches ? 0 : 280);
+        }
+        function setError(msg, field) {
+          err.textContent = msg; err.hidden = !msg;
+          [first, last, email].forEach(i => i.removeAttribute('aria-invalid'));
+          if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
+        }
+        function setBusy(on) {
+          busy = on; submit.disabled = on;
+          submitT.textContent = on ? 'Redirection…' : 'Payer ' + fmtNum(PRICES[plan]) + ' F';
+        }
+
+        function open(name, btn) {
+          plan = name; opener = btn;
+          $('#co-plan').textContent = name;
+          $('#co-price').textContent = fmtNum(PRICES[name]);
+          setError('', null); setBusy(false);
+          if (cfg.wa) { waLink.hidden = false; waLink.setAttribute('href', waUrl(MSG.plan(name))); waLink.setAttribute('target', '_blank'); waLink.setAttribute('rel', 'noopener noreferrer'); }
+          show(dlg);
+          first.focus();
+        }
+        $$('a[data-act^="plan:"]').forEach(a => {
+          const name = a.getAttribute('data-act').slice(5);
+          if (!PRICES[name]) return;
+          a.addEventListener('click', e => { e.preventDefault(); open(name, a); });
+        });
+        $('#co-close').addEventListener('click', () => hide(dlg, true));
+        dlg.addEventListener('cancel', e => { e.preventDefault(); hide(dlg, true); });
+        dlg.addEventListener('click', e => { if (e.target === dlg) hide(dlg, true); });
+
+        form.addEventListener('submit', async e => {
+          e.preventDefault();
+          if (busy) return;
+          const f = first.value.trim(), l = last.value.trim(), m = email.value.trim();
+          if (!NAME_RE.test(f)) return setError('Indiquez votre prénom.', first);
+          if (!NAME_RE.test(l)) return setError('Indiquez votre nom.', last);
+          if (m.length > 120 || !EMAIL_RE.test(m)) return setError('Indiquez une adresse e-mail valide.', email);
+          setError('', null); setBusy(true);
+          try {
+            const zone = ($('input[name="zone"]:checked', form) || {}).value || 'ouest';
+            const r = await fetch(cfg.checkout, {
+              method: 'POST', credentials: 'omit', cache: 'no-store',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ plan, zone, first_name: f, last_name: l, email: m })
+            });
+            const data = await r.json().catch(() => null);
+            if (!r.ok || !data || typeof data.checkout_url !== 'string') throw new Error('refus');
+            const u = new URL(data.checkout_url);
+            if (u.protocol !== 'https:' || !/(^|\.)moneroo\.io$/.test(u.hostname)) throw new Error('adresse');
+            window.location.assign(u.href);
+          } catch (x) {
+            setBusy(false);
+            setError('Le paiement n’a pas pu démarrer. Réessayez dans un instant' + (cfg.wa ? ', ou écrivez-nous sur WhatsApp.' : '.'), null);
+          }
+        });
+
+        /* ---- Retour de la page de paiement : on vérifie auprès du serveur ---- */
+        const params = new URLSearchParams(window.location.search);
+        const pid = params.get('paymentId');
+        if (pid && /^[A-Za-z0-9_-]{4,64}$/.test(pid)) {
+          const head = $('#pr-headline'), text = $('#pr-text'), ref = $('#pr-ref'), wa = $('#pr-wa');
+          $('#pr-close').addEventListener('click', () => hide(res, false));
+          res.addEventListener('cancel', e => { e.preventDefault(); hide(res, false); });
+          res.addEventListener('click', e => { if (e.target === res) hide(res, false); });
+          window.history.replaceState(null, '', window.location.pathname + window.location.hash);
+          show(res);
+          fetch(cfg.checkout + '?paymentId=' + encodeURIComponent(pid), { credentials: 'omit', cache: 'no-store' })
+            .then(r => r.ok ? r.json() : Promise.reject(new Error('refus')))
+            .then(d => {
+              if (d.status === 'success' && d.matches) {
+                head.textContent = 'Paiement confirmé';
+                text.textContent = 'Offre ' + d.plan + ' : merci. Gardez cette référence et envoyez-la-nous sur WhatsApp pour que nous activions votre offre.';
+                ref.textContent = 'Référence : ' + pid; ref.hidden = false;
+                if (cfg.wa) { setExternal(wa, waUrl("Bonjour, j'ai payé l'offre " + d.plan + " d'Animo. Ma référence de paiement : " + pid)); wa.hidden = false; }
+              } else if (d.status === 'pending' || d.status === 'initiated') {
+                head.textContent = 'Paiement en attente';
+                text.textContent = 'Votre opérateur n’a pas encore confirmé le paiement. Si vous avez validé sur votre téléphone, patientez un instant puis rechargez cette page.';
+              } else {
+                head.textContent = 'Le paiement n’a pas abouti';
+                text.textContent = 'Aucun montant n’a été confirmé. Vous pouvez réessayer depuis la section Tarifs.';
+              }
+            })
+            .catch(() => {
+              head.textContent = 'Vérification impossible';
+              text.textContent = 'Nous n’avons pas pu vérifier ce paiement. Si vous avez payé, conservez votre message de confirmation et écrivez-nous.';
+            });
+        }
       })();
 
       /* =================================================================
