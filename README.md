@@ -19,7 +19,7 @@ Dans la page, le logo est du SVG intégré (net sur tous les écrans, rien à t�
 
 `confidentialite.html` décrit ce que la page fait réellement : aucun cookie ni mesure d'audience, polices Google et bibliothèque d'animation chargées depuis des services tiers, aperçu qui reste dans le navigateur, données de paiement transmises à Moneroo. `conditions.html` pose la structure des conditions d'utilisation.
 
-Tout ce qui dépend de ta société reste en crochets visibles (éditeur, adresse, e-mail, hébergeur, durées de conservation, annulation, propriété des vidéos, droit applicable). **Fais relire ces deux pages par un juriste de ton pays avant la mise en ligne** : ce sont des modèles, pas un avis juridique.
+Les informations propres à ta société (raison sociale, adresse, hébergeur, annulation, propriété des vidéos, droit applicable) ne sont pas encore écrites : les pages disent qu'elles seront publiées avant l'ouverture. **Fais relire ces deux pages par un juriste de ton pays avant la mise en ligne** : ce sont des modèles, pas un avis juridique.
 
 ## Couleurs
 
@@ -56,7 +56,7 @@ Tout est dans le bloc `animo-config` (près de la fin de `index.html`).
 
 ## Page d'affiliation
 
-`affiliation.html` présente le programme d'affiliation (à qui il s'adresse, comment ça marche, conditions, règles, questions). Aucun taux, délai ni montant n'est affiché : tout ce qui n'est pas décidé est en crochets visibles (`[TAUX DE COMMISSION]`, `[QUAND ET COMMENT LA COMMISSION EST PAYÉE]`, etc.) à remplir directement dans le fichier.
+`affiliation.html` présente le programme d'affiliation (à qui il s'adresse, comment ça marche, règles, questions). Aucun taux, délai ni montant n'est affiché : la page dit qu'ils seront annoncés à l'ouverture du programme. Quand ils sont décidés, ajoute-les dans la section « Ce que tu gagnes » et dans les questions.
 
 Le bouton « Devenir affilié » se règle dans le bloc `animo-config` de `affiliation.html` (près de la fin du fichier) :
 
@@ -66,7 +66,7 @@ Le bouton « Devenir affilié » se règle dans le bloc `animo-config` de `affil
 | `displayNumber` | Numéro affiché en clair (facultatif) |
 | `affiliationUrl` | Lien `https://` d'un formulaire d'inscription. S'il est renseigné, il remplace WhatsApp |
 
-Tant que rien n'est renseigné, les boutons font défiler jusqu'au bas de la page. Le suivi des recommandations et le versement des commissions n'existent pas encore : la page décrit le programme, elle ne le fait pas fonctionner. `confidentialite.html` a une section « Si tu deviens affilié » à compléter.
+Tant que rien n'est renseigné, les boutons font défiler jusqu'au bas de la page. Le suivi des recommandations et le versement des commissions n'existent pas encore : la page décrit le programme, elle ne le fait pas fonctionner. `confidentialite.html` a une section « Si tu deviens affilié ».
 
 ## Module de paiement (Moneroo)
 
