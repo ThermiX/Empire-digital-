@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-t46+Jr1OssL6asYgCiTrVJzsPk1TG9KDDYzW/W7YLNY=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-cBJOW5JVF8fZ7dugwJG+gZOsJwRaaHVmskyYhiMu0aI=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="color-scheme" content="light">
   <title>Confidentialité · Animo</title>
   <meta name="description" content="Ce que la page d’Animo collecte, ce que font ses prestataires, et comment exercer tes droits.">
-  <meta name="theme-color" content="#F6F2EA">
+  <meta name="theme-color" content="#FFFFFF">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <style>
-    :root { --paper: #F6F2EA; --paper-alt: #EEE8DA; --ink: #111111; --gold: #C9A14A; --gold-light: #EBD49A; --gold-ink: #7A5C1B; --line: #DDD5C4; --ink-mute: #625D54;
+    :root { --paper: #FFFFFF; --paper-alt: #F6F6F8; --ink: #0E0E10; --gold: #D4380C; --gold-light: #FFE6DC; --gold-ink: #B3330D; --line: #E8E8EC; --ink-mute: #5B5B66;
       --font-display: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; --font-text: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
       --gutter: clamp(20px, 5vw, 80px); --ease: cubic-bezier(.16, 1, .3, 1); }
     *, *::before, *::after { box-sizing: border-box; }
@@ -26,26 +26,27 @@
     a { color: inherit; }
     svg { display: block; }
     ::selection { background: var(--gold-light); }
-    :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; box-shadow: 0 0 0 6px rgba(201, 161, 74, .45); }
+    :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; box-shadow: 0 0 0 6px rgba(212, 56, 12, .45); }
     .wrap { width: min(100% - 2 * var(--gutter), 760px); margin-inline: auto; }
     .top { padding-top: 14px; }
-    .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: min(100% - 2 * var(--gutter), 1180px); margin-inline: auto; min-height: 60px; padding: 7px 8px 7px 22px; background: rgba(246, 242, 234, .9); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 0 0 5px rgba(235, 212, 154, .26); }
+    .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: min(100% - 2 * var(--gutter), 1180px); margin-inline: auto; min-height: 60px; padding: 7px 8px 7px 22px; background: rgba(255, 255, 255, .9); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 12px 32px -20px rgba(14, 14, 16, .3); }
     .logo { height: 28px; width: auto; color: var(--ink); }
     .back { display: inline-flex; align-items: center; gap: .6em; min-height: 46px; padding: 0 1.2em; border-radius: 999px; border: 1px solid var(--ink); font-weight: 600; font-size: .9375rem; text-decoration: none; transition: background-color .3s var(--ease), color .3s; }
     .back:hover { background: var(--ink); color: var(--paper); }
     main { padding-block: clamp(48px, 8vw, 104px) clamp(64px, 9vw, 120px); }
     .label { font: 500 .72rem/1.5 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-mute); display: flex; align-items: center; gap: 14px; }
-    .label::before { content: ""; width: 28px; height: 1px; background: var(--gold-ink); }
-    h1 { font: 800 clamp(2.5rem, 1.4rem + 5vw, 4.75rem)/1 var(--font-display); letter-spacing: -.04em; text-wrap: balance; margin-top: 20px; }
+    .label { display: inline-flex; padding: 7px 14px 7px 11px; border: 1px solid var(--line); border-radius: 999px; gap: 10px; letter-spacing: .14em; }
+    .label::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+    h1 { font: 700 clamp(2.5rem, 1.4rem + 5vw, 4.75rem)/1 var(--font-display); letter-spacing: -.04em; text-wrap: balance; margin-top: 20px; }
     .lead { font-size: 1.25rem; line-height: 1.55; margin-top: 24px; max-width: 34em; text-wrap: pretty; }
     .upd { margin-top: 20px; color: var(--ink-mute); font-size: .9375rem; }
     section { margin-top: clamp(40px, 6vw, 64px); padding-top: 28px; border-top: 1px solid var(--line); }
-    h2 { font: 800 clamp(1.5rem, 1.2rem + 1.2vw, 2rem)/1.15 var(--font-display); letter-spacing: -.03em; text-wrap: balance; }
+    h2 { font: 700 clamp(1.5rem, 1.2rem + 1.2vw, 2rem)/1.15 var(--font-display); letter-spacing: -.03em; text-wrap: balance; }
     section p, section ul { margin-top: 14px; max-width: 65ch; text-wrap: pretty; }
     section ul { display: grid; gap: 8px; }
     section li { display: flex; gap: 14px; align-items: baseline; }
     section li::before { content: ""; width: 14px; height: 1.5px; background: var(--gold-ink); flex: none; transform: translateY(-.3em); }
-    .todo { background: rgba(201, 161, 74, .26); border-radius: 3px; padding: 0 .25em; }
+    .todo { background: rgba(212, 56, 12, .26); border-radius: 3px; padding: 0 .25em; }
     .ulink { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
     footer { background: var(--paper-alt); padding-block: 28px 36px; color: var(--ink-mute); font-size: .9rem; }
     footer .row { width: min(100% - 2 * var(--gutter), 1180px); margin-inline: auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 32px; }
@@ -56,7 +57,7 @@
 <body>
   <header class="top">
     <div class="bar">
-      <a href="./" aria-label="Animo, retour à l’accueil"><svg class="logo" viewBox="0 0 334 100" width="94" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"><path d="M12 90 L42 14 L72 90 M25 64 H59"/><path d="M97 90 V52 C97 34 131 34 131 52 V90"/><path d="M158 40 V90"/><path d="M182 90 V52 C182 34 212 34 212 52 V90 M212 52 C212 34 242 34 242 52 V90"/><circle cx="292" cy="64" r="26"/></g><path d="M149 5 L149 25 L167 15 Z" fill="#C9A14A" stroke="#C9A14A" stroke-width="5" stroke-linejoin="round"/></svg></a>
+      <a href="./" aria-label="Animo, retour à l’accueil"><svg class="logo" viewBox="0 0 334 100" width="94" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"><path d="M12 90 L42 14 L72 90 M25 64 H59"/><path d="M97 90 V52 C97 34 131 34 131 52 V90"/><path d="M158 40 V90"/><path d="M182 90 V52 C182 34 212 34 212 52 V90 M212 52 C212 34 242 34 242 52 V90"/><circle cx="292" cy="64" r="26"/></g><path d="M149 5 L149 25 L167 15 Z" fill="#D4380C" stroke="#D4380C" stroke-width="5" stroke-linejoin="round"/></svg></a>
       <a class="back" href="./">Retour à l’accueil</a>
     </div>
   </header>
@@ -66,11 +67,11 @@
       <p class="label">Confidentialité</p>
       <h1>Tes données, en clair.</h1>
       <p class="lead">Cette page en collecte très peu. Voici ce qui se passe, point par point, sans jargon.</p>
-      <p class="upd">Dernière mise à jour : <span class="todo">[DATE DE MISE À JOUR]</span></p>
+      <p class="upd">Dernière mise à jour : 17 novembre 2026</p>
 
       <section>
         <h2>Qui est responsable</h2>
-        <p>Animo est édité par <span class="todo">[NOM OU RAISON SOCIALE DE L’ÉDITEUR]</span>, <span class="todo">[ADRESSE]</span>. Pour toute question sur tes données, écris à <span class="todo">[E-MAIL DE CONTACT]</span>.</p>
+        <p>Animo est responsable des données décrites sur cette page. Pour toute question, écris-nous sur WhatsApp ou par e-mail : nos coordonnées sont en bas de la page d’accueil.</p>
       </section>
 
       <section>
@@ -80,7 +81,7 @@
         <ul>
           <li>Google Fonts, pour les polices d’écriture (fonts.googleapis.com et fonts.gstatic.com).</li>
           <li>cdnjs, géré par Cloudflare, pour la bibliothèque d’animation.</li>
-          <li><span class="todo">[HÉBERGEUR DU SITE]</span>, qui héberge la page et garde des journaux techniques.</li>
+          <li>L’hébergeur du site, qui sert la page et garde des journaux techniques.</li>
         </ul>
         <p>Chacun de ces services a sa propre politique de confidentialité.</p>
       </section>
@@ -92,30 +93,30 @@
 
       <section>
         <h2>Quand tu nous écris sur WhatsApp</h2>
-        <p>Les boutons WhatsApp ouvrent une conversation avec nous. Tes messages passent par WhatsApp. Nous voyons ton numéro et ton message, et nous les utilisons pour te répondre. Durée de conservation : <span class="todo">[DURÉE DE CONSERVATION DES MESSAGES]</span>.</p>
+        <p>Les boutons WhatsApp ouvrent une conversation avec nous. Tes messages passent par WhatsApp. Nous voyons ton numéro et ton message, et nous les utilisons pour te répondre. Nous les gardons le temps de te répondre et de suivre ta demande.</p>
       </section>
 
       <section>
         <h2>Quand tu paies en ligne</h2>
         <p>Si le paiement en ligne est ouvert, tu nous donnes ton prénom, ton nom et ton adresse e-mail, et tu choisis ta zone. Notre serveur les transmet à notre prestataire de paiement, <a class="ulink" href="https://moneroo.io" target="_blank" rel="noopener noreferrer">Moneroo</a>, qui crée le paiement et affiche sa propre page.</p>
         <p>Ton numéro de téléphone, tes identifiants Mobile Money et ta carte sont saisis chez Moneroo. Nous ne les voyons pas et notre serveur ne les enregistre pas.</p>
-        <p>De Moneroo, nous recevons la référence du paiement, son statut, le montant et l’offre choisie, pour confirmer ton paiement. Durée de conservation : <span class="todo">[DURÉE DE CONSERVATION DES PAIEMENTS]</span>.</p>
+        <p>De Moneroo, nous recevons la référence du paiement, son statut, le montant et l’offre choisie, pour confirmer ton paiement. Nous les gardons le temps de suivre ton abonnement et de respecter nos obligations comptables.</p>
       </section>
 
       <section>
         <h2>L’application Animo</h2>
-        <p>L’application n’est pas encore ouverte. Quand elle ouvrira, cette page indiquera quelles données elle traite (photos, prix, numéros) et combien de temps elles sont gardées. <span class="todo">[À COMPLÉTER À L’OUVERTURE DE L’APPLICATION]</span></p>
+        <p>L’application n’est pas encore ouverte. Quand elle ouvrira, cette page indiquera quelles données elle traite (photos, prix, numéros) et combien de temps elles sont gardées.</p>
       </section>
 
       <section>
         <h2>Tes droits</h2>
-        <p>Tu peux demander à voir, corriger ou supprimer les données que nous avons sur toi, ou t’opposer à leur usage : écris à <span class="todo">[E-MAIL DE CONTACT]</span>.</p>
-        <p>Si tu penses que tes droits ne sont pas respectés, tu peux t’adresser à l’autorité de protection des données de ton pays : <span class="todo">[AUTORITÉ DE PROTECTION DES DONNÉES COMPÉTENTE]</span>.</p>
+        <p>Tu peux demander à voir, corriger ou supprimer les données que nous avons sur toi, ou t’opposer à leur usage : écris-nous, nos coordonnées sont en bas de la page d’accueil.</p>
+        <p>Si tu penses que tes droits ne sont pas respectés, tu peux t’adresser à l’autorité de protection des données de ton pays.</p>
       </section>
 
       <section>
         <h2>Si tu deviens affilié</h2>
-        <p>Pour rejoindre le <a class="ulink" href="affiliation.html">programme d’affiliation</a>, tu nous écris. Nous gardons ton nom, ton moyen de contact, ton lien de recommandation et les commissions qui te sont dues, pour pouvoir te payer. Données nécessaires au versement : <span class="todo">[MODE DE VERSEMENT ET DONNÉES NÉCESSAIRES]</span>. Durée de conservation : <span class="todo">[DURÉE DE CONSERVATION DES DONNÉES D’AFFILIATION]</span>.</p>
+        <p>Pour rejoindre le <a class="ulink" href="affiliation.html">programme d’affiliation</a>, tu nous écris. Nous gardons ton nom, ton moyen de contact, ton lien de recommandation et les commissions qui te sont dues, pour pouvoir te payer. Nous les gardons le temps de ta participation au programme et de nos obligations comptables.</p>
       </section>
 
       <section>

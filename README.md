@@ -6,7 +6,7 @@ Une seule page, `index.html` : le CSS et le JavaScript sont intégrés. Elle s'o
 
 Déjà dans le dépôt : `logo.svg` et `logo-blanc.svg` (le logo : le mot « Animo », avec un triangle de lecture doré à la place du point du « i »), leurs versions `logo.png` et `logo-blanc.png`, `favicon.svg` et `favicon.png` (icône carrée), `apercu.jpg` (image de partage, 1200 × 630 px, tirée de la page), et les pages `affiliation.html`, `confidentialite.html`, `conditions.html` et `404.html`.
 
-Il reste à ajouter :
+Facultatif, pour remplacer les scènes animées des exemples par de vraies vidéos (puis mettre `videosExemples` à `true`) :
 
 | Fichier | Format conseillé |
 |---|---|
@@ -21,6 +21,10 @@ Dans la page, le logo est du SVG intégré (net sur tous les écrans, rien à t�
 
 Tout ce qui dépend de ta société reste en crochets visibles (éditeur, adresse, e-mail, hébergeur, durées de conservation, annulation, propriété des vidéos, droit applicable). **Fais relire ces deux pages par un juriste de ton pays avant la mise en ligne** : ce sont des modèles, pas un avis juridique.
 
+## Couleurs
+
+Fond blanc et une seule couleur d'accent (orange `#D4380C`, texte blanc dessus lisible à 4,8:1). Pour changer de couleur, modifier en haut du CSS de `index.html` les variables `--accent`, `--accent-dark`, `--accent-soft` et `--accent-ink`, puis lancer `python3 tools/update-csp.py`. Les pages annexes ont les mêmes variables en tête de leur CSS (`--gold`, `--gold-light`, `--gold-ink`).
+
 ## Réglages (liens, numéro, paiement)
 
 Tout se règle dans le bloc `<script type="application/json" id="animo-config">`, vers la fin de `index.html`. Modifier ce bloc ne demande rien d'autre.
@@ -31,6 +35,8 @@ Tout se règle dans le bloc `<script type="application/json" id="animo-config">`
 | `displayNumber` | Numéro affiché en clair (si vide, il est déduit de `whatsappNumber`) |
 | `email` | Adresse affichée dans le pied de page |
 | `appUrl` | Lien de l'application. Vide : les boutons « Créer ma vidéo » ouvrent WhatsApp (liste d'attente) |
+| `operateurs` | Opérateurs Mobile Money acceptés, affichés sous les offres (par exemple `Orange Money, Moov Money, Wave`). Vide : la ligne n'apparaît pas |
+| `videosExemples` | `true` quand `exemple-1.mp4` à `exemple-6.mp4` sont en ligne. `false` : chaque exemple joue une scène animée (aucun fichier demandé) |
 | `checkoutEndpoint` | Chemin du service de paiement du site (`/api/checkout`). Vide : pas de formulaire de paiement |
 | `paymentLinks` | Un lien de paiement par nom d'offre (par exemple `Essentiel`, `Boutique`), utilisé si le formulaire de paiement ne s'applique pas. Sans lien, le bouton ouvre WhatsApp avec le nom de l'offre |
 | `plans` | Les trois offres affichées dans « Tarifs » (voir ci-dessous) |
@@ -105,6 +111,6 @@ python3 tools/update-csp.py
 
 Le script recalcule les empreintes dans `index.html`, `_headers` et `vercel.json`. Modifier les textes, les liens ou le bloc de réglages ne le demande pas.
 
-## Textes à compléter
+## Ce qui n'apparaît pas tant que ce n'est pas réglé
 
-`[+227 XX XX XX XX]`, `[ADRESSE E-MAIL]`, `[AJOUTER LES OPÉRATEURS ACCEPTÉS]`, `[AJOUTER LES MOYENS DE PAIEMENT]`, `[AJOUTER LA POLITIQUE D'ANNULATION]`, `[AJOUTER LES CONDITIONS D'UTILISATION]`, `[NOM OU RAISON SOCIALE DE L'ÉDITEUR]`, `[ADRESSE]` et les autres crochets des pages légales. Les numéros et l'e-mail se remplissent via le bloc de réglages ; les trois réponses de la FAQ se modifient dans le HTML.
+La page n'affiche aucun texte entre crochets. Le numéro WhatsApp, l'adresse e-mail et les opérateurs acceptés restent invisibles tant qu'ils ne sont pas renseignés dans `animo-config`. Sans numéro, les boutons « Créer ma vidéo » font défiler jusqu'à l'appel final.
