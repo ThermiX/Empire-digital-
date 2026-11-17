@@ -24,10 +24,21 @@ Tout se règle dans le bloc `<script type="application/json" id="animo-config">`
 | `email` | Adresse affichée dans le pied de page |
 | `appUrl` | Lien de l'application. Vide : les boutons « Créer ma vidéo » ouvrent WhatsApp (liste d'attente) |
 | `checkoutEndpoint` | Chemin du service de paiement du site (`/api/checkout`). Vide : pas de formulaire de paiement |
-| `paymentLinks` | Un lien de paiement par offre (`Essentiel`, `Pro`, `Business`), utilisé si `checkoutEndpoint` est vide. Sans lien, le bouton ouvre WhatsApp avec le nom de l'offre |
+| `paymentLinks` | Un lien de paiement par nom d'offre (par exemple `Essentiel`, `Boutique`), utilisé si le formulaire de paiement ne s'applique pas. Sans lien, le bouton ouvre WhatsApp avec le nom de l'offre |
+| `plans` | Les trois offres affichées dans « Tarifs » (voir ci-dessous) |
 | `termsUrl`, `privacyUrl` | Pages « Conditions d'utilisation » et « Confidentialité » |
 
 Les valeurs sont vérifiées par la page : seules les adresses `https://` sont acceptées (les liens `javascript:` ou `data:` sont ignorés).
+
+## Offres, prix et numéro WhatsApp : où remplir
+
+Tout est dans le bloc `animo-config` (près de la fin de `index.html`).
+
+- **Numéro WhatsApp** : `whatsappNumber` (chiffres seulement, indicatif compris). Vide : « Réserver un échange » fait défiler jusqu'à l'appel final, où figure le numéro à compléter.
+- **Offres** : `plans`, trois offres au maximum. Chacune a `id`, `nom`, `type` (`libre-service` ou `sur-mesure`), `description`, `prix_fcfa`, `videos_par_mois`, `avantages` (liste de textes) et `mis_en_avant` (une seule offre, affichée en noir).
+- **Tant que `prix_fcfa` est vide**, la carte affiche « Prix annoncé en décembre » et son bouton devient « Rejoindre la liste d'attente ». Un prix renseigné (en chiffres, par exemple `15000`) s'affiche « 15 000 F par mois ».
+- **Offre `sur-mesure`** : jamais de prix affiché, bouton « Réserver un échange » vers WhatsApp.
+- **Paiement en ligne** : le formulaire de paiement ne s'ouvre que si le nom et le prix de l'offre correspondent à ceux de `lib/payments.mjs` (`PLANS`). Quand vos prix sont décidés, mettez-les aussi à cet endroit. Sinon, les boutons ouvrent WhatsApp ou le lien de `paymentLinks`.
 
 ## Module de paiement (Moneroo)
 
