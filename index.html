@@ -4,12 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- Sécurité : politique de contenu (CSP). Les empreintes (sha256) des blocs de style et de script sont
+       recalculées par « python3 tools/update-csp.py » : à relancer après toute modification du CSS ou du JavaScript. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-MuQ3zUdVQ9aJ21tYBZzXqSQaowVdtsZy5Yg7YwvTMMM=' https://cdnjs.cloudflare.com; style-src 'sha256-sfeOZnuOOvDEfyjRanLoC4N1J8MFHIZH5F6E9tFNXt0=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="color-scheme" content="light">
+
   <title>Animo · Vos photos deviennent des vidéos qui vendent</title>
   <meta name="description" content="Animo transforme les photos de votre produit, son prix et votre numéro WhatsApp en vidéo animée, prête pour TikTok, WhatsApp et Facebook. Dès 10 000 F par mois, payable par Mobile Money.">
   <meta name="theme-color" content="#F6F2EA">
   <link rel="icon" href="favicon.png" type="image/png">
 
-  <!-- Partage (Open Graph / Twitter) -->
+  <!-- Partage (Open Graph / Twitter). Mettre une URL absolue pour og:image une fois le domaine connu. -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_FR">
   <meta property="og:site_name" content="Animo">
@@ -23,6 +29,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@600;800&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Évite un flash de contenu : les titres animés restent masqués jusqu’à l’initialisation (3,5 s au plus). -->
+  <script>
+    (function () {
+      var h = document.documentElement;
+      h.classList.add('js-wait');
+      setTimeout(function () { h.classList.remove('js-wait'); }, 3500);
+    })();
+  </script>
 
   <!-- Données structurées -->
   <script type="application/ld+json">
@@ -119,11 +134,19 @@
       overflow-x: clip;
     }
     img, svg, video { display: block; max-width: 100%; }
-    h1, h2, h3, p, ul, ol, figure { margin: 0; }
+    h1, h2, h3, p, ul, ol, figure, fieldset { margin: 0; }
     ul, ol { padding: 0; list-style: none; }
+    fieldset { padding: 0; border: 0; min-width: 0; }
     a { color: inherit; text-decoration: none; }
     button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
     ::selection { background: var(--gold-light); color: var(--ink); }
+    .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+    /* Grain de film, très léger */
+    body::after {
+      content: ""; position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: .05;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
 
     :focus-visible {
       outline: 2px solid var(--focus);
@@ -149,13 +172,13 @@
     @media (min-width: 900px) { .grid { grid-template-columns: repeat(12, minmax(0, 1fr)); } }
 
     /* Feuille de travail : grille de points très discrète sur les sections crème */
-    .dots {
+    .hero, .statement, .how, .feats, .pricing, .faq {
       background-color: var(--paper);
       background-image: radial-gradient(circle at center, rgba(138, 132, 122, .30) 0, rgba(138, 132, 122, .30) .75px, transparent 1px);
       background-size: 32px 32px;
       background-position: 16px 16px;
     }
-    .dots--alt { background-color: var(--paper-alt); }
+    .feats, .faq { background-color: var(--paper-alt); }
     .is-dark { background: var(--ink); color: var(--paper); }
 
     .section { position: relative; padding-block: var(--section-y); }
@@ -198,6 +221,11 @@
     .todo { background: rgba(201, 161, 74, .26); border-radius: 3px; padding: 0 .25em; }
     .is-dark .todo { color: var(--gold-light); }
 
+    /* Masque de mots pour les titres animés */
+    .w { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0 .06em .14em; margin: 0 -.06em -.14em; }
+    .w > span, .wi { display: inline-block; }
+    .js-wait [data-split], .js-wait [data-hero], .js-wait .hero-title .w > span, .js-wait [data-reveal] { visibility: hidden; }
+
     /* Lien souligné animé */
     .ulink {
       background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
@@ -206,25 +234,35 @@
     }
     .ulink:hover, .ulink:focus-visible { background-size: 100% 1px; }
 
+    /* Icônes en trait fin */
+    .ic { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
     /* =====================================================================
        2. BOUTONS
        ===================================================================== */
     .btn {
-      position: relative;
+      --fill: var(--gold-light);
+      position: relative; isolation: isolate; overflow: hidden;
       display: inline-flex; align-items: center; justify-content: center; gap: .8em;
       min-height: 54px; padding: 0 1.7em;
       border-radius: 999px;
       font: 600 1rem/1 var(--font-text);
       white-space: nowrap;
-      transition: background-color .35s var(--ease-out), color .35s, border-color .35s;
+      transition: color .4s var(--ease-out), border-color .4s;
     }
+    .btn::before {
+      content: ""; position: absolute; inset: -1px; z-index: -1; background: var(--fill);
+      transform: translateY(102%); border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+      transition: transform .55s var(--ease-out), border-radius .55s var(--ease-out);
+    }
+    .btn:hover::before, .btn:focus-visible::before { transform: none; border-radius: 0; }
     .btn--gold { background: var(--gold); color: var(--ink); }
-    .btn--gold:hover { background: var(--gold-light); }
-    .btn--ghost { border: 1px solid var(--ink); }
-    .btn--ghost:hover { background: var(--ink); color: var(--paper); }
-    .is-dark .btn--ghost { border-color: rgba(246, 242, 234, .5); }
-    .is-dark .btn--ghost:hover { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+    .btn--ghost { border: 1px solid var(--ink); --fill: var(--ink); }
+    .btn--ghost:hover, .btn--ghost:focus-visible { color: var(--paper); }
+    .is-dark .btn--ghost { border-color: rgba(246, 242, 234, .5); --fill: var(--paper); }
+    .is-dark .btn--ghost:hover, .is-dark .btn--ghost:focus-visible { color: var(--ink); border-color: var(--paper); }
     .btn--sm { min-height: 44px; padding: 0 1.3em; font-size: .9375rem; }
+    .btn--lg { min-height: 66px; padding: 0 2.2em; font-size: 1.0625rem; }
     .btn--block { width: 100%; }
 
     /* Flèche qui glisse : une sort, l’autre entre */
@@ -236,10 +274,7 @@
     :is(.btn, .btn-link, .feat):hover .arr svg:last-child,
     :is(.btn, .btn-link):focus-visible .arr svg:last-child { transform: none; }
 
-    .btn-link {
-      display: inline-flex; align-items: center; gap: .7em;
-      min-height: 54px; font-weight: 600;
-    }
+    .btn-link { display: inline-flex; align-items: center; gap: .7em; min-height: 54px; font-weight: 600; }
     .btn-link span:first-child {
       background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
       padding-bottom: 3px;
@@ -254,12 +289,26 @@
     }
     .icon-btn svg { width: 22px; height: 22px; }
 
-    /* Icônes en trait fin */
-    .ic { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
-
     /* =====================================================================
-       3. EN-TÊTE ET MENU MOBILE
+       3. EN-TÊTE, PROGRESSION, CURSEUR, MENU MOBILE
        ===================================================================== */
+    .progress { position: fixed; z-index: 80; inset: 0 0 auto 0; height: 2px; pointer-events: none; }
+    .progress i { display: block; height: 100%; background: var(--gold); transform-origin: left; transform: scaleX(0); }
+
+    .cursor {
+      position: fixed; left: 0; top: 0; z-index: 95; pointer-events: none;
+      width: 44px; height: 44px; margin: -22px 0 0 -22px;
+      border: 1px solid var(--gold); border-radius: 50%;
+      display: none; place-items: center; opacity: 0;
+      transition: opacity .3s, width .4s var(--ease-out), height .4s var(--ease-out), margin .4s var(--ease-out), background-color .3s;
+    }
+    .cursor span { font: 500 .62rem/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--ink); opacity: 0; transition: opacity .2s; }
+    .cursor.is-on { opacity: 1; }
+    .cursor.is-hover { width: 70px; height: 70px; margin: -35px 0 0 -35px; background: rgba(201, 161, 74, .18); }
+    .cursor.has-label { width: 88px; height: 88px; margin: -44px 0 0 -44px; background: var(--gold); }
+    .cursor.has-label span { opacity: 1; }
+    @media (hover: hover) and (pointer: fine) { .cursor.is-ready { display: grid; } }
+
     .site-header {
       position: fixed; inset: 0 0 auto 0; z-index: 60;
       height: var(--header-h);
@@ -268,26 +317,16 @@
       border-bottom: 1px solid transparent;
       transition: height .45s var(--ease-out), background-color .3s, border-color .3s;
     }
-    .site-header.is-scrolled, .site-header.is-open {
-      height: 60px;
-      background: var(--paper);
-      border-bottom-color: var(--line);
-    }
-    .site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .site-header.is-scrolled, .site-header.is-open { height: 60px; background: var(--paper); border-bottom-color: var(--line); }
+    .bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
     .brand { display: inline-flex; align-items: center; min-height: 44px; }
     .brand .logo { height: 28px; width: auto; }
     .wordmark { font: 800 1.5rem/1 var(--font-display); letter-spacing: -.04em; }
 
     .nav { display: none; }
     .head-cta { display: none; }
-    .burger {
-      position: relative; width: 48px; height: 48px; border-radius: 50%;
-      border: 1px solid var(--ink);
-    }
-    .burger i {
-      position: absolute; left: 14px; right: 14px; height: 1.5px; background: var(--ink);
-      transition: transform .5s var(--ease-out);
-    }
+    .burger { position: relative; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--ink); }
+    .burger i { position: absolute; left: 14px; right: 14px; height: 1.5px; background: var(--ink); transition: transform .5s var(--ease-out); }
     .burger i:nth-child(1) { top: 19px; }
     .burger i:nth-child(2) { top: 27px; }
     .site-header.is-open .burger i:nth-child(1) { transform: translateY(4px) rotate(45deg); }
@@ -305,17 +344,9 @@
     }
     .menu.is-open { visibility: visible; clip-path: inset(0); transition: clip-path .7s var(--ease-out), visibility 0s; }
     .menu-links li { border-bottom: 1px solid var(--line); }
-    .menu-links a {
-      display: flex; align-items: baseline; gap: 16px;
-      padding: 14px 0;
-      font: 800 clamp(2.25rem, 11vw, 3.5rem)/1.05 var(--font-display);
-      letter-spacing: -.04em;
-    }
+    .menu-links a { display: flex; align-items: baseline; gap: 16px; padding: 14px 0; font: 800 clamp(2.25rem, 11vw, 3.5rem)/1.05 var(--font-display); letter-spacing: -.04em; }
     .menu-links a small { font: 500 var(--fs-label)/1 var(--font-mono); letter-spacing: .2em; color: var(--ink-mute); }
-    .menu-links li, .menu-foot {
-      opacity: 0; transform: translateY(28px);
-      transition: opacity .5s, transform .7s var(--ease-out);
-    }
+    .menu-links li, .menu-foot { opacity: 0; transform: translateY(28px); transition: opacity .5s, transform .7s var(--ease-out); }
     .menu.is-open .menu-links li, .menu.is-open .menu-foot { opacity: 1; transform: none; }
     .menu.is-open li:nth-child(1) { transition-delay: .15s; }
     .menu.is-open li:nth-child(2) { transition-delay: .21s; }
@@ -328,7 +359,9 @@
     @media (min-width: 900px) {
       .nav { display: block; }
       .nav ul { display: flex; gap: clamp(20px, 3vw, 44px); }
-      .nav a { font-size: .9375rem; font-weight: 500; display: inline-block; padding: 12px 0; }
+      .nav a { position: relative; font-size: .9375rem; font-weight: 500; display: inline-block; padding: 12px 0; }
+      .nav a::after { content: ""; position: absolute; left: 50%; bottom: 2px; width: 5px; height: 5px; margin-left: -2.5px; background: var(--gold); transform: rotate(45deg) scale(0); transition: transform .4s var(--ease-out); }
+      .nav a[aria-current="true"]::after { transform: rotate(45deg) scale(1); }
       .head-cta { display: inline-flex; }
       .burger, .menu { display: none; }
     }
@@ -344,11 +377,7 @@
       background: #181818;
       box-shadow: 0 0 0 1px rgba(246, 242, 234, .16), inset 0 0 0 1px rgba(246, 242, 234, .06);
     }
-    /* bouton latéral */
-    .phone::after {
-      content: ""; position: absolute; right: -.9cqw; top: 24%;
-      width: .9cqw; height: 11%; border-radius: 0 1cqw 1cqw 0; background: #2a2a2a;
-    }
+    .phone::after { content: ""; position: absolute; right: -.9cqw; top: 24%; width: .9cqw; height: 11%; border-radius: 0 1cqw 1cqw 0; background: #2a2a2a; }
     .phone-screen {
       position: relative; display: block; overflow: hidden;
       aspect-ratio: 9 / 16;
@@ -357,185 +386,82 @@
       container-type: inline-size;
       isolation: isolate;
     }
-    /* caméra */
     .phone-screen::after {
       content: ""; position: absolute; top: 3.4cqw; left: 50%; z-index: 9;
       width: 3.4cqw; height: 3.4cqw; margin-left: -1.7cqw; border-radius: 50%;
-      background: #050505; box-shadow: 0 0 0 .5cqw rgba(246, 242, 234, .06);
+      background: #050505; box-shadow: 0 0 0 .5cqw rgba(246, 242, 234, .06); pointer-events: none;
+    }
+    .halo {
+      position: absolute; z-index: -1; left: 50%; top: 50%; width: 170%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(235, 212, 154, .75), rgba(235, 212, 154, 0));
       pointer-events: none;
     }
+    .halo--dark { background: radial-gradient(closest-side, rgba(201, 161, 74, .32), rgba(201, 161, 74, 0)); }
 
-    /* =====================================================================
-       5. HERO
-       ===================================================================== */
-    .hero {
-      padding-top: calc(var(--header-h) + clamp(28px, 5vw, 64px));
-      padding-bottom: clamp(40px, 5vw, 72px);
-      overflow-x: clip;
+    /* ---- Scène vidéo (aperçu du produit : photo, prix, mots, bouton) ---- */
+    .vs {
+      --sc-bg1: #F6F2EA; --sc-bg2: #EBD49A; --sc-disc: rgba(246, 242, 234, .72); --sc-disc-line: #C9A14A;
+      --sc-tag-bg: #111111; --sc-tag-fg: #EBD49A; --sc-cta-bg: #C9A14A; --sc-cta-fg: #111111; --sc-name: #111111; --sc-prog: rgba(17, 17, 17, .2);
+      position: absolute; inset: 0; color: var(--paper);
+      background: linear-gradient(180deg, var(--sc-bg1), var(--sc-bg2));
     }
-    .hero-grid { align-items: end; row-gap: 56px; }
-    .hero-copy { grid-column: 1 / span 7; display: grid; gap: clamp(22px, 2.6vw, 34px); align-content: end; }
-    .hero-title { max-width: 9.5em; }
-    .w { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0 .06em .14em; margin: 0 -.06em -.14em; }
-    .w > span { display: inline-block; }
-    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 32px; margin-top: 4px; }
-
-    .hero-phone { grid-column: 9 / span 4; justify-self: center; position: relative; --pw: clamp(232px, 64vw, 300px); width: var(--pw); }
-    .hero-phone-stage { position: relative; }
-    .hero-ring {
-      position: absolute; z-index: -1; left: 50%; top: 50%;
-      width: 128%; aspect-ratio: 1; transform: translate(-50%, -50%);
-      border: 1px solid var(--gold-light); border-radius: 50%;
+    .vs[data-style="nuit"] { --sc-bg1: #28221a; --sc-bg2: #111111; --sc-disc: rgba(201, 161, 74, .16); --sc-tag-bg: #C9A14A; --sc-tag-fg: #111111; --sc-name: #EBD49A; --sc-prog: rgba(246, 242, 234, .25); }
+    .vs[data-style="dore"] { --sc-bg1: #EBD49A; --sc-bg2: #C9A14A; --sc-disc: rgba(246, 242, 234, .55); --sc-disc-line: rgba(17, 17, 17, .3); --sc-cta-bg: #F6F2EA; }
+    .vs-art { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 50% 62%; }
+    .vs-disc { fill: var(--sc-disc); }
+    .vs-disc-line { fill: none; stroke: var(--sc-disc-line); stroke-width: .4; }
+    .vs-scrim { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(17, 17, 17, 0) 50%, rgba(17, 17, 17, .88) 84%); }
+    .vs-prog { position: absolute; left: 6cqw; right: 6cqw; top: 9.5cqw; height: .8cqw; border-radius: 1cqw; background: var(--sc-prog); overflow: hidden; }
+    .vs-prog i { display: block; height: 100%; background: var(--sc-name); transform-origin: left; }
+    .vs-name { position: absolute; left: 6cqw; right: 6cqw; top: 14.5cqw; font: 500 3.1cqw/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--sc-name); max-width: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vs-price {
+      position: absolute; left: 6cqw; top: 21cqw; max-width: 88cqw;
+      background: var(--sc-tag-bg); color: var(--sc-tag-fg);
+      font: 800 17cqw/1 var(--font-display); letter-spacing: -.04em; word-spacing: .14em; white-space: nowrap;
+      padding: 2.4cqw 4.4cqw 3cqw; border-radius: 3cqw; transform-origin: 50% 100%;
     }
-    .hero-ring::after {
-      content: ""; position: absolute; inset: 11%; border: 1px solid var(--line); border-radius: 50%;
-    }
-    .hero-caption { position: absolute; left: calc(100% + 18px); bottom: 12%; writing-mode: vertical-rl; display: none; }
-
-    .facts {
-      margin-top: clamp(40px, 6vw, 88px);
-      border-top: 1px solid var(--line);
-      display: grid;
-    }
-    .facts li {
-      padding: 18px 0; border-bottom: 1px solid var(--line);
-      font-weight: 500; display: flex; align-items: center; gap: 14px;
-    }
-    .facts li::before { content: ""; width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); flex: none; }
-
-    @media (min-width: 640px) {
-      .facts { grid-template-columns: repeat(3, 1fr); }
-      .facts li { border-bottom: 0; padding: 22px 24px; border-left: 1px solid var(--line); }
-      .facts li:first-child { border-left: 0; padding-left: 0; }
-    }
-    @media (min-width: 900px) {
-      .hero { min-height: min(100svh, 1040px); display: flex; flex-direction: column; justify-content: flex-end; }
-      .hero > .wrap { width: min(100% - 2 * var(--gutter), var(--maxw)); }
-      .hero-phone { --pw: min(clamp(250px, 24vw, 340px), 38vh); align-self: center; }
-      .hero-title { font-size: min(var(--fs-display), 11.4vh); }
-      .hero-copy .lead { max-width: 38em; }
-      .hero-caption { display: block; }
-    }
-    @media (max-width: 899px) {
-      .hero-copy { grid-column: 1; }
-      .hero-phone { grid-column: 1; margin-top: 24px; }
-    }
-
-    /* ---- Démonstration animée dans le téléphone (état final par défaut) ---- */
-    .demo { position: absolute; inset: 0; color: var(--paper); }
-    .demo-art { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .demo-scrim {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(17, 17, 17, 0) 48%, rgba(17, 17, 17, .86) 82%);
-    }
-    .demo-progress { position: absolute; left: 6cqw; right: 6cqw; top: 9cqw; height: .7cqw; border-radius: 1cqw; background: rgba(17, 17, 17, .18); overflow: hidden; }
-    .demo-progress i { display: block; height: 100%; background: var(--ink); transform-origin: left; }
-    .demo-price {
-      position: absolute; left: 6cqw; top: 15cqw;
-      background: var(--ink); color: var(--gold-light);
-      font: 800 17cqw/1 var(--font-display); letter-spacing: -.04em;
-      padding: 2.4cqw 4.4cqw 3cqw; border-radius: 3cqw;
-      transform-origin: 50% 100%;
-    }
-    .demo-words {
-      position: absolute; left: 6cqw; right: 6cqw; bottom: 23.5cqw;
+    .vs-price[data-len="9"], .vs-price[data-len="10"] { font-size: 14cqw; }
+    .vs-price[data-len="11"] { font-size: 11.5cqw; }
+    .vs-words {
+      position: absolute; left: 6cqw; right: 6cqw; bottom: 25cqw;
       display: grid; gap: .6cqw; justify-items: start;
-      font: 800 10cqw/1.1 var(--font-display); letter-spacing: -.035em; color: var(--gold);
+      font: 800 9.6cqw/1.1 var(--font-display); letter-spacing: -.035em; color: var(--gold);
       text-shadow: 0 .4cqw 2cqw rgba(17, 17, 17, .5);
     }
-    .demo-cta {
+    .vs-words li { max-width: 88cqw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vs-words li:empty { display: none; }
+    .vs-cta {
       position: absolute; left: 6cqw; right: 6cqw; bottom: 7cqw;
-      height: 13cqw; border-radius: 7cqw;
+      height: 14cqw; border-radius: 7cqw;
       display: flex; align-items: center; justify-content: center; gap: 2.4cqw;
-      background: var(--gold); color: var(--ink);
-      font: 600 4.7cqw/1 var(--font-text);
+      background: var(--sc-cta-bg); color: var(--sc-cta-fg);
+      font: 600 4.5cqw/1.15 var(--font-text);
     }
-    .demo-cta svg { width: 6cqw; height: 6cqw; }
-    .demo-ring { position: absolute; inset: 0; border-radius: 7cqw; border: .6cqw solid var(--gold); opacity: 0; pointer-events: none; }
+    .vs-cta svg { width: 6cqw; height: 6cqw; flex: none; }
+    .vs-cta-text { display: grid; text-align: left; }
+    .vs-cta-text b { font-weight: 600; }
+    .vs-cta-text small { font: 500 3.3cqw/1.2 var(--font-text); opacity: .75; }
+    .vs-cta-text small:empty { display: none; }
+    .vs-ring { position: absolute; inset: 0; border-radius: 7cqw; border: .6cqw solid var(--gold); opacity: 0; pointer-events: none; }
 
-    /* Mot-clé en marque de page dans le hero */
-    .hero-caption { font: 500 var(--fs-label)/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-mute); }
-
-    /* =====================================================================
-       6. BANDE DÉFILANTE
-       ===================================================================== */
-    .marquee { background: var(--ink); color: var(--paper); overflow: hidden; padding-block: clamp(22px, 3.4vw, 44px); }
-    .marquee-track { display: flex; width: max-content; animation: marquee 48s linear infinite; }
-    .marquee:hover .marquee-track { animation-play-state: paused; }
-    .marquee-list { display: flex; align-items: center; flex: none; }
-    .marquee-list li {
-      display: flex; align-items: center;
-      font: 800 clamp(2rem, 1rem + 4.2vw, 4.75rem)/1.1 var(--font-display);
-      letter-spacing: -.04em; white-space: nowrap;
-    }
-    .marquee-list li::after {
-      content: ""; width: .22em; height: .22em; background: var(--gold);
-      transform: rotate(45deg); margin-inline: clamp(24px, 3.6vw, 56px);
-    }
-    @keyframes marquee { to { transform: translateX(-50%); } }
-
-    /* =====================================================================
-       7. COMMENT ÇA MARCHE
-       ===================================================================== */
-    .head-row { row-gap: 20px; margin-bottom: clamp(48px, 7vw, 104px); align-items: end; }
-    .head-row .label { grid-column: 1 / -1; }
-    .head-row .h2 { grid-column: 1 / span 9; }
-    .head-row .head-side { grid-column: 10 / span 3; }
-    @media (max-width: 899px) { .head-row > * { grid-column: auto !important; } }
-
-    .how-grid { display: grid; gap: 0; }
-    .how-phone { display: none; }
-    .steps { position: relative; padding-left: 40px; }
-    .steps-line { position: absolute; left: 0; top: 14px; bottom: 14px; width: 1.5px; background: var(--line); }
-    .steps-line i { position: absolute; inset: 0; background: var(--gold); transform-origin: top; }
-    .step { position: relative; padding-block: clamp(28px, 6vw, 56px); }
-    .step::before {
-      content: ""; position: absolute; left: -46px; top: clamp(44px, 8vw, 78px);
-      width: 13px; height: 13px; border-radius: 50%;
-      background: var(--paper); border: 1.5px solid var(--gold-dark);
-      transition: background-color .4s, transform .5s var(--ease-out);
-    }
-    .step.is-active::before { background: var(--gold); transform: scale(1.35); }
-    .step-n {
-      display: block;
-      font: 800 clamp(4rem, 2rem + 8vw, 9rem)/.9 var(--font-display); letter-spacing: -.05em;
-      color: transparent; -webkit-text-stroke: 1px var(--ink-soft);
-      transition: color .5s, -webkit-text-stroke-color .5s;
-      margin-bottom: 14px;
-    }
-    .step.is-active .step-n { color: var(--gold-dark); -webkit-text-stroke-color: transparent; }
-    .step h3 { font: 800 clamp(1.625rem, 1.1rem + 1.8vw, 2.75rem)/1.08 var(--font-display); letter-spacing: -.035em; text-wrap: balance; max-width: 15em; }
-    .step p { margin-top: 14px; color: var(--ink-mute); font-size: 1.0625rem; max-width: 30em; }
-
-    @media (min-width: 1000px) {
-      .how-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px); }
-      .how-phone { display: block; grid-column: 1 / span 5; }
-      .how-sticky { position: sticky; top: max(96px, calc(50vh - 320px)); --pw: min(300px, 36vh); margin-inline: auto; width: var(--pw); }
-      .steps { grid-column: 7 / span 6; }
-      .step { min-height: 64vh; display: flex; flex-direction: column; justify-content: center; }
-      .step:last-child { min-height: 52vh; }
-    }
-
-    /* Écrans de l’application (maquette) */
+    /* ---- Interface de l’application (maquette) ---- */
     .ui {
-      position: absolute; inset: 0; z-index: 1;
+      position: absolute; inset: 0; z-index: 2;
       padding: 15cqw 7cqw 7cqw;
       display: flex; flex-direction: column; gap: 4cqw;
       background: var(--paper); color: var(--ink);
       font-size: 4.3cqw; line-height: 1.3;
-      opacity: 0; transition: opacity .55s;
     }
-    .ui.is-on { opacity: 1; z-index: 2; }
-    .ui-title { font: 800 7cqw/1.05 var(--font-display); letter-spacing: -.035em; }
-    .ui-cap { font: 500 2.9cqw/1 var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-mute); }
+    .ui-title { font: 800 7cqw/1.05 var(--font-display); letter-spacing: -.035em; max-width: none; }
+    .ui-cap { font: 500 2.9cqw/1 var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-mute); max-width: none; }
     .ui-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4cqw; }
-    .ui-photo { aspect-ratio: 1; border-radius: 3cqw; overflow: hidden; position: relative; background: var(--gold-light); }
-    .ui-photo:nth-child(2) { background: var(--paper-alt); }
-    .ui-photo:nth-child(3) { background: #D9CBA8; }
+    .ui-photo { aspect-ratio: 1; border-radius: 3cqw; overflow: hidden; background: var(--gold-light); }
+    .ui-photo--2 { background: var(--paper-alt); }
+    .ui-photo--3 { background: #D9CBA8; }
     .ui-photo svg { width: 100%; height: 100%; }
-    .ui-field { border: 1px solid var(--line); border-radius: 3cqw; padding: 2.6cqw 3.4cqw; background: #fff9; display: grid; gap: 1.2cqw; }
+    .ui-field { border: 1px solid var(--line); border-radius: 3cqw; padding: 2.6cqw 3.4cqw; background: rgba(255, 255, 255, .6); display: grid; gap: 1.2cqw; }
     .ui-field b { font: 800 6cqw/1 var(--font-display); letter-spacing: -.03em; }
-    .ui-field b.dim { font-weight: 600; color: var(--ink-mute); letter-spacing: .04em; }
+    .ui-field b.dim { font-weight: 600; color: var(--ink-mute); letter-spacing: .04em; font-size: 5cqw; }
     .ui-btn { margin-top: auto; height: 12cqw; border-radius: 6cqw; background: var(--gold); display: grid; place-items: center; font-weight: 600; }
     .ui-styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.4cqw; }
     .ui-style { display: grid; gap: 1.6cqw; text-align: center; font: 500 2.7cqw/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-mute); }
@@ -546,28 +472,221 @@
     .ui-style:nth-child(3) i::after { content: ""; position: absolute; inset: 12% 12% 40% 12%; border: 1.5px solid var(--gold-light); border-radius: 1cqw; }
     .ui-style.is-pick i { border-color: var(--gold); box-shadow: 0 0 0 1cqw rgba(201, 161, 74, .35); }
     .ui-style.is-pick { color: var(--ink); }
-    .ui-gen { margin: auto; display: grid; justify-items: center; gap: 5cqw; text-align: center; }
+    .ui-gen { margin: auto; display: grid; justify-items: center; gap: 5cqw; text-align: center; width: 100%; }
     .ui-ring { width: 36cqw; height: 36cqw; }
     .ui-ring circle { fill: none; stroke-width: 2.2; }
     .ui-ring .bg { stroke: var(--line); }
-    .ui-ring .fg { stroke: var(--gold); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transform: rotate(-90deg); transform-origin: 50% 50%; }
-    .ui.is-on .ui-ring .fg { animation: ring 3.2s var(--ease-out) infinite; }
-    @keyframes ring { 0% { stroke-dashoffset: 100; } 80%, 100% { stroke-dashoffset: 6; } }
+    .ui-ring .fg { stroke: var(--gold); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 6; transform: rotate(-90deg); transform-origin: 50% 50%; }
     .ui-bars { width: 100%; display: grid; gap: 2.4cqw; }
-    .ui-bars span { display: block; height: 1.6cqw; border-radius: 1cqw; background: var(--line); position: relative; overflow: hidden; }
-    .ui-bars span::after { content: ""; position: absolute; inset: 0; background: var(--gold-dark); transform-origin: left; transform: scaleX(0); }
-    .ui.is-on .ui-bars span::after { animation: bar 3.2s var(--ease-out) infinite; }
-    .ui.is-on .ui-bars span:nth-child(2)::after { animation-delay: .25s; }
-    .ui.is-on .ui-bars span:nth-child(3)::after { animation-delay: .5s; }
-    @keyframes bar { 0% { transform: scaleX(0); } 70%, 100% { transform: scaleX(1); } }
-    .ui-thumb { position: relative; aspect-ratio: 9 / 13; border-radius: 4cqw; overflow: hidden; background: var(--gold-light); }
-    .ui-thumb svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .ui-thumb em { position: absolute; left: 3cqw; top: 3cqw; font: 800 8cqw/1 var(--font-display); font-style: normal; letter-spacing: -.04em; background: var(--ink); color: var(--gold-light); padding: 1.4cqw 2.6cqw 1.8cqw; border-radius: 2cqw; }
+    .ui-bars span { display: block; height: 1.6cqw; border-radius: 1cqw; background: var(--line); overflow: hidden; }
+    .ui-bars i { display: block; height: 100%; background: var(--gold-dark); transform-origin: left; }
+    .ui--s4 { padding: 0; background: var(--ink); }
+    .ui--s4 .phone-slot { position: absolute; inset: 0; }
+    .ui-sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; padding: 6cqw 7cqw 7cqw; display: grid; gap: 3.4cqw; background: var(--paper); border-radius: 7cqw 7cqw 0 0; }
+    .ui-sheet .ui-btn { margin-top: 0; }
     .ui-chips { display: flex; gap: 2cqw; }
     .ui-chips span { border: 1px solid var(--ink); border-radius: 99px; padding: 1.8cqw 3.2cqw; font: 500 3.2cqw/1 var(--font-text); }
+    /* L’écran de l’application du hero est caché tant que la démonstration ne tourne pas */
+    .ui--hero { visibility: hidden; opacity: 0; }
 
     /* =====================================================================
-       8. FONCTIONNALITÉS (liste éditoriale)
+       5. HERO
+       ===================================================================== */
+    .hero {
+      position: relative;
+      padding-top: calc(var(--header-h) + clamp(24px, 4vw, 56px));
+      padding-bottom: clamp(36px, 4vw, 64px);
+      overflow-x: clip;
+    }
+    .hero-bg { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(52% 62% at 76% 46%, rgba(235, 212, 154, .5), transparent 70%); }
+    .hero-grid { position: relative; align-items: center; row-gap: 72px; }
+    .hero-copy { display: grid; gap: clamp(22px, 2.6vw, 34px); align-content: center; }
+    .hero-title { max-width: 9.5em; }
+    .vend { position: relative; display: inline-block; }
+    .swash { position: absolute; left: 0; bottom: -.04em; width: 100%; height: .22em; overflow: visible; }
+    .swash path { fill: none; stroke: var(--gold); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; vector-effect: non-scaling-stroke; }
+    .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 32px; margin-top: 4px; }
+
+    .hero-stage { display: grid; justify-items: center; position: relative; }
+    .hero-phone { --pw: min(66vw, 280px); position: relative; }
+    .orbit { position: absolute; z-index: -1; left: 50%; top: 50%; width: 132%; aspect-ratio: 1; translate: -50% -50%; border: 1px solid var(--gold-light); border-radius: 50%; animation: spin 46s linear infinite; }
+    .orbit::after { content: ""; position: absolute; left: 50%; top: -4px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--gold); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .fl { position: absolute; z-index: 0; width: 34cqw; padding: 2.2cqw; background: #FFFDF8; border-radius: 3.2cqw; box-shadow: 0 2.4cqw 5cqw -2.4cqw rgba(17, 17, 17, .35); }
+    .fl-in { display: block; background: var(--gold-light); border-radius: 2cqw; overflow: hidden; aspect-ratio: 74 / 80; }
+    .fl-in svg { width: 100%; height: 100%; }
+    .fl--a { left: -26cqw; top: 78cqw; rotate: -9deg; }
+    .fl--b { right: -24cqw; top: 12cqw; width: 30cqw; rotate: 8deg; }
+    .fl--b .fl-in { background: var(--paper-alt); }
+    .hero-phone .phone { z-index: 1; }
+
+    .pubs li { position: absolute; z-index: 2; }
+    .pub {
+      display: flex; align-items: center; gap: 1.6cqw; padding: 2cqw 3.6cqw; border-radius: 99px;
+      background: var(--ink); color: var(--paper);
+      font: 500 3cqw/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase;
+    }
+    .pub::before { content: ""; width: 1.8cqw; height: 1.8cqw; border-radius: 50%; background: var(--gold); }
+    .pub--1 { right: -14cqw; top: 54cqw; }
+    .pub--2 { left: -18cqw; top: 44cqw; }
+    .pub--3 { right: -18cqw; top: 86cqw; }
+    .hero-caption { display: none; position: absolute; left: calc(100% + 5cqw); bottom: 4cqw; writing-mode: vertical-rl; font: 500 var(--fs-label)/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-mute); }
+
+    .facts { margin-top: clamp(40px, 6vw, 88px); border-top: 1px solid var(--line); display: grid; }
+    .facts li { padding: 18px 0; border-bottom: 1px solid var(--line); font-weight: 500; display: flex; align-items: center; gap: 14px; }
+    .facts li::before { content: ""; width: 7px; height: 7px; background: var(--gold); transform: rotate(45deg); flex: none; }
+
+    @media (min-width: 640px) {
+      .facts { grid-template-columns: repeat(3, 1fr); }
+      .facts li { border-bottom: 0; padding: 22px 24px; border-left: 1px solid var(--line); }
+      .facts li:first-child { border-left: 0; padding-left: 0; }
+    }
+    @media (min-width: 900px) {
+      .hero { min-height: min(100svh, 1060px); display: flex; flex-direction: column; justify-content: center; }
+      .hero-copy { grid-column: 1 / span 7; }
+      .hero-stage { grid-column: 8 / span 5; }
+      .hero-phone { --pw: min(clamp(250px, 24vw, 350px), 38vh); }
+      .hero-title { font-size: min(var(--fs-display), 11.4vh); }
+      .hero-copy .lead { max-width: 38em; }
+      .hero-caption { display: block; }
+    }
+
+    /* =====================================================================
+       6. BANDE DÉFILANTE
+       ===================================================================== */
+    .marquee { background: var(--ink); color: var(--paper); overflow: hidden; padding-block: clamp(24px, 3.6vw, 48px); }
+    .marquee-track { display: flex; width: max-content; will-change: transform; animation: marquee 56s linear infinite; }
+    .marquee.is-live .marquee-track { animation: none; }
+    .marquee-list { display: flex; align-items: center; flex: none; }
+    .marquee-list li {
+      display: flex; align-items: center;
+      font: 800 clamp(2.25rem, 1rem + 5vw, 5.5rem)/1.1 var(--font-display);
+      letter-spacing: -.04em; white-space: nowrap;
+    }
+    /* Mots « en contour » : ombres crème autour d’un texte de la couleur du fond (évite les traits parasites des polices variables) */
+    .marquee-list li:nth-child(even) {
+      color: var(--ink);
+      text-shadow: -1.5px -1.5px 0 var(--paper), 1.5px -1.5px 0 var(--paper), -1.5px 1.5px 0 var(--paper), 1.5px 1.5px 0 var(--paper), 0 -1.5px 0 var(--paper), 0 1.5px 0 var(--paper), -1.5px 0 0 var(--paper), 1.5px 0 0 var(--paper);
+    }
+    .marquee-list li::after { content: ""; width: .2em; height: .2em; background: var(--gold); transform: rotate(45deg); margin-inline: clamp(24px, 3.6vw, 56px); }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+
+    /* =====================================================================
+       7. LE PRINCIPE
+       ===================================================================== */
+    .statement { padding-block: clamp(72px, 10vw, 150px); }
+    .statement .grid { align-items: start; row-gap: 28px; }
+    .statement-label { grid-column: 1 / span 3; }
+    .statement-text {
+      grid-column: 4 / span 9; max-width: none;
+      font: 800 clamp(1.75rem, .9rem + 3.4vw, 4.1rem)/1.12 var(--font-display); letter-spacing: -.035em; text-wrap: balance;
+    }
+    @media (max-width: 899px) { .statement-label, .statement-text { grid-column: auto; } }
+
+    /* =====================================================================
+       8. COMMENT ÇA MARCHE (liste simple ; épinglé quand le mouvement est actif)
+       ===================================================================== */
+    .how { position: relative; padding-top: var(--section-y); padding-bottom: var(--section-y); }
+    .how-head { display: grid; gap: 20px; margin-bottom: clamp(32px, 5vw, 72px); }
+    .how-head .h2 { max-width: 14em; }
+    .how-pin { position: relative; }
+    .how-grid { display: grid; gap: clamp(24px, 4vw, 56px); }
+    .how-stage, .how-rail { display: none; }
+    .how-steps { border-top: 1px solid var(--ink); }
+    .step { display: grid; grid-template-columns: auto 1fr; column-gap: 20px; row-gap: 8px; padding-block: 26px; border-bottom: 1px solid var(--line); }
+    .step-n { grid-row: span 2; font: 800 clamp(3.25rem, 2rem + 5vw, 6rem)/.9 var(--font-display); letter-spacing: -.05em; color: var(--gold-light); }
+    .step h3 { font: 800 clamp(1.5rem, 1.1rem + 1.6vw, 2.75rem)/1.08 var(--font-display); letter-spacing: -.035em; text-wrap: balance; max-width: 15em; }
+    .step p { color: var(--ink-mute); font-size: 1.0625rem; max-width: 30em; }
+
+    /* Mode épinglé */
+    .how.is-pinned { padding-bottom: 0; }
+    .how.is-pinned .how-pin { height: 100svh; padding: 72px 0 24px; display: flex; align-items: center; }
+    .how.is-pinned .how-grid { width: min(100% - 2 * var(--gutter), var(--maxw)); margin-inline: auto; align-items: center; justify-items: center; gap: 20px; }
+    .how.is-pinned .how-stage { display: grid; place-items: center; }
+    .how.is-pinned .how-text { width: 100%; display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .how.is-pinned .how-rail { display: block; position: relative; height: 2px; background: var(--line); margin-inline: 6px; }
+    .how.is-pinned .rail-fill { position: absolute; inset: 0; background: var(--gold); transform-origin: left; transform: scaleX(var(--p, 0)); }
+    .how.is-pinned .rail-node { position: absolute; top: 50%; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--gold-dark); transition: background-color .4s, transform .5s var(--ease-out); }
+    .how.is-pinned .rail-node[data-i="0"] { left: 0; }
+    .how.is-pinned .rail-node[data-i="1"] { left: 33.333%; }
+    .how.is-pinned .rail-node[data-i="2"] { left: 66.666%; }
+    .how.is-pinned .rail-node[data-i="3"] { left: 100%; }
+    .how.is-pinned .rail-node.is-on { background: var(--gold); transform: scale(1.35); }
+    .how.is-pinned .how-steps { display: grid; border: 0; }
+    .how.is-pinned .step { grid-area: 1 / 1; display: block; padding: 0; border: 0; opacity: 0; align-self: start; }
+    .how.is-pinned .step:first-child { opacity: 1; }
+    .how.is-pinned .step-n { display: block; margin-bottom: 6px; font-size: clamp(2.5rem, 12vw, 4rem); }
+    .how.is-pinned .step h3 { font-size: clamp(1.4rem, 5.4vw, 1.9rem); }
+    .how.is-pinned .step p { margin-top: 8px; font-size: 1rem; }
+    .how-phone { --pw: min(44vw, 22svh, 210px); }
+
+    @media (min-width: 900px) {
+      .how.is-pinned .how-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 0 clamp(16px, 2vw, 32px); justify-items: stretch; }
+      .how.is-pinned .how-stage { grid-column: 1 / span 5; }
+      .how-phone { --pw: min(310px, 40svh); }
+      .how.is-pinned .how-text { grid-column: 7 / span 6; grid-template-columns: 40px 1fr; gap: 28px; min-height: min(58svh, 500px); }
+      .how.is-pinned .how-rail { width: 2px; height: auto; margin: 0 auto; }
+      .how.is-pinned .rail-fill { transform-origin: top; transform: scaleY(var(--p, 0)); }
+      .how.is-pinned .rail-node { left: 50% !important; margin: -6.5px 0 0 -6.5px; }
+      .how.is-pinned .rail-node[data-i="0"] { top: 0; }
+      .how.is-pinned .rail-node[data-i="1"] { top: 33.333%; }
+      .how.is-pinned .rail-node[data-i="2"] { top: 66.666%; }
+      .how.is-pinned .rail-node[data-i="3"] { top: 100%; }
+      .how.is-pinned .step { align-self: center; }
+      .how.is-pinned .step-n { font-size: clamp(4rem, 2rem + 6vw, 8.5rem); margin-bottom: 14px; }
+      .how.is-pinned .step h3 { font-size: clamp(1.75rem, 1.1rem + 2vw, 3rem); }
+      .how.is-pinned .step p { margin-top: 14px; font-size: 1.125rem; }
+    }
+
+    /* =====================================================================
+       9. APERÇU INTERACTIF
+       ===================================================================== */
+    .head-row { row-gap: 20px; margin-bottom: clamp(40px, 6vw, 96px); align-items: end; }
+    .head-row .label { grid-column: 1 / -1; }
+    .head-row .h2 { grid-column: 1 / span 9; }
+    .head-row .head-side { grid-column: 10 / span 3; }
+    @media (max-width: 899px) { .head-row > * { grid-column: auto !important; } }
+    .is-dark .head-side { color: rgba(246, 242, 234, .78); }
+    .head-side { color: var(--ink-mute); }
+
+    .studio, .examples { overflow-x: clip; }
+    .studio-grid { align-items: center; row-gap: 56px; }
+    .studio-controls { grid-column: 1 / span 6; display: grid; gap: 26px; }
+    .studio-stage { grid-column: 8 / span 5; display: grid; place-items: center; }
+    .studio-phone { --pw: min(70vw, 300px); position: relative; }
+    @media (min-width: 900px) { .studio-phone { --pw: min(clamp(250px, 24vw, 330px), 52vh); } }
+    @media (max-width: 899px) { .studio-controls, .studio-stage { grid-column: auto; } .studio-stage { order: -1; } }
+
+    .field { display: grid; gap: 10px; min-width: 0; }
+    .field-row { display: grid; gap: 26px; grid-template-columns: 1fr; }
+    @media (min-width: 640px) { .field-row { grid-template-columns: 1.3fr 1fr; } }
+    .studio input[type="text"], .studio input[type="tel"] {
+      width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--line-dark); border-radius: 0;
+      color: var(--paper); font: 600 1.25rem/1.4 var(--font-text); padding: 10px 0;
+      transition: border-color .3s;
+    }
+    .studio input::placeholder { color: var(--ink-soft); font-weight: 400; }
+    .studio input[type="text"]:hover, .studio input[type="tel"]:hover { border-bottom-color: rgba(246, 242, 234, .5); }
+    .studio input[type="text"]:focus, .studio input[type="tel"]:focus { border-bottom-color: var(--gold); }
+    .choices { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    @media (min-width: 640px) { .choices { grid-template-columns: repeat(4, 1fr); } .choices--styles { grid-template-columns: repeat(3, 1fr); } }
+    .choice { position: relative; display: block; }
+    .choice input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+    .choice span { display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 8px 14px 8px 10px; border: 1px solid var(--line-dark); border-radius: 14px; font-weight: 500; font-size: .9375rem; transition: border-color .3s, background-color .3s; }
+    .choice svg { width: 38px; height: 38px; flex: none; border-radius: 9px; background: var(--gold-light); }
+    .choice:hover span { border-color: rgba(246, 242, 234, .45); }
+    .choice input:checked + span { border-color: var(--gold); background: rgba(201, 161, 74, .14); }
+    .choice input:focus-visible + span { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+    .sw { display: block; width: 28px; height: 28px; flex: none; border-radius: 50%; border: 1px solid rgba(246, 242, 234, .4); }
+    .sw--creme { background: linear-gradient(135deg, #F6F2EA, #EBD49A); }
+    .sw--nuit { background: linear-gradient(135deg, #28221a, #111); }
+    .sw--dore { background: linear-gradient(135deg, #EBD49A, #C9A14A); }
+    .studio-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
+    .note { font-size: .875rem; color: var(--ink-soft); }
+
+    /* =====================================================================
+       10. FONCTIONNALITÉS (liste éditoriale)
        ===================================================================== */
     .feat-list { border-top: 1px solid var(--ink); }
     .feat {
@@ -578,16 +697,16 @@
     }
     .feat::before {
       content: ""; position: absolute; z-index: 0; inset: 0 -20px;
-      background: rgba(235, 212, 154, .42);
+      background: rgba(235, 212, 154, .46);
       transform: scaleY(0); transform-origin: bottom;
       transition: transform .6s var(--ease-out);
     }
     .feat > * { position: relative; z-index: 1; }
     .feat-n { font: 500 .9rem/2.4 var(--font-mono); letter-spacing: .12em; color: var(--ink-mute); transition: color .4s; }
-    .feat-name { font: 800 var(--fs-h3)/1.02 var(--font-display); letter-spacing: -.04em; text-wrap: balance; }
+    .feat-name { font: 800 var(--fs-h3)/1.02 var(--font-display); letter-spacing: -.04em; text-wrap: balance; transition: transform .6s var(--ease-out); }
     .feat-body { grid-column: 2; }
     .feat-body p { color: var(--ink-mute); font-size: 1.0625rem; max-width: 30em; }
-    .feat-body .feat-tag { margin-top: 12px; color: var(--gold-ink); font-size: .68rem; max-width: 30em; }
+    .feat-body .feat-tag { margin-top: 12px; color: var(--gold-ink); font-size: .68rem; }
     .feat-arrow { display: none; }
     @media (min-width: 1000px) {
       .feat { grid-template-columns: repeat(12, minmax(0, 1fr)); align-items: center; column-gap: clamp(16px, 2vw, 32px); }
@@ -598,14 +717,12 @@
       .feat-arrow svg { width: 40px; height: 40px; }
       .feat:hover::before { transform: scaleY(1); }
       .feat:hover .feat-n { color: var(--gold-ink); }
+      .feat:hover .feat-name { transform: translateX(14px); }
       .feat:hover .feat-arrow { transform: none; opacity: 1; }
     }
 
     /* Aperçu animé qui suit le curseur */
-    .fx-preview {
-      position: fixed; left: 0; top: 0; z-index: 45; width: 156px; pointer-events: none;
-      display: none;
-    }
+    .fx-preview { position: fixed; left: 0; top: 0; z-index: 45; width: 156px; pointer-events: none; display: none; }
     .fx-card {
       position: relative; aspect-ratio: 9 / 16; border-radius: 22px; overflow: hidden; container-type: inline-size;
       background: var(--ink); color: var(--paper);
@@ -614,18 +731,14 @@
       transition: opacity .35s, transform .6s var(--ease-out);
     }
     .fx-preview.is-on .fx-card { opacity: 1; transform: none; }
-    .fx-scene { position: absolute; inset: 0; opacity: 0; transition: opacity .3s; padding: 9cqw; display: flex; flex-direction: column; justify-content: flex-end; gap: 4cqw; }
+    .fx-scene { position: absolute; inset: 0; opacity: 0; transition: opacity .3s; padding: 9cqw; display: flex; flex-direction: column; justify-content: flex-end; gap: 4cqw; background: var(--paper); }
+    .fx-scene--dark { background: var(--ink); color: var(--paper); }
     .fx-scene.is-on { opacity: 1; }
-    .fx-scene::before { content: ""; position: absolute; inset: 0; background: var(--paper); z-index: -1; }
-    .fx-scene--dark::before { background: var(--ink); }
-    .fx-scene--dark { color: var(--paper); }
-    /* 1 : prix qui tombe */
     .fx1-disc { position: absolute; left: 50%; top: 40%; width: 56cqw; aspect-ratio: 1; margin: -28cqw 0 0 -28cqw; border-radius: 50%; background: var(--gold-light); }
     .fx1-bottle { position: absolute; left: 50%; top: 24%; width: 36cqw; margin-left: -18cqw; }
     .fx1-price { position: absolute; left: 8cqw; top: 8cqw; background: var(--ink); color: var(--gold-light); font: 800 15cqw/1 var(--font-display); letter-spacing: -.04em; padding: 2cqw 3.4cqw 2.6cqw; border-radius: 2.6cqw; }
     .fx-scene.is-on .fx1-price { animation: drop 3s var(--ease-out) infinite; }
     @keyframes drop { 0% { transform: translateY(-160%); opacity: 0; } 14% { transform: translateY(0); opacity: 1; } 20% { transform: translateY(-8%); } 26%, 88% { transform: translateY(0); opacity: 1; } 100% { opacity: 0; } }
-    /* 2 : mots */
     .fx2-words { display: flex; flex-wrap: wrap; gap: 1.6cqw 3cqw; font: 800 12cqw/1.05 var(--font-display); letter-spacing: -.04em; }
     .fx2-words span { color: rgba(246, 242, 234, .28); }
     .fx-scene.is-on .fx2-words span { animation: word 4s infinite; }
@@ -633,7 +746,6 @@
     .fx-scene.is-on .fx2-words span:nth-child(3) { animation-delay: 1.2s; }
     .fx-scene.is-on .fx2-words span:nth-child(4) { animation-delay: 1.8s; }
     @keyframes word { 0%, 4% { color: rgba(246, 242, 234, .28); } 10%, 62% { color: var(--gold); } 80%, 100% { color: rgba(246, 242, 234, .28); } }
-    /* 3 : voix */
     .fx3-bars { display: flex; align-items: center; justify-content: space-between; height: 40cqw; margin-bottom: 4cqw; }
     .fx3-bars i { width: 3.4cqw; height: 100%; border-radius: 2cqw; background: var(--gold); transform: scaleY(.15); }
     .fx-scene.is-on .fx3-bars i { animation: wave 1.1s ease-in-out infinite; }
@@ -641,10 +753,10 @@
     .fx3-bars i:nth-child(3n+1) { animation-delay: -.7s !important; }
     .fx3-bars i:nth-child(4n) { animation-duration: 1.5s !important; }
     @keyframes wave { 0%, 100% { transform: scaleY(.15); } 50% { transform: scaleY(.95); } }
-    /* 4 : fin de marque */
-    .fx4-logo { width: 34cqw; aspect-ratio: 1; margin: 0 auto auto; margin-top: 18cqw; border: 1.5px dashed var(--ink-mute); border-radius: 50%; display: grid; place-items: center; font: 500 3.4cqw/1.2 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); text-align: center; }
+    .fx4-logo { width: 34cqw; aspect-ratio: 1; margin: 18cqw auto auto; border: 1.5px dashed var(--ink-mute); border-radius: 50%; display: grid; place-items: center; font: 500 3.4cqw/1.2 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); text-align: center; }
     .fx4-sw { display: flex; gap: 2cqw; justify-content: center; }
     .fx4-sw i { width: 7cqw; height: 7cqw; border-radius: 50%; border: 1px solid var(--ink); }
+    .sw-gold { background: #C9A14A; } .sw-ink { background: #111111; } .sw-paper { background: #F6F2EA; }
     .fx4-btn { height: 13cqw; border-radius: 7cqw; background: var(--gold); color: var(--ink); display: flex; align-items: center; justify-content: center; gap: 2.4cqw; font: 600 5cqw/1 var(--font-text); }
     .fx-scene.is-on .fx4-btn { animation: pulse 2.4s var(--ease-out) infinite; }
     .fx4-btn svg { width: 6.4cqw; height: 6.4cqw; }
@@ -652,10 +764,10 @@
     @media (hover: hover) and (pointer: fine) and (min-width: 1000px) { .fx-preview { display: block; } }
 
     /* =====================================================================
-       9. EXEMPLES (section noire)
+       11. EXEMPLES (section noire)
        ===================================================================== */
     .examples .head-row .h2 { grid-column: 1 / span 8; }
-    .examples .head-row .head-side { grid-column: 9 / span 4; color: rgba(246, 242, 234, .78); }
+    .examples .head-row .head-side { grid-column: 9 / span 4; }
     .gallery {
       display: flex; gap: 16px;
       overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
@@ -665,14 +777,12 @@
       scrollbar-width: thin; scrollbar-color: var(--ink-soft) transparent;
     }
     .ex { flex: 0 0 min(66vw, 252px); scroll-snap-align: start; display: block; text-align: left; }
-    .ex-btn { display: block; width: 100%; border-radius: 13cqw; text-align: left; }
+    .ex-btn { display: block; width: 100%; border-radius: 13cqw; text-align: left; transform-style: preserve-3d; }
     .ex .phone-wrap { --pw: 100%; }
     .ex .phone-screen { background: radial-gradient(120% 80% at 50% 0%, #2c261a 0%, #151515 72%); }
     .ex video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-    .ex-ph {
-      position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; text-align: center;
-      font: 500 .7rem/1.4 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-soft);
-    }
+    .ex-ph { position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; text-align: center; font: 500 .7rem/1.4 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--ink-soft); }
+    .ex-ph[hidden] { display: none; }
     .ex-ph b { font: 800 clamp(2.25rem, 8cqw, 3rem)/1 var(--font-display); letter-spacing: -.04em; color: var(--gold); }
     .ex-play {
       position: absolute; right: 4.5cqw; bottom: 4.5cqw; z-index: 3;
@@ -722,44 +832,38 @@
     .viewer-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(246, 242, 234, .25); }
     .viewer-progress i { display: block; height: 100%; background: var(--gold); transform-origin: left; transform: scaleX(0); }
     .viewer-controls { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-    .chip {
-      display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 20px;
-      border: 1px solid rgba(246, 242, 234, .5); border-radius: 999px; font-weight: 500; font-size: .9375rem;
-      transition: background-color .3s, color .3s;
-    }
+    .chip { display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 20px; border: 1px solid rgba(246, 242, 234, .5); border-radius: 999px; font-weight: 500; font-size: .9375rem; transition: background-color .3s, color .3s; }
     .chip:hover { background: var(--paper); color: var(--ink); }
     .chip svg { width: 20px; height: 20px; }
     .viewer .icon-btn:hover { background: var(--paper); color: var(--ink); }
 
     /* =====================================================================
-       10. TARIFS
+       12. TARIFS
        ===================================================================== */
     .pricing .head-row .h2 { grid-column: 1 / span 8; }
-    .pricing .head-row .head-side { grid-column: 9 / span 4; color: var(--ink-mute); }
+    .pricing .head-row .head-side { grid-column: 9 / span 4; }
     .plans { display: grid; border-top: 1px solid var(--ink); }
     .plan { position: relative; padding: 36px 0 44px; display: grid; gap: 22px; align-content: start; border-bottom: 1px solid var(--line); }
     .plan-top { display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
     .plan-name { font: 800 clamp(2rem, 1.5rem + 1.6vw, 2.75rem)/1 var(--font-display); letter-spacing: -.04em; }
-    .tag {
-      display: inline-block; padding: 6px 12px; border: 1px solid var(--gold); border-radius: 999px;
-      font: 500 .68rem/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--gold);
-    }
+    .tag { display: inline-block; padding: 6px 12px; border: 1px solid var(--gold); border-radius: 999px; font: 500 .68rem/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--gold); }
     .price { font: 800 clamp(3rem, 1.6rem + 6vw, 5rem)/1 var(--font-display); letter-spacing: -.045em; font-variant-numeric: tabular-nums; white-space: nowrap; }
     .price .cur { font-size: .5em; letter-spacing: -.02em; color: var(--gold-dark); margin-left: .12em; }
     .per { color: var(--ink-mute); font-size: .9375rem; margin-top: 6px; }
     .plan-for { min-height: 3.2em; max-width: 24em; }
     .incl { display: grid; gap: 12px; padding-top: 22px; border-top: 1px solid var(--line); }
     .incl li { display: flex; gap: 14px; align-items: baseline; }
-    .incl li::before { content: ""; width: 14px; height: 1.5px; background: var(--gold-dark); flex: none; transform: translateY(-.3em); }
-    .plan--pro { background: var(--ink); color: var(--paper); border-bottom-color: var(--ink); margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); }
+    .incl li::before { content: ""; width: 14px; height: 1.5px; background: var(--gold-dark); flex: none; transform: translateY(-.3em); transition: width .5s var(--ease-out); }
+    .plan:hover .incl li::before { width: 22px; }
+    .plan--pro { background: var(--ink); color: var(--paper); border-bottom-color: var(--ink); margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); overflow: hidden; }
+    .plan--pro::before { content: ""; position: absolute; left: 0; top: 0; height: 3px; width: 38%; background: linear-gradient(90deg, transparent, var(--gold), transparent); animation: sweep 4.5s var(--ease-out) infinite; }
+    @keyframes sweep { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(300%); } }
     .plan--pro .price { color: var(--gold); }
     .plan--pro .price .cur { color: var(--paper); }
     .plan--pro .per { color: var(--ink-soft); }
     .plan--pro .incl { border-top-color: var(--line-dark); }
     .plan--pro .incl li::before { background: var(--gold); }
-    .plan--pro .btn--gold:hover { background: var(--gold-light); }
     .pay-note { margin-top: 36px; color: var(--ink-mute); }
-    @media (min-width: 900px) { .pay-note { margin-top: 84px; } }
 
     @media (min-width: 900px) {
       .plans { grid-template-columns: repeat(3, 1fr); border-top: 0; }
@@ -769,13 +873,12 @@
       .plan--pro { margin: -36px 0; padding: 80px clamp(22px, 2.6vw, 44px) 88px; border-left: 0; }
       .plan--pro + .plan { border-left: 0; }
       .plan-for { min-height: 5em; }
+      .pay-note { margin-top: 84px; }
     }
-    @media (max-width: 899px) {
-      .plan--pro { margin-block: 12px; }
-    }
+    @media (max-width: 899px) { .plan--pro { margin-block: 12px; } }
 
     /* =====================================================================
-       11. QUESTIONS
+       13. QUESTIONS
        ===================================================================== */
     .faq-grid { row-gap: 40px; }
     .faq-head { grid-column: 1 / span 4; align-self: start; }
@@ -784,37 +887,38 @@
     @media (max-width: 899px) { .faq-head, .faq-list { grid-column: auto; } }
     @media (min-width: 900px) { .faq-head { position: sticky; top: 110px; } }
     .faq-item { border-bottom: 1px solid var(--line); }
-    .faq-q {
-      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px;
-      padding: 26px 0; text-align: left;
-      font: 800 clamp(1.25rem, 1rem + 1vw, 1.75rem)/1.2 var(--font-display); letter-spacing: -.03em;
-    }
+    .faq-q { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 26px 0; text-align: left; font: 800 clamp(1.25rem, 1rem + 1vw, 1.75rem)/1.2 var(--font-display); letter-spacing: -.03em; }
     .faq-q .plus { flex: none; width: 36px; height: 36px; border: 1px solid var(--ink); border-radius: 50%; display: grid; place-items: center; transition: transform .6s var(--ease-out), background-color .3s, color .3s; }
     .faq-q .plus svg { width: 18px; height: 18px; }
     .faq-q:hover .plus { background: var(--ink); color: var(--paper); }
     .faq-q[aria-expanded="true"] .plus { transform: rotate(135deg); background: var(--gold); border-color: var(--gold); color: var(--ink); }
-    .faq-panel {
-      display: grid; grid-template-rows: 0fr; visibility: hidden;
-      transition: grid-template-rows .55s var(--ease-out), visibility 0s .55s;
-    }
+    .faq-panel { display: grid; grid-template-rows: 0fr; visibility: hidden; transition: grid-template-rows .55s var(--ease-out), visibility 0s .55s; }
     .faq-panel.is-open { grid-template-rows: 1fr; visibility: visible; transition: grid-template-rows .55s var(--ease-out), visibility 0s; }
     .faq-panel > div { overflow: hidden; }
     .faq-panel p { padding: 0 60px 28px 0; color: var(--ink-mute); font-size: 1.0625rem; }
 
     /* =====================================================================
-       12. APPEL À L’ACTION FINAL
+       14. APPEL À L’ACTION FINAL
        ===================================================================== */
-    .cta { padding-block: clamp(96px, 13vw, 200px); overflow-x: clip; }
-    .cta-title { font-size: clamp(2.75rem, 1.4rem + 7vw, 8rem); max-width: 10em; }
-    .cta-grid { row-gap: 36px; }
-    .cta-main { grid-column: 1 / span 9; display: grid; gap: clamp(24px, 3vw, 40px); justify-items: start; }
+    .cta { position: relative; padding-block: clamp(88px, 12vw, 180px); overflow: hidden; }
+    .cta-word {
+      position: absolute; left: 0; bottom: -.3em; max-width: none; white-space: nowrap; pointer-events: none; user-select: none;
+      font: 800 clamp(9rem, 34vw, 34rem)/.8 var(--font-display); letter-spacing: -.06em;
+      color: rgba(246, 242, 234, .045);
+    }
+    .cta-grid { position: relative; align-items: center; row-gap: 64px; }
+    .cta-title { font-size: clamp(2.75rem, 1.4rem + 6.4vw, 7.5rem); max-width: 10em; }
+    .cta-main { grid-column: 1 / span 7; display: grid; gap: clamp(24px, 3vw, 40px); justify-items: start; }
     .cta-main .lead { color: rgba(246, 242, 234, .8); }
-    .cta-phone { margin-top: 8px; display: grid; gap: 6px; padding-top: 22px; border-top: 1px solid var(--line-dark); width: min(100%, 460px); }
+    .cta-visual { grid-column: 9 / span 4; display: grid; justify-items: center; }
+    .cta-phone { --pw: min(64vw, 270px); position: relative; }
+    @media (min-width: 900px) { .cta-phone { --pw: min(clamp(230px, 22vw, 310px), 48vh); } }
+    @media (max-width: 899px) { .cta-main, .cta-visual { grid-column: auto; } }
+    .cta-phone-num { display: grid; gap: 6px; padding-top: 22px; border-top: 1px solid var(--line-dark); width: min(100%, 460px); }
     .cta-num { font: 800 clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem)/1.1 var(--font-display); letter-spacing: -.03em; user-select: all; -webkit-user-select: all; }
-    @media (max-width: 899px) { .cta-main { grid-column: auto; } }
 
     /* =====================================================================
-       13. PIED DE PAGE
+       15. PIED DE PAGE
        ===================================================================== */
     .site-footer { background: var(--paper-alt); padding-top: clamp(56px, 7vw, 96px); }
     .foot-grid { row-gap: 40px; padding-bottom: clamp(48px, 6vw, 80px); }
@@ -830,7 +934,7 @@
     @media (min-width: 900px) { .foot-col--nav { grid-column: 7 / span 3; } .foot-col--contact { grid-column: 10 / span 3; } }
 
     /* =====================================================================
-       14. BOUTON WHATSAPP FLOTTANT
+       16. BOUTON WHATSAPP FLOTTANT
        ===================================================================== */
     .fab {
       position: fixed; z-index: 40; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom));
@@ -845,7 +949,7 @@
     .fab svg { width: 26px; height: 26px; }
 
     /* =====================================================================
-       15. MOUVEMENT RÉDUIT
+       17. MOUVEMENT RÉDUIT
        ===================================================================== */
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -853,24 +957,20 @@
       .marquee-track { width: auto; flex-wrap: wrap; justify-content: center; }
       .marquee-list[aria-hidden="true"] { display: none; }
       .marquee-list { flex-wrap: wrap; justify-content: center; row-gap: 8px; }
-      .ui-ring .fg { stroke-dashoffset: 6; }
-      .ui-bars span::after { transform: scaleX(1); }
+      .cursor { display: none !important; }
     }
   </style>
 </head>
-
-<body id="top">
+<body>
 
   <a class="skip" href="#contenu">Aller au contenu</a>
+  <div class="progress" aria-hidden="true"><i id="progress"></i></div>
+  <div class="cursor" id="cursor" aria-hidden="true"><span id="cursor-label"></span></div>
 
-  <!-- Icônes et illustrations réutilisables (traits fins de 1,5 px) -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-    <defs>
-      <linearGradient id="g-wall" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#F6F2EA"/>
-        <stop offset="1" stop-color="#EBD49A"/>
-      </linearGradient>
-    </defs>
+  <!-- =====================================================================
+       Icônes (traits fins de 1,5 px) et illustrations produit réutilisables
+       ===================================================================== -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
     <symbol id="i-arrow" viewBox="0 0 24 24"><path class="ic" d="M4 12h15M13.5 6.5 19 12l-5.5 5.5"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path class="ic" d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path class="ic" d="M6 6l12 12M18 6 6 18"/></symbol>
@@ -881,7 +981,7 @@
     <symbol id="i-swipe" viewBox="0 0 24 24"><path class="ic" d="M3 12h17M15 6.5 20.5 12 15 17.5"/></symbol>
     <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></symbol>
 
-    <!-- Illustration produit : flacon de parfum (sert de « photo » dans les maquettes) -->
+    <!-- Cosmétiques : flacon -->
     <symbol id="art-bottle" viewBox="0 0 90 160">
       <ellipse cx="45" cy="108" rx="24" ry="3.6" fill="#111" opacity=".16"/>
       <rect x="40" y="52" width="10" height="9" fill="#2a2a2a"/>
@@ -894,29 +994,91 @@
       <rect x="40" y="83" width="10" height="1.4" fill="#9C7A2C"/>
       <rect x="38" y="88" width="14" height="1.4" fill="#9C7A2C"/>
     </symbol>
+    <!-- Téléphones -->
+    <symbol id="art-phone" viewBox="0 0 90 160">
+      <ellipse cx="45" cy="113" rx="22" ry="3.2" fill="#111" opacity=".16"/>
+      <rect x="62" y="58" width="1.2" height="9" rx=".6" fill="#2a2a2a"/>
+      <rect x="28" y="40" width="34" height="71" rx="6.5" fill="#161616"/>
+      <rect x="30.2" y="42.2" width="29.6" height="66.6" rx="4.6" fill="#EBD49A"/>
+      <rect x="30.2" y="42.2" width="29.6" height="66.6" rx="4.6" fill="#C9A14A" opacity=".5"/>
+      <circle cx="45" cy="46" r="1.1" fill="#161616"/>
+      <rect x="36.5" y="54" width="17" height="6" rx="1.4" fill="#111" opacity=".82"/>
+      <g fill="#111">
+        <rect x="33" y="70" width="5.4" height="5.4" rx="1.4" opacity=".8"/><rect x="42.3" y="70" width="5.4" height="5.4" rx="1.4" opacity=".55"/><rect x="51.6" y="70" width="5.4" height="5.4" rx="1.4" opacity=".8"/>
+        <rect x="33" y="79" width="5.4" height="5.4" rx="1.4" opacity=".55"/><rect x="42.3" y="79" width="5.4" height="5.4" rx="1.4" opacity=".8"/><rect x="51.6" y="79" width="5.4" height="5.4" rx="1.4" opacity=".55"/>
+        <rect x="33" y="88" width="5.4" height="5.4" rx="1.4" opacity=".8"/><rect x="42.3" y="88" width="5.4" height="5.4" rx="1.4" opacity=".55"/><rect x="51.6" y="88" width="5.4" height="5.4" rx="1.4" opacity=".8"/>
+      </g>
+      <rect x="39" y="102" width="12" height="1.6" rx=".8" fill="#111" opacity=".5"/>
+    </symbol>
+    <!-- Restaurant : burger -->
+    <symbol id="art-burger" viewBox="0 0 90 160">
+      <ellipse cx="45" cy="111" rx="27" ry="3.4" fill="#111" opacity=".16"/>
+      <path d="M19 76 Q19 54 45 54 Q71 54 71 76 Z" fill="#C9A14A"/>
+      <g fill="#EBD49A">
+        <ellipse cx="33" cy="65" rx="1.7" ry=".9" transform="rotate(-20 33 65)"/><ellipse cx="45" cy="60.5" rx="1.7" ry=".9"/>
+        <ellipse cx="57" cy="65" rx="1.7" ry=".9" transform="rotate(20 57 65)"/><ellipse cx="39" cy="70" rx="1.7" ry=".9" transform="rotate(10 39 70)"/>
+        <ellipse cx="52" cy="70" rx="1.7" ry=".9" transform="rotate(-10 52 70)"/>
+      </g>
+      <path d="M17 78 q4.5 -5 9 0 t9 0 t9 0 t9 0 t9 0 t9 0 v4 H17 Z" fill="#7C9A5B"/>
+      <rect x="21" y="82" width="48" height="4.6" rx="2.3" fill="#B5472D"/>
+      <rect x="19" y="87" width="52" height="9" rx="4.5" fill="#3A2A20"/>
+      <path d="M20 86.5 H70 L64 92 L58 87.5 L52 93 L46 87.5 H20 Z" fill="#EBD49A"/>
+      <path d="M20 98 H70 V101 Q70 107.5 62 107.5 H28 Q20 107.5 20 101 Z" fill="#C9A14A"/>
+    </symbol>
+    <!-- Mode : sac -->
+    <symbol id="art-bag" viewBox="0 0 90 160">
+      <ellipse cx="45" cy="112.5" rx="25" ry="3.2" fill="#111" opacity=".16"/>
+      <path d="M32 68 C32 46 58 46 58 68" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <path d="M22 66 H68 L72 106 Q72 111 67 111 H23 Q18 111 18 106 Z" fill="#161616"/>
+      <path d="M22 66 H68 L69.2 75 H20.8 Z" fill="#2a2a2a"/>
+      <rect x="41" y="70" width="8" height="7.4" rx="1.6" fill="#C9A14A"/>
+      <rect x="44.2" y="72.6" width="1.6" height="2.4" rx=".8" fill="#111"/>
+    </symbol>
   </svg>
 
+  <!-- Modèle d’une scène vidéo (utilisé dans le hero, l’aperçu interactif et l’appel final) -->
+  <template id="tpl-scene">
+    <div class="vs" data-style="creme">
+      <svg class="vs-art" viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+        <g transform="translate(0 6)">
+          <circle class="vs-disc" cx="45" cy="76" r="34"/>
+          <circle class="vs-disc-line" cx="45" cy="76" r="34"/>
+          <use class="vs-prod" href="#art-bottle" width="90" height="160"/>
+        </g>
+      </svg>
+      <div class="vs-scrim"></div>
+      <div class="vs-prog"><i></i></div>
+      <p class="vs-name"></p>
+      <div class="vs-price"><span class="vs-price-n"></span></div>
+      <ul class="vs-words"><li></li><li></li><li></li></ul>
+      <div class="vs-cta">
+        <span class="vs-ring"></span>
+        <svg aria-hidden="true" focusable="false"><use href="#i-wa"/></svg>
+        <span class="vs-cta-text"><b>Écrire sur WhatsApp</b><small></small></span>
+      </div>
+    </div>
+  </template>
+
   <!-- =====================================================================
-       EN-TÊTE
+       EN-TÊTE ET MENU MOBILE
        ===================================================================== -->
   <header class="site-header" id="header">
-    <div class="wrap">
+    <div class="wrap bar">
       <a class="brand" href="#top" aria-label="Animo, retour en haut de la page">
         <img class="logo" src="logo.png" alt="" width="112" height="28">
       </a>
 
       <nav class="nav" aria-label="Navigation principale">
         <ul>
-          <li><a class="ulink" href="#fonctionnalites">Fonctionnalités</a></li>
-          <li><a class="ulink" href="#exemples">Exemples</a></li>
-          <li><a class="ulink" href="#tarifs">Tarifs</a></li>
-          <li><a class="ulink" href="#questions">Questions</a></li>
+          <li><a class="ulink" href="#fonctionnalites" data-nav="fonctionnalites">Fonctionnalités</a></li>
+          <li><a class="ulink" href="#exemples" data-nav="exemples">Exemples</a></li>
+          <li><a class="ulink" href="#tarifs" data-nav="tarifs">Tarifs</a></li>
+          <li><a class="ulink" href="#questions" data-nav="questions">Questions</a></li>
         </ul>
       </nav>
 
-      <a class="btn btn--gold btn--sm head-cta" data-cta="app" data-msg="Bonjour, je veux créer ma première vidéo avec Animo. Pouvez-vous m’inscrire sur la liste d’attente ?"
-         href="https://wa.me/[NUMÉRO SANS + NI ESPACES]?text=Bonjour%2C%20je%20veux%20cr%C3%A9er%20ma%20premi%C3%A8re%20vid%C3%A9o%20avec%20Animo.%20Pouvez-vous%20m%27inscrire%20sur%20la%20liste%20d%27attente%C2%A0%3F">
-        <span>Créer ma vidéo</span>
+      <a class="btn btn--gold btn--sm head-cta" data-act="app" href="#creer">
+        <span class="btn-t">Créer ma vidéo</span>
         <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
       </a>
 
@@ -926,7 +1088,6 @@
     </div>
   </header>
 
-  <!-- Menu plein écran (téléphone) -->
   <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
     <ul class="menu-links">
       <li><a href="#fonctionnalites"><small>01</small>Fonctionnalités</a></li>
@@ -935,9 +1096,8 @@
       <li><a href="#questions"><small>04</small>Questions</a></li>
     </ul>
     <div class="menu-foot">
-      <a class="btn btn--gold btn--block" data-cta="app"
-         href="https://wa.me/[NUMÉRO SANS + NI ESPACES]?text=Bonjour%2C%20je%20veux%20cr%C3%A9er%20ma%20premi%C3%A8re%20vid%C3%A9o%20avec%20Animo.%20Pouvez-vous%20m%27inscrire%20sur%20la%20liste%20d%27attente%C2%A0%3F">
-        <span>Créer ma vidéo</span>
+      <a class="btn btn--gold btn--block" data-act="app" href="#creer">
+        <span class="btn-t">Créer ma vidéo</span>
         <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
       </a>
       <p class="label">Niamey, Niger</p>
@@ -947,75 +1107,98 @@
   <main id="contenu">
 
     <!-- =====================================================================
-         HERO
+         1. HERO
          ===================================================================== -->
-    <section class="hero dots" aria-labelledby="hero-title">
-      <div class="wrap">
-        <div class="hero-grid grid">
-          <div class="hero-copy">
-            <p class="label label--rule" data-hero="eyebrow">Vidéos animées · pour les commerçants</p>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="wrap hero-grid grid">
 
-            <h1 class="display hero-title" id="hero-title">
-              <span class="w"><span>Vos</span></span>
-              <span class="w"><span>photos</span></span>
-              <span class="w"><span>deviennent</span></span>
-              <span class="w"><span>des</span></span>
-              <span class="w"><span>vidéos</span></span>
-              <span class="w"><span>qui</span></span>
-              <span class="w"><span><em class="k">vendent.</em></span></span>
-            </h1>
+        <div class="hero-copy">
+          <p class="label label--rule" data-hero="eyebrow">Vidéos animées · pour les commerçants</p>
 
-            <p class="lead" data-hero="lead">Ajoutez vos photos, votre prix et votre numéro WhatsApp. Animo en fait une vidéo animée, prête pour TikTok, WhatsApp et Facebook. Sans savoir monter.</p>
+          <h1 class="display hero-title" id="hero-title">
+            <span class="w"><span>Vos</span></span>
+            <span class="w"><span>photos</span></span>
+            <span class="w"><span>deviennent</span></span>
+            <span class="w"><span>des</span></span>
+            <span class="w"><span>vidéos</span></span>
+            <span class="w"><span>qui</span></span>
+            <span class="w"><span class="vend"><em class="k">vendent.</em>
+              <svg class="swash" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path pathLength="1" d="M4 17 C 70 5, 150 4, 296 11"/></svg>
+            </span></span>
+          </h1>
 
-            <div class="hero-actions" data-hero="actions">
-              <a class="btn btn--gold" data-cta="app"
-                 href="https://wa.me/[NUMÉRO SANS + NI ESPACES]?text=Bonjour%2C%20je%20veux%20cr%C3%A9er%20ma%20premi%C3%A8re%20vid%C3%A9o%20avec%20Animo.%20Pouvez-vous%20m%27inscrire%20sur%20la%20liste%20d%27attente%C2%A0%3F">
-                <span>Créer ma première vidéo</span>
-                <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
-              </a>
-              <a class="btn-link" href="#exemples">
-                <span>Voir des exemples</span>
-                <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
-              </a>
-            </div>
-          </div>
+          <p class="lead" data-hero="lead">Ajoutez vos photos, votre prix et votre numéro WhatsApp. Animo en fait une vidéo animée, prête pour TikTok, WhatsApp et Facebook. Sans savoir monter.</p>
 
-          <!-- Téléphone avec démonstration animée en code -->
-          <div class="hero-phone" data-hero="phone">
-            <div class="hero-phone-stage">
-              <span class="hero-ring" aria-hidden="true"></span>
-              <div class="phone-wrap" style="--pw:100%">
-                <div class="phone" role="img" aria-label="Démonstration animée : une photo de produit arrive, le prix 15 000 F tombe en grand, trois mots-clés s’affichent en sous-titres, puis un bouton WhatsApp s’allume.">
-                  <div class="phone-screen" id="demo">
-                    <div class="demo" data-demo="root">
-                      <svg class="demo-art" viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-demo="art">
-                        <rect width="90" height="160" fill="url(#g-wall)"/>
-                        <circle cx="45" cy="76" r="33" fill="#F6F2EA" opacity=".7"/>
-                        <circle cx="45" cy="76" r="33" fill="none" stroke="#C9A14A" stroke-width=".4"/>
-                        <use href="#art-bottle" x="0" y="8" width="90" height="160"/>
-                      </svg>
-                      <div class="demo-scrim"></div>
-                      <div class="demo-progress" aria-hidden="true"><i data-demo="progress"></i></div>
-                      <div class="demo-price" data-demo="price">15&nbsp;000&nbsp;F</div>
-                      <ul class="demo-words" data-demo="words">
-                        <li>Nouveau</li>
-                        <li>Livraison</li>
-                        <li>Niamey</li>
-                      </ul>
-                      <div class="demo-cta" data-demo="cta">
-                        <span class="demo-ring" data-demo="ring"></span>
-                        <svg aria-hidden="true"><use href="#i-wa"/></svg>
-                        <span>Écrire sur WhatsApp</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <p class="hero-caption" aria-hidden="true">Démonstration animée</p>
-            </div>
+          <div class="hero-actions" data-hero="actions">
+            <a class="btn btn--gold" data-act="app" data-magnetic href="#creer">
+              <span class="btn-t">Créer ma première vidéo</span>
+              <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
+            </a>
+            <a class="btn-link" href="#exemples">
+              <span>Voir des exemples</span>
+              <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
+            </a>
           </div>
         </div>
 
+        <div class="hero-stage" data-hero="stage">
+          <div class="phone-wrap hero-phone" id="hero-phone">
+            <span class="halo" aria-hidden="true"></span>
+            <span class="orbit" aria-hidden="true"></span>
+
+            <figure class="fl fl--a" aria-hidden="true"><span class="fl-in"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></span></figure>
+            <figure class="fl fl--b" aria-hidden="true"><span class="fl-in"><svg viewBox="8 36 74 80"><use href="#art-phone" width="90" height="160"/></svg></span></figure>
+
+            <div class="phone" role="img" aria-label="Démonstration animée : vous ajoutez trois photos, un prix et un numéro, puis Animo construit la vidéo. Le prix 15 000 F tombe en grand, trois mots-clés s’affichent, et un bouton WhatsApp s’allume.">
+              <div class="phone-screen" id="hero-screen">
+                <!-- Scène vidéo (état final par défaut) -->
+                <div class="vs" data-style="creme" id="hero-scene">
+                  <svg class="vs-art" viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+                    <g transform="translate(0 6)">
+                      <circle class="vs-disc" cx="45" cy="76" r="34"/>
+                      <circle class="vs-disc-line" cx="45" cy="76" r="34"/>
+                      <use class="vs-prod" href="#art-bottle" width="90" height="160"/>
+                    </g>
+                  </svg>
+                  <div class="vs-scrim"></div>
+                  <div class="vs-prog"><i></i></div>
+                  <p class="vs-name">Parfum Oud</p>
+                  <div class="vs-price" data-len="8"><span class="vs-price-n">15&nbsp;000&nbsp;F</span></div>
+                  <ul class="vs-words"><li>Nouveau</li><li>Éclat</li><li>Livraison</li></ul>
+                  <div class="vs-cta">
+                    <span class="vs-ring"></span>
+                    <svg aria-hidden="true" focusable="false"><use href="#i-wa"/></svg>
+                    <span class="vs-cta-text"><b>Écrire sur WhatsApp</b><small></small></span>
+                  </div>
+                </div>
+                <!-- Écran de l’application : s’affiche au début de la démonstration -->
+                <div class="ui ui--hero" id="hero-app">
+                  <p class="ui-cap">Nouvelle vidéo</p>
+                  <p class="ui-title">Vos photos</p>
+                  <div class="ui-photos">
+                    <div class="ui-photo"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></div>
+                    <div class="ui-photo ui-photo--2"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></div>
+                    <div class="ui-photo ui-photo--3"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></div>
+                  </div>
+                  <div class="ui-field"><span class="ui-cap">Prix</span><b class="app-price">15&nbsp;000&nbsp;F</b></div>
+                  <div class="ui-field"><span class="ui-cap">Numéro WhatsApp</span><b class="dim app-num">+227 ·· ·· ·· ··</b></div>
+                  <div class="ui-btn app-btn">Créer la vidéo</div>
+                </div>
+              </div>
+            </div>
+
+            <ul class="pubs" aria-hidden="true">
+              <li class="pub pub--1">TikTok</li>
+              <li class="pub pub--2">WhatsApp</li>
+              <li class="pub pub--3">Facebook</li>
+            </ul>
+            <p class="hero-caption" aria-hidden="true">Démonstration animée</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap">
         <ul class="facts" data-hero="facts">
           <li>Format vertical 9:16</li>
           <li>Prix en francs CFA</li>
@@ -1025,10 +1208,10 @@
     </section>
 
     <!-- =====================================================================
-         BANDE DÉFILANTE
+         2. BANDE DÉFILANTE
          ===================================================================== -->
     <section class="marquee is-dark" aria-label="Types de commerces">
-      <div class="marquee-track">
+      <div class="marquee-track" id="marquee-track">
         <ul class="marquee-list">
           <li>Boutiques de téléphones</li>
           <li>Mode</li>
@@ -1049,62 +1232,69 @@
     </section>
 
     <!-- =====================================================================
-         COMMENT ÇA MARCHE
+         3. LE PRINCIPE (texte qui s’éclaire au défilement)
          ===================================================================== -->
-    <section class="section dots" id="comment-ca-marche" aria-labelledby="how-title">
-      <div class="wrap">
-        <div class="head-row grid" data-reveal-group>
-          <p class="label label--rule" data-reveal>Comment ça marche</p>
-          <h2 class="h2" id="how-title" data-reveal>De la photo à la vidéo <em class="k">publiée</em>, en quatre étapes.</h2>
-        </div>
+    <section class="statement" aria-labelledby="statement-label">
+      <div class="wrap grid">
+        <p class="label label--rule statement-label" id="statement-label" data-reveal>Le principe</p>
+        <p class="statement-text" id="statement-text">Sur TikTok et sur WhatsApp, on regarde vite. Animo affiche votre prix dès la première seconde, anime vos photos, sous-titre chaque mot et termine sur votre numéro. Vous gardez le plus important&nbsp;: <em class="k">vendre.</em></p>
+      </div>
+    </section>
 
-        <div class="how-grid">
-          <!-- Téléphone collant : l’écran suit l’étape visible -->
-          <div class="how-phone" aria-hidden="true">
-            <div class="how-sticky">
-              <div class="phone-wrap" style="--pw:100%">
-                <div class="phone">
-                  <div class="phone-screen">
-                    <!-- Étape 1 -->
-                    <div class="ui is-on" data-screen="0">
-                      <p class="ui-cap">Nouvelle vidéo</p>
-                      <p class="ui-title">Vos photos</p>
-                      <div class="ui-photos">
-                        <div class="ui-photo"><svg viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice"><use href="#art-bottle" y="2"/></svg></div>
-                        <div class="ui-photo"><svg viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice"><use href="#art-bottle" x="-6" y="6"/></svg></div>
-                        <div class="ui-photo"><svg viewBox="0 0 90 160" preserveAspectRatio="xMidYMid slice"><use href="#art-bottle" x="6" y="-2"/></svg></div>
-                      </div>
-                      <div class="ui-field"><span class="ui-cap">Prix</span><b>15&nbsp;000&nbsp;F</b></div>
-                      <div class="ui-field"><span class="ui-cap">Numéro WhatsApp</span><b class="dim">+227 ·· ·· ·· ··</b></div>
-                      <div class="ui-btn">Continuer</div>
+    <!-- =====================================================================
+         4. COMMENT ÇA MARCHE (épinglé : la vidéo se construit au défilement)
+         ===================================================================== -->
+    <section class="how" id="comment-ca-marche" aria-labelledby="how-title">
+      <div class="wrap how-head">
+        <p class="label label--rule" data-reveal>Comment ça marche</p>
+        <h2 class="h2" id="how-title" data-split>De la photo à la vidéo <em class="k">publiée</em>, en quatre étapes.</h2>
+      </div>
+
+      <div class="how-pin" id="how-pin">
+        <div class="wrap how-grid">
+
+          <div class="how-stage" aria-hidden="true">
+            <div class="phone-wrap how-phone">
+              <div class="phone">
+                <div class="phone-screen">
+                  <!-- Étape 1 -->
+                  <div class="ui ui--s1">
+                    <p class="ui-cap">Nouvelle vidéo</p>
+                    <p class="ui-title">Vos photos</p>
+                    <div class="ui-photos">
+                      <div class="ui-photo"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></div>
+                      <div class="ui-photo ui-photo--2"><svg viewBox="8 36 74 80"><use href="#art-phone" width="90" height="160"/></svg></div>
+                      <div class="ui-photo ui-photo--3"><svg viewBox="8 36 74 80"><use href="#art-bag" width="90" height="160"/></svg></div>
                     </div>
-                    <!-- Étape 2 -->
-                    <div class="ui" data-screen="1">
-                      <p class="ui-cap">Étape 2</p>
-                      <p class="ui-title">Choisissez un style</p>
-                      <div class="ui-styles">
-                        <div class="ui-style"><i></i>Modèle 1</div>
-                        <div class="ui-style is-pick"><i></i>Modèle 2</div>
-                        <div class="ui-style"><i></i>Modèle 3</div>
-                      </div>
-                      <div class="ui-btn">Utiliser ce modèle</div>
+                    <div class="ui-field"><span class="ui-cap">Prix</span><b>15&nbsp;000&nbsp;F</b></div>
+                    <div class="ui-field"><span class="ui-cap">Numéro WhatsApp</span><b class="dim">+227 ·· ·· ·· ··</b></div>
+                    <div class="ui-btn">Continuer</div>
+                  </div>
+                  <!-- Étape 2 -->
+                  <div class="ui ui--s2">
+                    <p class="ui-cap">Étape 2</p>
+                    <p class="ui-title">Choisissez un style</p>
+                    <div class="ui-styles">
+                      <div class="ui-style"><i></i>Modèle 1</div>
+                      <div class="ui-style is-pick"><i></i>Modèle 2</div>
+                      <div class="ui-style"><i></i>Modèle 3</div>
                     </div>
-                    <!-- Étape 3 -->
-                    <div class="ui" data-screen="2">
-                      <p class="ui-cap">Étape 3</p>
-                      <div class="ui-gen">
-                        <svg class="ui-ring" viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="15.9155"/><circle class="fg" cx="20" cy="20" r="15.9155" pathLength="100"/></svg>
-                        <p class="ui-title">Animo génère la vidéo</p>
-                        <div class="ui-bars"><span></span><span></span><span></span></div>
-                      </div>
+                    <div class="ui-btn">Utiliser ce modèle</div>
+                  </div>
+                  <!-- Étape 3 -->
+                  <div class="ui ui--s3">
+                    <p class="ui-cap">Étape 3</p>
+                    <div class="ui-gen">
+                      <svg class="ui-ring" viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="15.9155"/><circle class="fg" cx="20" cy="20" r="15.9155" pathLength="100"/></svg>
+                      <p class="ui-title">Animo génère la vidéo</p>
+                      <div class="ui-bars"><span><i></i></span><span><i></i></span><span><i></i></span></div>
                     </div>
-                    <!-- Étape 4 -->
-                    <div class="ui" data-screen="3">
+                  </div>
+                  <!-- Étape 4 -->
+                  <div class="ui ui--s4">
+                    <div class="phone-slot" data-scene-slot data-style="creme" data-product="mode" data-static></div>
+                    <div class="ui-sheet">
                       <p class="ui-cap">Votre vidéo est prête</p>
-                      <div class="ui-thumb">
-                        <svg viewBox="0 0 90 140" preserveAspectRatio="xMidYMid slice"><rect width="90" height="160" fill="url(#g-wall)"/><use href="#art-bottle" y="-6"/></svg>
-                        <em>15&nbsp;000&nbsp;F</em>
-                      </div>
                       <div class="ui-btn">Télécharger</div>
                       <div class="ui-chips"><span>TikTok</span><span>WhatsApp</span><span>Facebook</span></div>
                     </div>
@@ -1114,29 +1304,32 @@
             </div>
           </div>
 
-          <div class="steps" id="steps">
-            <span class="steps-line" aria-hidden="true"><i id="steps-line"></i></span>
-            <ol>
-            <li class="step is-active" data-step="0">
-              <span class="step-n" aria-hidden="true">01</span>
-              <h3>Ajoutez vos photos, votre prix et votre numéro.</h3>
-              <p>Prenez les photos de votre produit avec votre téléphone, indiquez son prix et votre numéro WhatsApp.</p>
-            </li>
-            <li class="step" data-step="1">
-              <span class="step-n" aria-hidden="true">02</span>
-              <h3>Choisissez un style de vidéo.</h3>
-              <p>Chaque modèle a été conçu par un motion designer. Vous en prenez un, c’est tout.</p>
-            </li>
-            <li class="step" data-step="2">
-              <span class="step-n" aria-hidden="true">03</span>
-              <h3>Animo génère la vidéo.</h3>
-              <p>Le prix s’affiche dès la première seconde, votre numéro à la fin. Vous n’avez rien à monter.</p>
-            </li>
-            <li class="step" data-step="3">
-              <span class="step-n" aria-hidden="true">04</span>
-              <h3>Téléchargez-la et publiez-la.</h3>
-              <p>La vidéo est verticale, prête pour TikTok, les statuts WhatsApp et Facebook.</p>
-            </li>
+          <div class="how-text">
+            <div class="how-rail" aria-hidden="true" id="how-rail">
+              <span class="rail-fill"></span>
+              <i class="rail-node" data-i="0"></i><i class="rail-node" data-i="1"></i><i class="rail-node" data-i="2"></i><i class="rail-node" data-i="3"></i>
+            </div>
+            <ol class="how-steps" id="how-steps">
+              <li class="step">
+                <span class="step-n" aria-hidden="true">01</span>
+                <h3>Ajoutez vos photos, votre prix et votre numéro.</h3>
+                <p>Prenez les photos de votre produit avec votre téléphone, indiquez son prix et votre numéro WhatsApp.</p>
+              </li>
+              <li class="step">
+                <span class="step-n" aria-hidden="true">02</span>
+                <h3>Choisissez un style de vidéo.</h3>
+                <p>Chaque modèle a été conçu par un motion designer. Vous en prenez un, c’est tout.</p>
+              </li>
+              <li class="step">
+                <span class="step-n" aria-hidden="true">03</span>
+                <h3>Animo génère la vidéo.</h3>
+                <p>Le prix s’affiche dès la première seconde, votre numéro à la fin. Vous n’avez rien à monter.</p>
+              </li>
+              <li class="step">
+                <span class="step-n" aria-hidden="true">04</span>
+                <h3>Téléchargez-la et publiez-la.</h3>
+                <p>La vidéo est verticale, prête pour TikTok, les statuts WhatsApp et Facebook.</p>
+              </li>
             </ol>
           </div>
         </div>
@@ -1144,13 +1337,88 @@
     </section>
 
     <!-- =====================================================================
-         FONCTIONNALITÉS
+         5. APERÇU INTERACTIF (section noire)
          ===================================================================== -->
-    <section class="section dots dots--alt" id="fonctionnalites" aria-labelledby="feat-title">
+    <section class="section studio is-dark clip" id="essayer" aria-labelledby="studio-title">
+      <div class="wrap">
+        <div class="head-row grid">
+          <p class="label label--rule" data-reveal>Essayez maintenant</p>
+          <h2 class="h2" id="studio-title" data-split>Tapez un prix, regardez la vidéo se <em class="k">construire</em>.</h2>
+          <p class="head-side" data-reveal>Cet aperçu simplifié tourne dans votre navigateur. La vraie vidéo est générée par Animo, avec vos photos.</p>
+        </div>
+
+        <div class="studio-grid grid">
+          <div class="studio-controls" role="group" aria-label="Réglages de l’aperçu">
+            <fieldset class="field">
+              <legend class="label">Votre commerce</legend>
+              <div class="choices">
+                <label class="choice"><input type="radio" name="product" value="cosmetiques" checked><span><svg viewBox="8 36 74 80" aria-hidden="true"><use href="#art-bottle" width="90" height="160"/></svg>Cosmétiques</span></label>
+                <label class="choice"><input type="radio" name="product" value="telephones"><span><svg viewBox="8 36 74 80" aria-hidden="true"><use href="#art-phone" width="90" height="160"/></svg>Téléphones</span></label>
+                <label class="choice"><input type="radio" name="product" value="restaurant"><span><svg viewBox="8 36 74 80" aria-hidden="true"><use href="#art-burger" width="90" height="160"/></svg>Restaurant</span></label>
+                <label class="choice"><input type="radio" name="product" value="mode"><span><svg viewBox="8 36 74 80" aria-hidden="true"><use href="#art-bag" width="90" height="160"/></svg>Mode</span></label>
+              </div>
+            </fieldset>
+
+            <div class="field-row">
+              <div class="field">
+                <label class="label" for="in-name">Nom du produit</label>
+                <input id="in-name" type="text" maxlength="24" autocomplete="off" spellcheck="false" value="Parfum Oud">
+              </div>
+              <div class="field">
+                <label class="label" for="in-price">Prix en francs CFA</label>
+                <input id="in-price" type="text" inputmode="numeric" maxlength="9" autocomplete="off" spellcheck="false" value="15 000">
+              </div>
+            </div>
+
+            <div class="field">
+              <label class="label" for="in-words">Trois mots-clés, séparés par une virgule</label>
+              <input id="in-words" type="text" maxlength="48" autocomplete="off" spellcheck="false" value="Nouveau, Éclat, Livraison">
+            </div>
+
+            <div class="field">
+              <label class="label" for="in-phone">Votre numéro WhatsApp (facultatif)</label>
+              <input id="in-phone" type="tel" inputmode="tel" maxlength="20" autocomplete="off" spellcheck="false" placeholder="+227 00 00 00 00">
+            </div>
+
+            <fieldset class="field">
+              <legend class="label">Modèle de la vidéo</legend>
+              <div class="choices choices--styles">
+                <label class="choice choice--style"><input type="radio" name="style" value="creme" checked><span><i class="sw sw--creme"></i>Crème</span></label>
+                <label class="choice choice--style"><input type="radio" name="style" value="nuit"><span><i class="sw sw--nuit"></i>Nuit</span></label>
+                <label class="choice choice--style"><input type="radio" name="style" value="dore"><span><i class="sw sw--dore"></i>Doré</span></label>
+              </div>
+            </fieldset>
+
+            <div class="studio-actions">
+              <button class="btn btn--ghost" id="replay" type="button"><span class="btn-t">Rejouer l’aperçu</span></button>
+              <a class="btn btn--gold" id="studio-cta" data-act="studio" href="#creer">
+                <span class="btn-t">Créer cette vidéo pour de vrai</span>
+                <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
+              </a>
+            </div>
+            <p class="note">Rien n’est envoyé ni enregistré : tout reste dans votre navigateur.</p>
+          </div>
+
+          <div class="studio-stage">
+            <div class="phone-wrap studio-phone">
+              <span class="halo halo--dark" aria-hidden="true"></span>
+              <div class="phone" role="img" aria-label="Aperçu animé de votre vidéo, mis à jour avec vos réglages" id="studio-phone">
+                <div class="phone-screen" data-scene-slot data-style="creme" data-product="cosmetiques" data-loop id="studio-slot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         6. FONCTIONNALITÉS
+         ===================================================================== -->
+    <section class="section feats" id="fonctionnalites" aria-labelledby="feat-title" data-fab-hide>
       <div class="wrap">
         <div class="head-row grid">
           <p class="label label--rule" data-reveal>Fonctionnalités</p>
-          <h2 class="h2" id="feat-title" data-reveal>Chaque vidéo est faite pour qu’on vous <em class="k">écrive</em>.</h2>
+          <h2 class="h2" id="feat-title" data-split>Chaque vidéo est faite pour qu’on vous <em class="k">écrive</em>.</h2>
         </div>
 
         <ul class="feat-list" id="feat-list">
@@ -1196,7 +1464,7 @@
         <div class="fx-card">
           <div class="fx-scene" data-scene="0">
             <span class="fx1-disc"></span>
-            <svg class="fx1-bottle" viewBox="0 0 90 160"><use href="#art-bottle"/></svg>
+            <svg class="fx1-bottle" viewBox="0 0 90 160"><use href="#art-bottle" width="90" height="160"/></svg>
             <span class="fx1-price">15&nbsp;000&nbsp;F</span>
           </div>
           <div class="fx-scene fx-scene--dark" data-scene="1">
@@ -1208,7 +1476,7 @@
           </div>
           <div class="fx-scene" data-scene="3">
             <div class="fx4-logo">Votre<br>logo</div>
-            <div class="fx4-sw"><i style="background:#C9A14A"></i><i style="background:#111"></i><i style="background:#F6F2EA"></i></div>
+            <div class="fx4-sw"><i class="sw-gold"></i><i class="sw-ink"></i><i class="sw-paper"></i></div>
             <div class="fx4-btn"><svg aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</div>
           </div>
         </div>
@@ -1216,20 +1484,20 @@
     </section>
 
     <!-- =====================================================================
-         EXEMPLES
+         7. EXEMPLES (section noire)
          ===================================================================== -->
-    <section class="section is-dark examples" id="exemples" aria-labelledby="ex-title" data-fab-hide>
+    <section class="section is-dark examples clip" id="exemples" aria-labelledby="ex-title" data-fab-hide>
       <div class="wrap">
         <div class="head-row grid">
           <p class="label label--rule" data-reveal>Exemples</p>
-          <h2 class="h2" id="ex-title" data-reveal>Des vidéos faites pour TikTok et les statuts <em class="k">WhatsApp</em>.</h2>
+          <h2 class="h2" id="ex-title" data-split>Des vidéos faites pour TikTok et les statuts <em class="k">WhatsApp</em>.</h2>
           <p class="head-side" data-reveal>Le prix dès la première seconde, votre numéro à la fin. Touchez une vidéo pour la voir en grand.</p>
         </div>
 
         <div class="gallery" id="gallery">
           <!-- Légendes à vérifier : elles doivent correspondre aux vidéos exemple-1 à exemple-6 -->
           <div class="ex" data-ex="1">
-            <button class="ex-btn" type="button" data-src="exemple-1.mp4" data-poster="exemple-1.jpg" data-title="Boutique de téléphones" aria-label="Voir en grand l’exemple 1 : boutique de téléphones">
+            <button class="ex-btn" type="button" data-src="exemple-1.mp4" data-poster="exemple-1.jpg" data-title="Boutique de téléphones" data-cursor-label="Voir" aria-label="Voir en grand l’exemple 1 : boutique de téléphones">
               <span class="phone-wrap"><span class="phone"><span class="phone-screen">
                 <span class="ex-ph"><b>01</b>Exemple à ajouter</span>
                 <video muted playsinline loop preload="none" poster="exemple-1.jpg" width="360" height="640" aria-label="Exemple de vidéo Animo pour une boutique de téléphones : prix affiché dès la première seconde, numéro WhatsApp à la fin"><source src="exemple-1.mp4" type="video/mp4"></video>
@@ -1239,7 +1507,7 @@
             <p class="ex-cap"><span>01</span>Boutique de téléphones</p>
           </div>
           <div class="ex" data-ex="2">
-            <button class="ex-btn" type="button" data-src="exemple-2.mp4" data-poster="exemple-2.jpg" data-title="Mode" aria-label="Voir en grand l’exemple 2 : mode">
+            <button class="ex-btn" type="button" data-src="exemple-2.mp4" data-poster="exemple-2.jpg" data-title="Mode" data-cursor-label="Voir" aria-label="Voir en grand l’exemple 2 : mode">
               <span class="phone-wrap"><span class="phone"><span class="phone-screen">
                 <span class="ex-ph"><b>02</b>Exemple à ajouter</span>
                 <video muted playsinline loop preload="none" poster="exemple-2.jpg" width="360" height="640" aria-label="Exemple de vidéo Animo pour une boutique de mode : prix affiché dès la première seconde, numéro WhatsApp à la fin"><source src="exemple-2.mp4" type="video/mp4"></video>
@@ -1249,7 +1517,7 @@
             <p class="ex-cap"><span>02</span>Mode</p>
           </div>
           <div class="ex" data-ex="3">
-            <button class="ex-btn" type="button" data-src="exemple-3.mp4" data-poster="exemple-3.jpg" data-title="Cosmétiques" aria-label="Voir en grand l’exemple 3 : cosmétiques">
+            <button class="ex-btn" type="button" data-src="exemple-3.mp4" data-poster="exemple-3.jpg" data-title="Cosmétiques" data-cursor-label="Voir" aria-label="Voir en grand l’exemple 3 : cosmétiques">
               <span class="phone-wrap"><span class="phone"><span class="phone-screen">
                 <span class="ex-ph"><b>03</b>Exemple à ajouter</span>
                 <video muted playsinline loop preload="none" poster="exemple-3.jpg" width="360" height="640" aria-label="Exemple de vidéo Animo pour des cosmétiques : prix affiché dès la première seconde, numéro WhatsApp à la fin"><source src="exemple-3.mp4" type="video/mp4"></video>
@@ -1259,7 +1527,7 @@
             <p class="ex-cap"><span>03</span>Cosmétiques</p>
           </div>
           <div class="ex" data-ex="4">
-            <button class="ex-btn" type="button" data-src="exemple-4.mp4" data-poster="exemple-4.jpg" data-title="Restaurant" aria-label="Voir en grand l’exemple 4 : restaurant">
+            <button class="ex-btn" type="button" data-src="exemple-4.mp4" data-poster="exemple-4.jpg" data-title="Restaurant" data-cursor-label="Voir" aria-label="Voir en grand l’exemple 4 : restaurant">
               <span class="phone-wrap"><span class="phone"><span class="phone-screen">
                 <span class="ex-ph"><b>04</b>Exemple à ajouter</span>
                 <video muted playsinline loop preload="none" poster="exemple-4.jpg" width="360" height="640" aria-label="Exemple de vidéo Animo pour un restaurant : prix affiché dès la première seconde, numéro WhatsApp à la fin"><source src="exemple-4.mp4" type="video/mp4"></video>
@@ -1269,7 +1537,7 @@
             <p class="ex-cap"><span>04</span>Restaurant</p>
           </div>
           <div class="ex" data-ex="5">
-            <button class="ex-btn" type="button" data-src="exemple-5.mp4" data-poster="exemple-5.jpg" data-title="Chaussures" aria-label="Voir en grand l’exemple 5 : chaussures">
+            <button class="ex-btn" type="button" data-src="exemple-5.mp4" data-poster="exemple-5.jpg" data-title="Chaussures" data-cursor-label="Voir" aria-label="Voir en grand l’exemple 5 : chaussures">
               <span class="phone-wrap"><span class="phone"><span class="phone-screen">
                 <span class="ex-ph"><b>05</b>Exemple à ajouter</span>
                 <video muted playsinline loop preload="none" poster="exemple-5.jpg" width="360" height="640" aria-label="Exemple de vidéo Animo pour une boutique de chaussures : prix affiché dès la première seconde, numéro WhatsApp à la fin"><source src="exemple-5.mp4" type="video/mp4"></video>
@@ -1279,7 +1547,7 @@
             <p class="ex-cap"><span>05</span>Chaussures</p>
           </div>
           <div class="ex" data-ex="6">
-            <button class="ex-btn" type="button" data-src="exemple-6.mp4" data-poster="exemple-6.jpg" data-title="Vendeur en ligne" aria-label="Voir en grand l’exemple 6 : vendeur en ligne">
+            <button class="ex-btn" type="button" data-src="exemple-6.mp4" data-poster="exemple-6.jpg" data-title="Vendeur en ligne" data-cursor-label="Voir" aria-label="Voir en grand l’exemple 6 : vendeur en ligne">
               <span class="phone-wrap"><span class="phone"><span class="phone-screen">
                 <span class="ex-ph"><b>06</b>Exemple à ajouter</span>
                 <video muted playsinline loop preload="none" poster="exemple-6.jpg" width="360" height="640" aria-label="Exemple de vidéo Animo pour un vendeur en ligne : prix affiché dès la première seconde, numéro WhatsApp à la fin"><source src="exemple-6.mp4" type="video/mp4"></video>
@@ -1294,13 +1562,13 @@
     </section>
 
     <!-- =====================================================================
-         TARIFS
+         8. TARIFS
          ===================================================================== -->
-    <section class="section dots pricing" id="tarifs" aria-labelledby="price-title" data-fab-hide>
+    <section class="section pricing" id="tarifs" aria-labelledby="price-title" data-fab-hide>
       <div class="wrap">
         <div class="head-row grid">
           <p class="label label--rule" data-reveal>Tarifs</p>
-          <h2 class="h2" id="price-title" data-reveal>Trois offres, en francs CFA. Choisissez celle qui suit votre <em class="k">rythme</em>.</h2>
+          <h2 class="h2" id="price-title" data-split>Trois offres, en francs CFA. Choisissez celle qui suit votre <em class="k">rythme</em>.</h2>
           <p class="head-side" data-reveal>Chaque offre se paie par mois, avec Mobile Money.</p>
         </div>
 
@@ -1319,9 +1587,8 @@
               <li>Sous-titres animés</li>
               <li>Fin avec votre numéro WhatsApp</li>
             </ul>
-            <a class="btn btn--ghost btn--block" data-wa
-               href="https://wa.me/[NUMÉRO SANS + NI ESPACES]?text=Bonjour%2C%20je%20veux%20l%27offre%20Essentiel%20d%27Animo">
-              <span>Choisir l’offre Essentiel</span>
+            <a class="btn btn--ghost btn--block" data-act="plan:Essentiel" href="#creer">
+              <span class="btn-t" data-t-wa="Choisir l’offre Essentiel" data-t-pay="Payer l’offre Essentiel">Choisir l’offre Essentiel</span>
               <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
             </a>
           </article>
@@ -1340,9 +1607,8 @@
               <li>Voix off en français</li>
               <li>Votre logo et vos couleurs</li>
             </ul>
-            <a class="btn btn--gold btn--block" data-wa
-               href="https://wa.me/[NUMÉRO SANS + NI ESPACES]?text=Bonjour%2C%20je%20veux%20l%27offre%20Pro%20d%27Animo">
-              <span>Choisir l’offre Pro</span>
+            <a class="btn btn--gold btn--block" data-act="plan:Pro" href="#creer">
+              <span class="btn-t" data-t-wa="Choisir l’offre Pro" data-t-pay="Payer l’offre Pro">Choisir l’offre Pro</span>
               <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
             </a>
           </article>
@@ -1361,9 +1627,8 @@
               <li>Plusieurs marques ou boutiques</li>
               <li>Traitement prioritaire</li>
             </ul>
-            <a class="btn btn--ghost btn--block" data-wa
-               href="https://wa.me/[NUMÉRO SANS + NI ESPACES]?text=Bonjour%2C%20je%20veux%20l%27offre%20Business%20d%27Animo">
-              <span>Choisir l’offre Business</span>
+            <a class="btn btn--ghost btn--block" data-act="plan:Business" href="#creer">
+              <span class="btn-t" data-t-wa="Choisir l’offre Business" data-t-pay="Payer l’offre Business">Choisir l’offre Business</span>
               <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
             </a>
           </article>
@@ -1374,35 +1639,35 @@
     </section>
 
     <!-- =====================================================================
-         QUESTIONS FRÉQUENTES
+         9. QUESTIONS FRÉQUENTES
          ===================================================================== -->
-    <section class="section dots dots--alt" id="questions" aria-labelledby="faq-title">
+    <section class="section faq" id="questions" aria-labelledby="faq-title" data-fab-hide>
       <div class="wrap">
         <div class="faq-grid grid">
           <div class="faq-head">
             <p class="label label--rule" data-reveal>Questions</p>
-            <h2 class="h2" id="faq-title" data-reveal>Les réponses avant de <em class="k">commencer</em>.</h2>
+            <h2 class="h2" id="faq-title" data-split>Les réponses avant de <em class="k">commencer</em>.</h2>
           </div>
 
           <div class="faq-list" id="faq" data-reveal>
             <div class="faq-item">
-              <h3><button class="faq-q" type="button" id="q1" aria-expanded="true" aria-controls="a1"><span>Faut-il savoir monter des vidéos ?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
+              <h3><button class="faq-q" type="button" id="q1" aria-expanded="true" aria-controls="a1"><span>Faut-il savoir monter des vidéos&nbsp;?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
               <div class="faq-panel is-open" id="a1" role="region" aria-labelledby="q1"><div><p>Non. Vous ajoutez vos photos, votre prix et votre numéro, Animo s’occupe du reste.</p></div></div>
             </div>
             <div class="faq-item">
-              <h3><button class="faq-q" type="button" id="q2" aria-expanded="false" aria-controls="a2"><span>Comment je paie ?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
+              <h3><button class="faq-q" type="button" id="q2" aria-expanded="false" aria-controls="a2"><span>Comment je paie&nbsp;?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
               <div class="faq-panel" id="a2" role="region" aria-labelledby="q2"><div><p>Les offres se paient par Mobile Money. <span class="todo">[AJOUTER LES MOYENS DE PAIEMENT]</span></p></div></div>
             </div>
             <div class="faq-item">
-              <h3><button class="faq-q" type="button" id="q3" aria-expanded="false" aria-controls="a3"><span>Puis-je changer d’offre ou arrêter ?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
+              <h3><button class="faq-q" type="button" id="q3" aria-expanded="false" aria-controls="a3"><span>Puis-je changer d’offre ou arrêter&nbsp;?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
               <div class="faq-panel" id="a3" role="region" aria-labelledby="q3"><div><p><span class="todo">[AJOUTER LA POLITIQUE D’ANNULATION]</span></p></div></div>
             </div>
             <div class="faq-item">
-              <h3><button class="faq-q" type="button" id="q4" aria-expanded="false" aria-controls="a4"><span>Les vidéos m’appartiennent-elles ?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
+              <h3><button class="faq-q" type="button" id="q4" aria-expanded="false" aria-controls="a4"><span>Les vidéos m’appartiennent-elles&nbsp;?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
               <div class="faq-panel" id="a4" role="region" aria-labelledby="q4"><div><p><span class="todo">[AJOUTER LES CONDITIONS D’UTILISATION]</span></p></div></div>
             </div>
             <div class="faq-item">
-              <h3><button class="faq-q" type="button" id="q5" aria-expanded="false" aria-controls="a5"><span>Sur quels réseaux puis-je publier ?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
+              <h3><button class="faq-q" type="button" id="q5" aria-expanded="false" aria-controls="a5"><span>Sur quels réseaux puis-je publier&nbsp;?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
               <div class="faq-panel" id="a5" role="region" aria-labelledby="q5"><div><p>TikTok, statuts WhatsApp, Facebook, Instagram&nbsp;: les vidéos sont au format vertical.</p></div></div>
             </div>
           </div>
@@ -1411,23 +1676,29 @@
     </section>
 
     <!-- =====================================================================
-         APPEL À L’ACTION FINAL
+         10. APPEL À L’ACTION FINAL
          ===================================================================== -->
-    <section class="cta is-dark" id="creer" aria-labelledby="cta-title" data-fab-hide>
-      <div class="wrap">
-        <div class="cta-grid grid">
-          <div class="cta-main">
-            <p class="label label--rule" data-reveal>Votre première vidéo</p>
-            <h2 class="display cta-title" id="cta-title" data-reveal>Votre prochain produit mérite sa <em class="k">vidéo</em>.</h2>
-            <p class="lead" data-reveal>Ajoutez vos photos, votre prix et votre numéro. Animo fait le reste.</p>
-            <a class="btn btn--gold" data-cta="app" data-reveal
-               href="https://wa.me/[NUMÉRO SANS + NI ESPACES]?text=Bonjour%2C%20je%20veux%20cr%C3%A9er%20ma%20premi%C3%A8re%20vid%C3%A9o%20avec%20Animo.%20Pouvez-vous%20m%27inscrire%20sur%20la%20liste%20d%27attente%C2%A0%3F">
-              <span>Créer ma première vidéo</span>
-              <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
-            </a>
-            <div class="cta-phone" data-reveal>
-              <p class="label">WhatsApp</p>
-              <p class="cta-num"><span class="todo" data-wa-display>[+227 XX XX XX XX]</span></p>
+    <section class="cta is-dark clip" id="creer" aria-labelledby="cta-title" data-fab-hide>
+      <p class="cta-word" aria-hidden="true">Animo</p>
+      <div class="wrap cta-grid grid">
+        <div class="cta-main">
+          <p class="label label--rule" data-reveal>Votre première vidéo</p>
+          <h2 class="display cta-title" id="cta-title" data-split>Votre prochain produit mérite sa <em class="k">vidéo</em>.</h2>
+          <p class="lead" data-reveal>Ajoutez vos photos, votre prix et votre numéro. Animo fait le reste.</p>
+          <a class="btn btn--gold btn--lg" data-act="app" data-reveal href="#creer">
+            <span class="btn-t">Créer ma première vidéo</span>
+            <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
+          </a>
+          <div class="cta-phone-num" data-reveal>
+            <p class="label">WhatsApp</p>
+            <p class="cta-num"><span class="todo" data-wa-display>[+227 XX XX XX XX]</span></p>
+          </div>
+        </div>
+        <div class="cta-visual">
+          <div class="phone-wrap cta-phone">
+            <span class="halo halo--dark" aria-hidden="true"></span>
+            <div class="phone" role="img" aria-label="Aperçu animé d’une vidéo Animo : un burger, son prix et un bouton WhatsApp">
+              <div class="phone-screen" data-scene-slot data-style="nuit" data-product="restaurant" data-loop></div>
             </div>
           </div>
         </div>
@@ -1449,6 +1720,7 @@
         <nav class="foot-col foot-col--nav" aria-label="Pied de page">
           <h2>Navigation</h2>
           <a class="ulink" href="#comment-ca-marche">Comment ça marche</a>
+          <a class="ulink" href="#essayer">Essayer l’aperçu</a>
           <a class="ulink" href="#fonctionnalites">Fonctionnalités</a>
           <a class="ulink" href="#exemples">Exemples</a>
           <a class="ulink" href="#tarifs">Tarifs</a>
@@ -1457,25 +1729,24 @@
 
         <div class="foot-col foot-col--contact">
           <h2>Contact</h2>
-          <a class="ulink" data-wa href="https://wa.me/[NUMÉRO SANS + NI ESPACES]?text=Bonjour%2C%20j%27ai%20une%20question%20sur%20Animo"><span class="todo" data-wa-display>[+227 XX XX XX XX]</span></a>
-          <span class="todo">[ADRESSE E-MAIL]</span>
-          <a class="ulink" href="https://www.tiktok.com/@animo.studioo" target="_blank" rel="noopener">TikTok @animo.studioo</a>
+          <a class="ulink" data-act="wa:question" href="#creer"><span class="todo" data-wa-display>[+227 XX XX XX XX]</span></a>
+          <a class="ulink" id="foot-mail" href="#creer"><span class="todo" data-mail-display>[ADRESSE E-MAIL]</span></a>
+          <a class="ulink" href="https://www.tiktok.com/@animo.studioo" target="_blank" rel="noopener noreferrer">TikTok @animo.studioo</a>
         </div>
       </div>
 
       <div class="foot-bottom">
         <p>© <span id="year">[ANNÉE]</span> Animo. Tous droits réservés.</p>
         <nav aria-label="Informations légales">
-          <a class="ulink" href="[URL]">Conditions d’utilisation</a>
-          <a class="ulink" href="[URL]">Confidentialité</a>
+          <a class="ulink" id="link-terms" href="#creer">Conditions d’utilisation <span class="todo" data-url-todo>[URL]</span></a>
+          <a class="ulink" id="link-privacy" href="#creer">Confidentialité <span class="todo" data-url-todo>[URL]</span></a>
         </nav>
       </div>
     </div>
   </footer>
 
   <!-- Bouton WhatsApp flottant -->
-  <a class="fab" id="fab" data-wa aria-label="Écrire à Animo sur WhatsApp"
-     href="https://wa.me/[NUMÉRO SANS + NI ESPACES]?text=Bonjour%2C%20j%27ai%20une%20question%20sur%20Animo" target="_blank" rel="noopener">
+  <a class="fab" id="fab" data-act="wa:question" href="#creer" aria-label="Écrire à Animo sur WhatsApp">
     <svg aria-hidden="true" focusable="false"><use href="#i-wa"/></svg>
   </a>
 
@@ -1497,56 +1768,111 @@
     </div>
   </dialog>
 
-  <!-- GSAP 3 et ScrollTrigger (cdnjs). La page reste complète sans eux. -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Réglages à compléter (données uniquement : modifier ces valeurs ne change pas la politique de sécurité) -->
+  <script type="application/json" id="animo-config">
+  {
+    "whatsappNumber": "",
+    "displayNumber": "",
+    "email": "",
+    "appUrl": "",
+    "paymentLinks": { "Essentiel": "", "Pro": "", "Business": "" },
+    "termsUrl": "",
+    "privacyUrl": ""
+  }
+  </script>
+
+  <!-- GSAP 3 et ScrollTrigger (cdnjs), avec contrôle d’intégrité. La page reste complète sans eux. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
     (() => {
       'use strict';
 
-      /* =================================================================
-         0. RÉGLAGES — à compléter avant la mise en ligne
-         ================================================================= */
-      const CONFIG = {
-        whatsappNumber: '',   // chiffres seulement, sans + ni espaces. Exemple : indicatif 227 puis le numéro
-        displayNumber: '',    // numéro affiché en clair. Exemple : +227 90 00 00 00
-        appUrl: ''            // lien de l’application. Vide : les boutons « Créer ma vidéo » ouvrent WhatsApp
-      };
-      const WA_TOKEN = '[NUMÉRO SANS + NI ESPACES]';
-
       const $ = (s, c = document) => c.querySelector(s);
       const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+      const root = document.documentElement;
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
       const hasGsap = typeof window.gsap !== 'undefined';
       const hasST = hasGsap && typeof window.ScrollTrigger !== 'undefined';
-      if (hasST) gsap.registerPlugin(ScrollTrigger);
+      if (hasST) { gsap.registerPlugin(ScrollTrigger); ScrollTrigger.config({ ignoreMobileResize: true }); }
 
       /* =================================================================
-         1. LIENS WHATSAPP / APPLICATION
+         0. RÉGLAGES (lus dans le bloc JSON « animo-config », puis validés)
          ================================================================= */
-      (function links() {
-        if (CONFIG.whatsappNumber) {
-          $$('a[href*="wa.me/"]').forEach(a => {
-            a.setAttribute('href', a.getAttribute('href').replace(WA_TOKEN, CONFIG.whatsappNumber));
-          });
+      let raw = {};
+      try { raw = JSON.parse($('#animo-config').textContent) || {}; } catch (e) { raw = {}; }
+
+      // Seules les adresses https:// sont acceptées (pas de javascript:, data:, etc.)
+      function safeUrl(v, allowRelative) {
+        if (typeof v !== 'string') return '';
+        v = v.trim();
+        if (!v || v.length > 600) return '';
+        if (/^https:\/\/[^\s<>"']+$/i.test(v)) return v;
+        if (allowRelative && !/^[a-z][a-z0-9+.-]*:/i.test(v) && !v.startsWith('//') && /^[\w\-./#?=&%]+$/.test(v)) return v;
+        return '';
+      }
+      const digits = String(raw.whatsappNumber || '').replace(/[\s+().-]/g, '');
+      const cfg = {
+        wa: /^\d{8,15}$/.test(digits) ? digits : '',
+        display: typeof raw.displayNumber === 'string' ? raw.displayNumber.trim().slice(0, 24) : '',
+        email: typeof raw.email === 'string' && /^[^\s@<>"'()]+@[^\s@<>"'()]+\.[^\s@<>"'()]+$/.test(raw.email.trim()) ? raw.email.trim() : '',
+        app: safeUrl(raw.appUrl),
+        pay: {},
+        terms: safeUrl(raw.termsUrl, true),
+        privacy: safeUrl(raw.privacyUrl, true)
+      };
+      ['Essentiel', 'Pro', 'Business'].forEach(n => { cfg.pay[n] = safeUrl((raw.paymentLinks || {})[n]); });
+      if (!cfg.display && cfg.wa) cfg.display = '+' + cfg.wa;
+
+      /* =================================================================
+         1. LIENS D’ACTION (WhatsApp, application, paiement)
+         ================================================================= */
+      const MSG = {
+        waitlist: "Bonjour, je veux créer ma première vidéo avec Animo. Pouvez-vous m'inscrire sur la liste d'attente ?",
+        question: "Bonjour, j'ai une question sur Animo",
+        plan: n => "Bonjour, je veux l'offre " + n + " d'Animo"
+      };
+      const waUrl = msg => 'https://wa.me/' + cfg.wa + '?text=' + encodeURIComponent(msg);
+
+      function resolveAct(act) {
+        if (act === 'app') {
+          if (cfg.app) return { href: cfg.app };
+          if (cfg.wa) return { href: waUrl(MSG.waitlist) };
+        } else if (act === 'wa:question') {
+          if (cfg.wa) return { href: waUrl(MSG.question) };
+        } else if (act.indexOf('plan:') === 0) {
+          const n = act.slice(5);
+          if (cfg.pay[n]) return { href: cfg.pay[n], pay: true };
+          if (cfg.wa) return { href: waUrl(MSG.plan(n)) };
         }
-        if (CONFIG.displayNumber) {
-          $$('[data-wa-display]').forEach(el => { el.textContent = CONFIG.displayNumber; el.classList.remove('todo'); });
-        }
-        if (CONFIG.appUrl) {
-          $$('a[data-cta="app"]').forEach(a => {
-            a.setAttribute('href', CONFIG.appUrl);
-            a.removeAttribute('target');
-          });
-        }
-        $$('a[href*="wa.me/"]').forEach(a => {
-          a.setAttribute('target', '_blank');
-          a.setAttribute('rel', 'noopener');
-        });
-        const year = $('#year');
-        if (year) year.textContent = new Date().getFullYear();
-      })();
+        return null;
+      }
+      function setExternal(a, href) {
+        a.setAttribute('href', href);
+        a.setAttribute('target', '_blank');
+        a.setAttribute('rel', 'noopener noreferrer');
+      }
+      $$('[data-act]').forEach(a => {
+        const act = a.getAttribute('data-act');
+        if (act === 'studio') return;
+        const r = resolveAct(act);
+        if (!r) return;
+        setExternal(a, r.href);
+        const t = $('[data-t-pay]', a);
+        if (t) t.textContent = r.pay ? t.getAttribute('data-t-pay') : t.getAttribute('data-t-wa');
+      });
+      $$('[data-wa-display]').forEach(el => { if (cfg.display) { el.textContent = cfg.display; el.classList.remove('todo'); } });
+      if (cfg.email) {
+        $$('[data-mail-display]').forEach(el => { el.textContent = cfg.email; el.classList.remove('todo'); });
+        const m = $('#foot-mail'); if (m) m.setAttribute('href', 'mailto:' + cfg.email);
+      }
+      [['#link-terms', cfg.terms], ['#link-privacy', cfg.privacy]].forEach(([sel, url]) => {
+        const a = $(sel);
+        if (a && url) { a.setAttribute('href', url); $$('[data-url-todo]', a).forEach(s => s.remove()); }
+      });
+      const yearEl = $('#year'); if (yearEl) yearEl.textContent = new Date().getFullYear();
 
       /* =================================================================
          2. LOGO : repli en texte si l’image est absente
@@ -1564,12 +1890,34 @@
       });
 
       /* =================================================================
-         3. EN-TÊTE : fond et hauteur au défilement
+         3. EN-TÊTE, BARRE DE PROGRESSION, SECTION COURANTE
          ================================================================= */
       const header = $('#header');
-      const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
-      window.addEventListener('scroll', onScroll, { passive: true });
+      const progressBar = $('#progress');
+      let ticking = false;
+      function onScroll() {
+        ticking = false;
+        const y = window.scrollY;
+        header.classList.toggle('is-scrolled', y > 24);
+        const max = root.scrollHeight - window.innerHeight;
+        progressBar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, y / max) : 0) + ')';
+      }
+      window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
       onScroll();
+
+      if ('IntersectionObserver' in window) {
+        const navLinks = $$('[data-nav]');
+        const navObs = new IntersectionObserver(entries => {
+          entries.forEach(en => {
+            if (!en.isIntersecting) return;
+            navLinks.forEach(a => a.removeAttribute('aria-current'));
+            const a = navLinks.find(l => l.dataset.nav === en.target.id);
+            if (a) a.setAttribute('aria-current', 'true');
+          });
+        }, { rootMargin: '-45% 0px -50% 0px' });
+        navLinks.forEach(a => { const s = document.getElementById(a.dataset.nav); if (s) navObs.observe(s); });
+      }
 
       /* =================================================================
          4. MENU MOBILE (clavier, focus, Échap)
@@ -1578,12 +1926,17 @@
       const menu = $('#menu');
       const desktopMq = window.matchMedia('(min-width: 900px)');
       let menuOpen = false;
+      let viewerOpen = false;
+      const fab = $('#fab');
+      const hideZones = new Set();
+      let pastHero = false;
+      function updateFab() { fab.classList.toggle('is-visible', pastHero && hideZones.size === 0 && !menuOpen && !viewerOpen); }
 
       function setMenu(open) {
         menuOpen = open;
         menu.classList.toggle('is-open', open);
         header.classList.toggle('is-open', open);
-        document.documentElement.classList.toggle('is-locked', open);
+        root.classList.toggle('is-locked', open);
         burger.setAttribute('aria-expanded', String(open));
         burger.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
         $('main').toggleAttribute('inert', open);
@@ -1591,7 +1944,7 @@
         if (open) { const first = $('a', menu); if (first) setTimeout(() => first.focus({ preventScroll: true }), 60); }
         updateFab();
       }
-      burger.addEventListener('click', () => { setMenu(!menuOpen); });
+      burger.addEventListener('click', () => setMenu(!menuOpen));
       $$('a', menu).forEach(a => a.addEventListener('click', () => setMenu(false)));
       document.addEventListener('keydown', e => {
         if (!menuOpen) return;
@@ -1606,23 +1959,14 @@
       desktopMq.addEventListener('change', e => { if (e.matches && menuOpen) setMenu(false); });
 
       /* =================================================================
-         5. BOUTON WHATSAPP FLOTTANT
+         5. BOUTON WHATSAPP FLOTTANT (apparaît après le premier écran)
          ================================================================= */
-      const fab = $('#fab');
-      const hero = $('.hero');
-      let pastHero = false;
-      const hideZones = new Set();
-      let viewerOpen = false;
-
-      function updateFab() {
-        fab.classList.toggle('is-visible', pastHero && hideZones.size === 0 && !menuOpen && !viewerOpen);
-      }
       if ('IntersectionObserver' in window) {
-        new IntersectionObserver(([entry]) => { pastHero = !entry.isIntersecting; updateFab(); }, { threshold: 0, rootMargin: '-40% 0px 0px 0px' }).observe(hero);
+        new IntersectionObserver(([en]) => { pastHero = !en.isIntersecting; updateFab(); }, { rootMargin: '-40% 0px 0px 0px' }).observe($('.hero'));
         const zoneObs = new IntersectionObserver(entries => {
           entries.forEach(en => { en.isIntersecting ? hideZones.add(en.target) : hideZones.delete(en.target); });
           updateFab();
-        }, { threshold: 0 });
+        });
         $$('[data-fab-hide]').forEach(el => zoneObs.observe(el));
       }
 
@@ -1635,7 +1979,7 @@
           btn.addEventListener('click', () => {
             const open = btn.getAttribute('aria-expanded') === 'true';
             btn.setAttribute('aria-expanded', String(!open));
-            $('#' + btn.getAttribute('aria-controls')).classList.toggle('is-open', !open);
+            document.getElementById(btn.getAttribute('aria-controls')).classList.toggle('is-open', !open);
           });
           btn.addEventListener('keydown', e => {
             const keys = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: buttons.length - 1 };
@@ -1647,28 +1991,126 @@
       })();
 
       /* =================================================================
-         7. ÉTAPES : l’écran du téléphone suit l’étape visible
+         7. SCÈNES VIDÉO (hero, aperçu interactif, appel final)
          ================================================================= */
-      (function steps() {
-        const items = $$('.step');
-        const screens = $$('.ui');
-        if (!items.length || !('IntersectionObserver' in window)) return;
-        const setActive = idx => {
-          items.forEach((s, i) => s.classList.toggle('is-active', i === idx));
-          screens.forEach((u, i) => u.classList.toggle('is-on', i === idx));
+      const PRODUCTS = {
+        cosmetiques: { art: '#art-bottle', name: 'Parfum Oud', price: 15000, words: ['Nouveau', 'Éclat', 'Livraison'] },
+        telephones: { art: '#art-phone', name: 'Téléphone 128 Go', price: 85000, words: ['Neuf', '128 Go', 'Livraison'] },
+        restaurant: { art: '#art-burger', name: 'Burger maison', price: 3500, words: ['Chaud', 'Généreux', 'Livraison'] },
+        mode: { art: '#art-bag', name: 'Sac en cuir', price: 12000, words: ['Nouveau', 'Élégant', 'Livraison'] }
+      };
+      const STYLES = ['creme', 'nuit', 'dore'];
+      const fmtNum = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      const fmtPrice = n => fmtNum(n) + ' F';
+
+      function createScene(el) {
+        const q = s => el.querySelector(s);
+        const r = {
+          art: q('.vs-art'), use: q('.vs-prod'), prog: q('.vs-prog i'), name: q('.vs-name'),
+          price: q('.vs-price'), priceN: q('.vs-price-n'), words: $$('.vs-words li', el),
+          cta: q('.vs-cta'), ctaSmall: q('.vs-cta-text small'), ring: q('.vs-ring')
         };
-        const obs = new IntersectionObserver(entries => {
-          entries.forEach(en => { if (en.isIntersecting) setActive(Number(en.target.dataset.step)); });
-        }, { rootMargin: '-42% 0px -42% 0px', threshold: 0 });
-        items.forEach(s => obs.observe(s));
-      })();
+        const state = Object.assign({ product: 'cosmetiques', style: 'creme', number: '' }, PRODUCTS.cosmetiques);
+        let core = null, loopTl = null, started = false, visible = false;
+
+        function render() {
+          el.setAttribute('data-style', STYLES.indexOf(state.style) >= 0 ? state.style : 'creme');
+          r.use.setAttribute('href', (PRODUCTS[state.product] || PRODUCTS.cosmetiques).art);
+          r.name.textContent = state.name;
+          const txt = fmtPrice(state.price);
+          r.priceN.textContent = txt;
+          r.price.setAttribute('data-len', String(txt.length));
+          r.words.forEach((li, i) => { li.textContent = state.words[i] || ''; });
+          r.ctaSmall.textContent = state.number;
+        }
+        function targets() { return [el, r.art, r.prog, r.name, r.price, r.cta, r.ring].concat(r.words); }
+        function reset() {
+          if (core) { core.kill(); core = null; }
+          if (loopTl) { loopTl.kill(); loopTl = null; }
+          if (hasGsap) gsap.set(targets(), { clearProps: 'all' });
+        }
+        // Chronologie de la vidéo (environ 6,8 s, sans répétition)
+        function makeCore() {
+          const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+          const cs = getComputedStyle(el);
+          const ctaBg = cs.getPropertyValue('--sc-cta-bg').trim() || '#C9A14A';
+          const ctaFg = cs.getPropertyValue('--sc-cta-fg').trim() || '#111111';
+          const words = r.words.filter(li => li.textContent);
+          tl.fromTo(r.prog, { scaleX: 0 }, { scaleX: 1, duration: 6.2, ease: 'none' }, 0)
+            .fromTo(r.art, { scale: 1.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.1, ease: 'expo.out' }, .05)
+            .to(r.art, { scale: 1.05, duration: 5, ease: 'sine.inOut' }, 1.15)
+            .fromTo(r.name, { opacity: 0, x: -14 }, { opacity: 1, x: 0, duration: .6 }, .5)
+            // le prix tombe, rebondit une fois
+            .fromTo(r.price, { yPercent: -340, opacity: 0, scaleY: 1 }, { yPercent: 0, opacity: 1, duration: .42, ease: 'power2.in' }, 1.0)
+            .to(r.price, { scaleY: .86, duration: .08, ease: 'power1.out' }, 1.42)
+            .to(r.price, { scaleY: 1, yPercent: -9, duration: .16, ease: 'power2.out' }, 1.5)
+            .to(r.price, { yPercent: 0, duration: .17, ease: 'power2.in' }, 1.66)
+            .to(r.price, { scaleY: .95, duration: .06 }, 1.83)
+            .to(r.price, { scaleY: 1, duration: .2 }, 1.89);
+          if (words.length) tl.fromTo(words, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .55, stagger: .5 }, 2.15);
+          // le bouton WhatsApp s’allume
+          tl.fromTo(r.cta, { backgroundColor: 'rgba(246,242,234,.16)', color: 'rgba(246,242,234,.55)', scale: .96 }, { backgroundColor: ctaBg, color: ctaFg, scale: 1, duration: .55, ease: 'power2.out' }, 3.9)
+            .fromTo(r.ring, { opacity: .9, scale: 1 }, { opacity: 0, scale: 1.12, duration: .9, ease: 'power2.out' }, 3.95)
+            .set({}, {}, 6.8);
+          return tl;
+        }
+        function makeLoop() {
+          core = makeCore();
+          loopTl = gsap.timeline({ paused: true, repeat: -1 }).add(core, 0);
+          return loopTl;
+        }
+        function sync() {
+          if (!loopTl) return;
+          if (started && visible && !document.hidden) loopTl.resume(); else loopTl.pause();
+        }
+
+        const api = {
+          el, state, render, makeCore, reset,
+          update(patch) {
+            Object.assign(state, patch);
+            render();
+            if (loopTl) { const was = started; reset(); makeLoop(); if (was) { loopTl.play(0); sync(); } }
+          },
+          loop() {
+            if (!hasGsap) return;
+            reset(); makeLoop();
+            if ('IntersectionObserver' in window) {
+              new IntersectionObserver(([en]) => { visible = en.isIntersecting; if (visible && !started) { started = true; loopTl.play(0); } sync(); }, { threshold: .25 }).observe(el);
+              document.addEventListener('visibilitychange', sync);
+            } else { started = visible = true; loopTl.play(0); }
+          },
+          restart() { if (loopTl) { started = true; loopTl.play(0); sync(); } }
+        };
+        render();
+        return api;
+      }
+
+      const scenes = {};
+      const heroSceneEl = $('#hero-scene');
+      if (heroSceneEl) scenes.hero = createScene(heroSceneEl);
+
+      const tplScene = $('#tpl-scene');
+      const slotScenes = [];
+      $$('[data-scene-slot]').forEach(slot => {
+        if (!tplScene) return;
+        const el = tplScene.content.firstElementChild.cloneNode(true);
+        slot.appendChild(el);
+        const sc = createScene(el);
+        sc.update({
+          product: PRODUCTS[slot.dataset.product] ? slot.dataset.product : 'cosmetiques',
+          style: STYLES.indexOf(slot.dataset.style) >= 0 ? slot.dataset.style : 'creme'
+        });
+        const p = PRODUCTS[sc.state.product];
+        sc.update({ name: p.name, price: p.price, words: p.words.slice() });
+        slotScenes.push({ slot, sc });
+        if (slot.id === 'studio-slot') scenes.studio = sc;
+      });
 
       /* =================================================================
          8. VIDÉOS D’EXEMPLE : lecture seulement à l’écran, sans le son
          ================================================================= */
       const galleryVideos = $$('.ex video');
       const visibleVideos = new Set();
-
       function syncVideos() {
         galleryVideos.forEach(v => {
           const shouldPlay = !reduceMotion.matches && !document.hidden && !viewerOpen && visibleVideos.has(v);
@@ -1684,7 +2126,7 @@
         galleryVideos.forEach(v => vObs.observe(v));
       }
       document.addEventListener('visibilitychange', syncVideos);
-      // La vidéo masque l’espace réservé dès qu’elle a une image à montrer
+      reduceMotion.addEventListener('change', syncVideos);
       galleryVideos.forEach(v => {
         v.addEventListener('loadeddata', () => { const ph = v.parentNode.querySelector('.ex-ph'); if (ph) ph.hidden = true; });
       });
@@ -1701,8 +2143,7 @@
         const btnClose = $('#viewer-close');
         const btnPlay = $('#viewer-play');
         const btnSound = $('#viewer-sound');
-        let opener = null;
-        let closing = false;
+        let opener = null, closing = false;
 
         const setPlayUI = playing => {
           $('span', btnPlay).textContent = playing ? 'Pause' : 'Lecture';
@@ -1714,19 +2155,17 @@
           $('span', btnSound).textContent = on ? 'Couper le son' : 'Activer le son';
           $('use', btnSound).setAttribute('href', on ? '#i-sound' : '#i-mute');
         };
-
         function open(btn) {
           opener = btn;
           viewerOpen = true;
-          syncVideos();
-          updateFab();
+          syncVideos(); updateFab();
           titleEl.textContent = btn.dataset.title || 'Exemple';
           vid.setAttribute('aria-label', 'Exemple de vidéo Animo en grand : ' + (btn.dataset.title || '').toLowerCase());
           vid.poster = btn.dataset.poster || '';
           vid.src = btn.dataset.src;
           vid.muted = true;
           setSoundUI();
-          document.documentElement.classList.add('is-locked');
+          root.classList.add('is-locked');
           dlg.showModal();
           requestAnimationFrame(() => dlg.classList.add('is-on'));
           const p = vid.play();
@@ -1734,49 +2173,95 @@
           setPlayUI(true);
           btnClose.focus();
         }
-
         function close() {
           if (closing || !dlg.open) return;
           closing = true;
           dlg.classList.remove('is-on');
           setTimeout(() => {
-            vid.pause();
-            vid.removeAttribute('src');
-            vid.load();
+            vid.pause(); vid.removeAttribute('src'); vid.load();
             dlg.close();
-            document.documentElement.classList.toggle('is-locked', menuOpen);
-            viewerOpen = false;
-            closing = false;
-            syncVideos();
-            updateFab();
+            root.classList.toggle('is-locked', menuOpen);
+            viewerOpen = false; closing = false;
+            syncVideos(); updateFab();
             if (opener) opener.focus();
           }, reduceMotion.matches ? 0 : 280);
         }
-
         $$('.ex-btn').forEach(btn => btn.addEventListener('click', () => open(btn)));
         btnClose.addEventListener('click', close);
         dlg.addEventListener('cancel', e => { e.preventDefault(); close(); });
         dlg.addEventListener('click', e => { if (!e.target.closest('.viewer-stage, button')) close(); });
-
         btnPlay.addEventListener('click', () => { vid.paused ? vid.play() : vid.pause(); });
         vid.addEventListener('click', () => { vid.paused ? vid.play() : vid.pause(); });
         vid.addEventListener('play', () => setPlayUI(true));
         vid.addEventListener('pause', () => setPlayUI(false));
         btnSound.addEventListener('click', () => { vid.muted = !vid.muted; setSoundUI(); });
-        vid.addEventListener('timeupdate', () => {
-          if (vid.duration) bar.style.transform = 'scaleX(' + (vid.currentTime / vid.duration) + ')';
-        });
+        vid.addEventListener('timeupdate', () => { if (vid.duration) bar.style.transform = 'scaleX(' + (vid.currentTime / vid.duration) + ')'; });
       })();
 
       /* =================================================================
-         10. APERÇU QUI SUIT LE CURSEUR (fonctionnalités, ordinateur)
+         10. APERÇU INTERACTIF : l’utilisateur règle, la scène se rejoue
+         ================================================================= */
+      (function studio() {
+        const sc = scenes.studio;
+        if (!sc) return;
+        const inName = $('#in-name'), inPrice = $('#in-price'), inWords = $('#in-words'), inPhone = $('#in-phone');
+        const radios = { product: $$('input[name="product"]'), style: $$('input[name="style"]') };
+        const cta = $('#studio-cta');
+        const dirty = { name: false, price: false, words: false };
+        const val = k => (radios[k].find(r => r.checked) || radios[k][0]).value;
+        const parseWords = v => v.split(',').map(s => s.trim().slice(0, 14)).filter(Boolean).slice(0, 3);
+        const parsePrice = v => { const d = v.replace(/\D/g, '').slice(0, 7); return d ? parseInt(d, 10) : 0; };
+        const parseNumber = v => v.replace(/[^\d+\s]/g, '').replace(/\s+/g, ' ').trim().slice(0, 20);
+        const spaced = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+
+        function current() {
+          const product = val('product');
+          const def = PRODUCTS[product];
+          const words = parseWords(inWords.value);
+          return {
+            product, style: val('style'),
+            name: (inName.value.trim() || def.name).slice(0, 24),
+            price: parsePrice(inPrice.value) || def.price,
+            words: words.length ? words : def.words.slice(),
+            number: parseNumber(inPhone.value)
+          };
+        }
+        function updateLink() {
+          const c = current();
+          const msg = "Bonjour, je veux créer une vidéo Animo : " + c.name + ", " + fmtPrice(c.price).replace(/ /g, ' ') + ".";
+          if (cfg.app) setExternal(cta, cfg.app);
+          else if (cfg.wa) setExternal(cta, waUrl(msg));
+        }
+        let timer = null;
+        function apply() { sc.update(current()); updateLink(); }
+        function schedule() { clearTimeout(timer); timer = setTimeout(apply, 280); }
+
+        inName.addEventListener('input', () => { dirty.name = true; schedule(); });
+        inWords.addEventListener('input', () => { dirty.words = true; schedule(); });
+        inPhone.addEventListener('input', () => { inPhone.value = inPhone.value.replace(/[^\d+\s]/g, ''); schedule(); });
+        inPrice.addEventListener('input', () => { dirty.price = true; inPrice.value = inPrice.value.replace(/[^\d\s]/g, '').slice(0, 11); schedule(); });
+        inPrice.addEventListener('blur', () => { const n = parsePrice(inPrice.value); inPrice.value = n ? spaced(n) : ''; });
+        radios.product.forEach(r => r.addEventListener('change', () => {
+          const def = PRODUCTS[val('product')];
+          if (!dirty.name) inName.value = def.name;
+          if (!dirty.words) inWords.value = def.words.join(', ');
+          if (!dirty.price) inPrice.value = spaced(def.price);
+          apply();
+        }));
+        radios.style.forEach(r => r.addEventListener('change', apply));
+        $('#replay').addEventListener('click', () => { apply(); sc.restart(); });
+        updateLink();
+      })();
+
+      /* =================================================================
+         11. APERÇU QUI SUIT LE CURSEUR (fonctionnalités, ordinateur)
          ================================================================= */
       (function featurePreview() {
         const list = $('#feat-list');
         const prev = $('#fx-preview');
-        const finePointer = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1000px)');
+        const mq = window.matchMedia('(hover: hover) and (pointer: fine) and (min-width: 1000px)');
         if (!list || !prev) return;
-        const scenes = $$('.fx-scene', prev);
+        const scenesEls = $$('.fx-scene', prev);
         const W = 156, H = 156 * 16 / 9;
         let setX, setY;
         if (hasGsap) {
@@ -1793,129 +2278,314 @@
         };
         $$('.feat', list).forEach(row => {
           row.addEventListener('pointerenter', e => {
-            if (!finePointer.matches || e.pointerType !== 'mouse') return;
+            if (!mq.matches || e.pointerType !== 'mouse') return;
             const idx = Number(row.dataset.fx);
-            scenes.forEach((s, i) => s.classList.toggle('is-on', i === idx));
-            if (!prev.classList.contains('is-on') && hasGsap) { gsap.set(prev, { x: e.clientX + 28, y: e.clientY - H / 2 }); }
+            scenesEls.forEach((s, i) => s.classList.toggle('is-on', i === idx));
+            if (!prev.classList.contains('is-on') && hasGsap) gsap.set(prev, { x: e.clientX + 28, y: e.clientY - H / 2 });
             place(e.clientX, e.clientY);
             prev.classList.add('is-on');
           });
-          row.addEventListener('pointermove', e => { if (finePointer.matches && e.pointerType === 'mouse') place(e.clientX, e.clientY); });
+          row.addEventListener('pointermove', e => { if (mq.matches && e.pointerType === 'mouse') place(e.clientX, e.clientY); });
           row.addEventListener('pointerleave', () => prev.classList.remove('is-on'));
         });
       })();
 
       /* =================================================================
-         11. MOUVEMENT (GSAP) — désactivé si « réduire les animations »
+         12. MOUVEMENT (GSAP) : désactivé si « réduire les animations »
          ================================================================= */
-      if (!hasGsap) return;
+      function splitWords(el, mask) {
+        const holder = document.createElement('div');
+        const walk = (node, parent) => {
+          node.childNodes.forEach(ch => {
+            if (ch.nodeType === 3) {
+              ch.textContent.split(/([ \t\n\r]+)/).forEach(tok => {
+                if (!tok) return;
+                if (/^[ \t\n\r]+$/.test(tok)) { parent.appendChild(document.createTextNode(' ')); return; }
+                const wi = document.createElement('span');
+                wi.className = mask ? 'wi' : 'stw';
+                wi.textContent = tok;
+                if (mask) {
+                  const w = document.createElement('span');
+                  w.className = 'w';
+                  w.appendChild(wi);
+                  parent.appendChild(w);
+                } else parent.appendChild(wi);
+              });
+            } else if (ch.nodeType === 1) {
+              const c = ch.cloneNode(false);
+              parent.appendChild(c);
+              walk(ch, c);
+            }
+          });
+        };
+        walk(el, holder);
+        el.replaceChildren(...holder.childNodes);
+        return $$(mask ? '.wi' : '.stw', el);
+      }
+
+      function finalize() { root.classList.remove('js-wait'); }
+      if (!hasGsap) { finalize(); return; }
 
       const mm = gsap.matchMedia();
       mm.add('(prefers-reduced-motion: no-preference)', () => {
+        try {
+          const cleanups = [];
 
-        /* ---- Entrée du hero (environ 1,4 s) ---- */
-        const words = $$('.hero-title .w > span');
-        const demoTl = buildDemo();
-        const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
-        intro
-          .from('[data-hero="eyebrow"]', { opacity: 0, y: 14, duration: .8 }, 0)
-          .from(words, { yPercent: 115, duration: .95, stagger: .06 }, .05)
-          .from('[data-hero="lead"]', { opacity: 0, y: 24, duration: .85, ease: 'power3.out' }, .45)
-          .from('[data-hero="actions"]', { opacity: 0, y: 24, duration: .85, ease: 'power3.out' }, .6)
-          .from('[data-hero="phone"]', { opacity: 0, y: 70, rotation: 6, duration: 1.1, transformOrigin: '50% 100%' }, .3)
-          .from('[data-hero="facts"]', { opacity: 0, y: 16, duration: .8, ease: 'power3.out' }, .85)
-          .add(() => { demoTl.play(0); }, 1.15);
-        gsap.from(header, { opacity: 0, y: -12, duration: .8, ease: 'power3.out' });
-
-        /* Démonstration dans le téléphone : photo, prix, mots, bouton */
-        function buildDemo() {
-          const root = $('[data-demo="root"]');
-          const q = k => $('[data-demo="' + k + '"]', root);
-          const art = q('art'), price = q('price'), progress = q('progress'), cta = q('cta'), ring = q('ring');
-          const wordEls = $$('li', q('words'));
-          const tl = gsap.timeline({ paused: true, repeat: -1, defaults: { ease: 'power3.out' } });
-
-          tl.set(root, { opacity: 1 }, 0)
-            .fromTo(progress, { scaleX: 0 }, { scaleX: 1, duration: 6.1, ease: 'none' }, 0)
-            .fromTo(art, { scale: 1.18, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.1, ease: 'expo.out' }, .1)
-            // le prix tombe, rebondit une fois
-            .fromTo(price, { yPercent: -320, opacity: 0, scaleY: 1 }, { yPercent: 0, opacity: 1, duration: .42, ease: 'power2.in' }, 1.0)
-            .to(price, { scaleY: .86, duration: .08, ease: 'power1.out' }, 1.42)
-            .to(price, { scaleY: 1, yPercent: -9, duration: .16, ease: 'power2.out' }, 1.5)
-            .to(price, { yPercent: 0, duration: .17, ease: 'power2.in' }, 1.66)
-            .to(price, { scaleY: .95, duration: .06 }, 1.83)
-            .to(price, { scaleY: 1, duration: .2 }, 1.89)
-            // trois mots-clés, un par un
-            .fromTo(wordEls, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: .55, stagger: .5 }, 2.15)
-            // le bouton WhatsApp s’allume
-            .fromTo(cta,
-              { backgroundColor: 'rgba(246,242,234,.16)', color: 'rgba(246,242,234,.55)' },
-              { backgroundColor: '#C9A14A', color: '#111111', duration: .5, ease: 'power2.out' }, 3.9)
-            .fromTo(ring, { opacity: .9, scale: 1 }, { opacity: 0, scale: 1.12, duration: .9, ease: 'power2.out' }, 3.95)
-            .fromTo(cta, { scale: .96 }, { scale: 1, duration: .6, ease: 'expo.out' }, 3.9)
-            // fin de boucle
-            .to(root, { opacity: 0, duration: .4, ease: 'power1.in' }, 5.8)
-            .set({}, {}, 6.25);
-
-          // La démonstration ne tourne que lorsqu’elle est visible
-          if ('IntersectionObserver' in window) {
-            let started = false;
-            const io = new IntersectionObserver(([en]) => {
-              if (!started) { return; }
-              en.isIntersecting ? tl.resume() : tl.pause();
-            }, { threshold: .15 });
-            io.observe($('#demo'));
-            const origPlay = tl.play.bind(tl);
-            tl.play = (...a) => { started = true; return origPlay(...a); };
-          }
-          return tl;
-        }
-
-        if (!hasST) return;
-
-        /* ---- Apparition des blocs au défilement ---- */
-        gsap.set('[data-reveal]', { autoAlpha: 0, y: 32 });
-        ScrollTrigger.batch('[data-reveal]', {
-          start: 'top 90%',
-          once: true,
-          onEnter: batch => gsap.to(batch, { autoAlpha: 1, y: 0, duration: .85, ease: 'power3.out', stagger: .1, overwrite: true })
-        });
-
-        /* ---- Ligne dorée des étapes ---- */
-        gsap.fromTo('#steps-line', { scaleY: 0 }, {
-          scaleY: 1, ease: 'none',
-          scrollTrigger: { trigger: '#steps', start: 'top 60%', end: 'bottom 60%', scrub: .4 }
-        });
-
-        /* ---- Prix : comptage de 0 à la valeur, une seule fois ---- */
-        const fmt = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-        const counters = $$('[data-count]');
-        counters.forEach(el => { el.textContent = '0'; });
-        ScrollTrigger.create({
-          trigger: '#plans', start: 'top 80%', once: true,
-          onEnter: () => counters.forEach((el, i) => {
-            const target = Number(el.dataset.count);
-            const o = { v: 0 };
-            gsap.to(o, { v: target, duration: 1.6, delay: i * .12, ease: 'power3.out', onUpdate: () => { el.textContent = fmt(o.v); }, onComplete: () => { el.textContent = fmt(target); } });
-          })
-        });
-
-        /* ---- Parallaxe légère de la galerie (grand écran) ---- */
-        const mm2 = gsap.matchMedia();
-        mm2.add('(min-width: 1100px)', () => {
-          $$('.ex').forEach((ex, i) => {
-            gsap.fromTo(ex, { yPercent: i % 2 ? 3 : -3 }, {
-              yPercent: i % 2 ? -3 : 3, ease: 'none',
-              scrollTrigger: { trigger: '#gallery', start: 'top bottom', end: 'bottom top', scrub: true }
+          /* ---- Titres : les mots montent depuis un masque ---- */
+          if (hasST) {
+            $$('[data-split]').forEach(h => {
+              const words = splitWords(h, true);
+              gsap.set(words, { yPercent: 115 });
+              ScrollTrigger.create({
+                trigger: h, start: 'top 88%', once: true,
+                onEnter: () => gsap.to(words, { yPercent: 0, duration: .95, ease: 'expo.out', stagger: .05 })
+              });
             });
-          });
-        });
+            gsap.set('[data-reveal]', { autoAlpha: 0, y: 32 });
+            ScrollTrigger.batch('[data-reveal]', {
+              start: 'top 90%', once: true,
+              onEnter: batch => gsap.to(batch, { autoAlpha: 1, y: 0, duration: .85, ease: 'power3.out', stagger: .1, overwrite: true })
+            });
+          }
 
-        return () => mm2.revert();
+          /* ---- Hero : entrée (environ 1,4 s) puis démonstration en boucle ---- */
+          const heroScene = scenes.hero;
+          const heroApp = $('#hero-app');
+          let heroMaster = null, heroStarted = false, heroVisible = true;
+          function buildHeroMaster() {
+            const core = heroScene.makeCore();
+            const photos = $$('.ui-photo', heroApp), fields = $$('.ui-field', heroApp);
+            const appBtn = $('.app-btn', heroApp), appPrice = $('.app-price', heroApp), appNum = $('.app-num', heroApp);
+            const pubs = $$('.pub');
+            const o = { v: 0 };
+            const m = gsap.timeline({ paused: true, repeat: -1 });
+            m.set(heroApp, { autoAlpha: 1, yPercent: 0 }, 0)
+              .fromTo(photos, { scale: .5, opacity: 0, y: 24 }, { scale: 1, opacity: 1, y: 0, duration: .5, stagger: .14, ease: 'back.out(1.6)' }, .15)
+              .fromTo(fields, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: .4, stagger: .12, ease: 'power3.out' }, .7)
+              .fromTo(o, { v: 0 }, { v: 15000, duration: .9, ease: 'power2.out', onUpdate: () => { appPrice.textContent = fmtPrice(Math.round(o.v / 50) * 50); } }, .9)
+              .fromTo(appNum, { opacity: .25 }, { opacity: 1, duration: .4 }, 1.6)
+              .fromTo(appBtn, { scale: 1 }, { scale: .95, duration: .12, ease: 'power1.out' }, 2.15)
+              .to(appBtn, { scale: 1, duration: .35, ease: 'back.out(3)' }, 2.27)
+              .to(heroApp, { yPercent: -6, autoAlpha: 0, duration: .5, ease: 'power2.inOut' }, 2.55)
+              .add(core, 2.6)
+              .fromTo(pubs, { scale: .5, opacity: 0 }, { scale: 1, opacity: 1, duration: .5, stagger: .16, ease: 'back.out(2)' }, 7.0)
+              .to(pubs, { opacity: 0, duration: .35 }, 8.5)
+              .to(heroApp, { yPercent: 0, autoAlpha: 1, duration: .5, ease: 'power2.inOut' }, 8.9)
+              .set({}, {}, 9.5);
+            return m;
+          }
+          if (heroScene && heroApp) {
+            heroMaster = buildHeroMaster();
+            if ('IntersectionObserver' in window) {
+              new IntersectionObserver(([en]) => {
+                heroVisible = en.isIntersecting;
+                if (heroStarted) heroVisible ? heroMaster.resume() : heroMaster.pause();
+              }, { threshold: .1 }).observe($('.hero'));
+            }
+          }
+          const words = $$('.hero-title .w > span');
+          const swashPath = $('.swash path');
+          const intro = gsap.timeline({ defaults: { ease: 'expo.out' } });
+          intro
+            .from('[data-hero="eyebrow"]', { opacity: 0, y: 14, duration: .8 }, 0)
+            .from(words, { yPercent: 115, duration: .95, stagger: .06 }, .05)
+            .from('[data-hero="lead"]', { opacity: 0, y: 24, duration: .85, ease: 'power3.out' }, .45)
+            .from('[data-hero="actions"]', { opacity: 0, y: 24, duration: .85, ease: 'power3.out' }, .6)
+            .from('[data-hero="stage"]', { opacity: 0, y: 70, rotation: 6, duration: 1.1, transformOrigin: '50% 100%' }, .3)
+            .from('[data-hero="facts"]', { opacity: 0, y: 16, duration: .8, ease: 'power3.out' }, .85)
+            .add(() => { if (heroMaster) { heroStarted = true; heroMaster.play(0); if (!heroVisible) heroMaster.pause(); } }, 1.15);
+          if (swashPath) intro.fromTo(swashPath, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: .9, ease: 'power2.inOut' }, .85);
+          gsap.from(header, { opacity: 0, y: -12, duration: .8, ease: 'power3.out' });
+          cleanups.push(() => { if (heroMaster) heroMaster.kill(); });
+
+          // Éléments flottants du hero : légère respiration + parallaxe du pointeur
+          gsap.to('.fl-in', { y: -9, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1, stagger: { each: .9 } });
+          if (finePointer.matches) {
+            const hero = $('.hero');
+            const layers = [['.fl--a', -18], ['.fl--b', 22], ['.pub--1', 14], ['.pub--2', -12], ['.pub--3', 20], ['.hero-phone .halo', -10], ['.hero-phone .phone', 6]]
+              .map(([sel, f]) => { const el = $(sel); return el && { f, x: gsap.quickTo(el, 'x', { duration: .9, ease: 'power3.out' }), y: gsap.quickTo(el, 'y', { duration: .9, ease: 'power3.out' }) }; })
+              .filter(Boolean);
+            const move = e => {
+              const r = hero.getBoundingClientRect();
+              const nx = (e.clientX - r.left) / r.width - .5, ny = (e.clientY - r.top) / r.height - .5;
+              layers.forEach(l => { l.x(nx * l.f); l.y(ny * l.f); });
+            };
+            hero.addEventListener('pointermove', move);
+            cleanups.push(() => hero.removeEventListener('pointermove', move));
+          }
+
+          /* ---- Aperçu interactif et appel final : boucles quand elles sont visibles ---- */
+          slotScenes.forEach(({ slot, sc }) => { if (slot.hasAttribute('data-loop')) sc.loop(); });
+
+          /* ---- Boutons magnétiques et curseur ---- */
+          if (finePointer.matches) {
+            $$('[data-magnetic]').forEach(b => {
+              const qx = gsap.quickTo(b, 'x', { duration: .5, ease: 'power3.out' }), qy = gsap.quickTo(b, 'y', { duration: .5, ease: 'power3.out' });
+              b.addEventListener('pointermove', e => {
+                if (e.pointerType !== 'mouse') return;
+                const r = b.getBoundingClientRect();
+                qx((e.clientX - (r.left + r.width / 2)) * .25);
+                qy((e.clientY - (r.top + r.height / 2)) * .35);
+              });
+              b.addEventListener('pointerleave', () => { qx(0); qy(0); });
+            });
+            const cursor = $('#cursor'), label = $('#cursor-label');
+            cursor.classList.add('is-ready');
+            const cx = gsap.quickTo(cursor, 'x', { duration: .45, ease: 'power3.out' }), cy = gsap.quickTo(cursor, 'y', { duration: .45, ease: 'power3.out' });
+            let first = true;
+            const onMove = e => {
+              if (e.pointerType !== 'mouse') return;
+              if (first) { gsap.set(cursor, { x: e.clientX, y: e.clientY }); first = false; }
+              cx(e.clientX); cy(e.clientY);
+              cursor.classList.add('is-on');
+              const lab = e.target.closest && e.target.closest('[data-cursor-label]');
+              cursor.classList.toggle('is-hover', !!(e.target.closest && e.target.closest('a, button, label, input, [data-cursor-label]')));
+              cursor.classList.toggle('has-label', !!lab);
+              label.textContent = lab ? lab.getAttribute('data-cursor-label') : '';
+            };
+            const onLeave = () => cursor.classList.remove('is-on');
+            window.addEventListener('pointermove', onMove);
+            root.addEventListener('mouseleave', onLeave);
+            cleanups.push(() => { window.removeEventListener('pointermove', onMove); root.removeEventListener('mouseleave', onLeave); cursor.classList.remove('is-ready', 'is-on'); });
+          }
+
+          if (hasST) {
+            /* ---- Bande défilante : la vitesse suit le défilement ---- */
+            const mq = $('.marquee'), track = $('#marquee-track');
+            mq.classList.add('is-live');
+            const mTween = gsap.to(track, { xPercent: -50, duration: 60, ease: 'none', repeat: -1 });
+            ScrollTrigger.create({
+              trigger: mq, start: 'top bottom', end: 'bottom top',
+              onUpdate: self => {
+                const dir = self.direction;
+                gsap.to(mTween, { timeScale: dir * Math.min(1 + Math.abs(self.getVelocity()) / 260, 9), duration: .25, overwrite: true });
+                gsap.to(mTween, { timeScale: dir, duration: 1.2, delay: .25 });
+              }
+            });
+            cleanups.push(() => mq.classList.remove('is-live'));
+
+            /* ---- Le principe : les mots s’éclairent un à un ---- */
+            const st = $('#statement-text');
+            if (st) {
+              const sw = splitWords(st, false);
+              gsap.fromTo(sw, { opacity: .14 }, {
+                opacity: 1, ease: 'none', stagger: .1,
+                scrollTrigger: { trigger: st, start: 'top 82%', end: 'bottom 50%', scrub: true }
+              });
+            }
+
+            /* ---- Comment ça marche : section épinglée, la vidéo se construit ---- */
+            const how = $('.how');
+            const pinMm = gsap.matchMedia();
+            pinMm.add('(min-height: 560px)', () => {
+              how.classList.add('is-pinned');
+              const pin = $('#how-pin');
+              const steps = $$('.step', how), screens = $$('.how-stage .ui'), nodes = $$('.rail-node', how), rail = $('#how-rail');
+              const setActive = i => nodes.forEach((n, k) => n.classList.toggle('is-on', k <= i));
+              setActive(0);
+              gsap.set(screens.slice(1), { opacity: 0 });
+              gsap.set(steps.slice(1), { opacity: 0 });
+              gsap.set(rail, { '--p': 0 });
+              const s1 = screens[0];
+              const s1Items = [].concat($$('.ui-photo', s1), $$('.ui-field', s1), $$('.ui-btn', s1));
+              gsap.set(s1Items, { opacity: 0, y: 16 });
+              const intro1 = ScrollTrigger.create({
+                trigger: pin, start: 'top 75%', once: true,
+                onEnter: () => gsap.to(s1Items, { opacity: 1, y: 0, duration: .55, stagger: .09, ease: 'power3.out' })
+              });
+
+              const tl = gsap.timeline({
+                defaults: { ease: 'none' },
+                scrollTrigger: {
+                  trigger: pin, start: 'top top', end: () => '+=' + Math.round(window.innerHeight * 3.6),
+                  pin: true, scrub: .7, anticipatePin: 1, invalidateOnRefresh: true,
+                  onUpdate: self => setActive(Math.min(3, Math.floor(self.progress * 4)))
+                }
+              });
+              tl.to(rail, { '--p': 1, duration: 4 }, 0);
+              for (let i = 0; i < 4; i++) {
+                if (i > 0) {
+                  tl.fromTo(steps[i], { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: .14, ease: 'power2.out' }, i)
+                    .fromTo(screens[i], { opacity: 0 }, { opacity: 1, duration: .14 }, i);
+                }
+                if (i < 3) {
+                  tl.to(steps[i], { opacity: 0, y: -24, duration: .12, ease: 'power2.in' }, i + .86)
+                    .to(screens[i], { opacity: 0, duration: .12 }, i + .86);
+                }
+              }
+              // Écran 2 : les modèles arrivent, le deuxième est choisi
+              tl.fromTo($$('.ui-style', screens[1]), { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: .26, stagger: .08, ease: 'power2.out' }, 1.1)
+                .fromTo($$('.is-pick i', screens[1]), { scale: 1 }, { scale: 1.08, duration: .2, ease: 'back.out(3)' }, 1.55)
+                // Écran 3 : la génération avance
+                .fromTo($$('.fg', screens[2]), { strokeDashoffset: 100 }, { strokeDashoffset: 6, duration: .72, ease: 'power1.inOut' }, 2.12)
+                .fromTo($$('.ui-bars i', screens[2]), { scaleX: 0 }, { scaleX: 1, duration: .6, stagger: .1, ease: 'power1.inOut' }, 2.15)
+                // Écran 4 : la vidéo est prête, le panneau de publication monte
+                .fromTo($$('.vs-art', screens[3]), { scale: 1.15 }, { scale: 1, duration: .3, ease: 'power2.out' }, 3.02)
+                .fromTo($$('.ui-sheet', screens[3]), { yPercent: 105 }, { yPercent: 0, duration: .3, ease: 'power3.out' }, 3.3);
+              return () => { how.classList.remove('is-pinned'); intro1.kill(); };
+            });
+            cleanups.push(() => pinMm.revert());
+
+            /* ---- Sections noires : elles s’ouvrent en plein écran au défilement ---- */
+            $$('.clip').forEach(sec => {
+              gsap.fromTo(sec, { clipPath: 'inset(0px 4vw round 44px)' }, {
+                clipPath: 'inset(0px 0vw round 0px)', ease: 'none',
+                scrollTrigger: { trigger: sec, start: 'top 100%', end: 'top 40%', scrub: true }
+              });
+            });
+
+            /* ---- Prix : comptage de 0 à la valeur, une seule fois ---- */
+            const counters = $$('[data-count]');
+            counters.forEach(el => { el.textContent = '0'; });
+            ScrollTrigger.create({
+              trigger: '#plans', start: 'top 80%', once: true,
+              onEnter: () => counters.forEach((el, i) => {
+                const target = Number(el.dataset.count), o = { v: 0 };
+                gsap.to(o, { v: target, duration: 1.6, delay: i * .12, ease: 'power3.out', onUpdate: () => { el.textContent = fmtNum(Math.round(o.v)); }, onComplete: () => { el.textContent = fmtNum(target); } });
+              })
+            });
+
+            /* ---- Galerie : parallaxe légère et inclinaison au survol ---- */
+            const galMm = gsap.matchMedia();
+            galMm.add('(min-width: 1100px)', () => {
+              $$('.ex').forEach((ex, i) => {
+                gsap.fromTo(ex, { yPercent: i % 2 ? 3 : -3 }, {
+                  yPercent: i % 2 ? -3 : 3, ease: 'none',
+                  scrollTrigger: { trigger: '#gallery', start: 'top bottom', end: 'bottom top', scrub: true }
+                });
+              });
+              if (finePointer.matches) {
+                $$('.ex-btn').forEach(b => {
+                  gsap.set(b, { transformPerspective: 900 });
+                  const rx = gsap.quickTo(b, 'rotationX', { duration: .6, ease: 'power3.out' }), ry = gsap.quickTo(b, 'rotationY', { duration: .6, ease: 'power3.out' });
+                  b.addEventListener('pointermove', e => {
+                    if (e.pointerType !== 'mouse') return;
+                    const r = b.getBoundingClientRect();
+                    ry(((e.clientX - r.left) / r.width - .5) * 14);
+                    rx(-((e.clientY - r.top) / r.height - .5) * 14);
+                  });
+                  b.addEventListener('pointerleave', () => { rx(0); ry(0); });
+                });
+              }
+            });
+            cleanups.push(() => galMm.revert());
+
+            /* ---- Appel final : le grand mot défile doucement ---- */
+            const word = $('.cta-word');
+            if (word) gsap.fromTo(word, { xPercent: 4 }, { xPercent: -10, ease: 'none', scrollTrigger: { trigger: '.cta', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+            const refresh = () => ScrollTrigger.refresh();
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+            window.addEventListener('load', refresh);
+          }
+
+          return () => cleanups.forEach(fn => { try { fn(); } catch (e) { /* rien */ } });
+        } finally {
+          finalize();
+        }
       });
-
-      // Si l’utilisateur active « réduire les animations » en cours de visite
-      reduceMotion.addEventListener('change', syncVideos);
+      // Si le mouvement est réduit, ou si l’initialisation n’a rien activé : on affiche tout
+      if (reduceMotion.matches) finalize();
     })();
   </script>
 </body>
