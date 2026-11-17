@@ -1,6 +1,6 @@
 # Généré par tools/update-csp.py (Netlify, Cloudflare Pages)
 /*
-  Content-Security-Policy: default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-DemcRBNc/waYzGaipcWmBLuRnKA37JEeIXtVYehhTQI=' https://cdnjs.cloudflare.com; style-src 'sha256-Yk39dBdSG6WhyEsllE/wzhM687X+W4HEGUEl4J7RrCg=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-d1D8zHV2SL4+DuiP3EH0Urd7Cmm2caFzT/WbUSxyWiQ=' https://cdnjs.cloudflare.com; style-src 'sha256-ELFGTCUrSotlbLzlEmyz/uu73Droa562K72ek8EYtOc=' 'sha256-t46+Jr1OssL6asYgCiTrVJzsPk1TG9KDDYzW/W7YLNY=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

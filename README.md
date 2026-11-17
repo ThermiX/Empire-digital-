@@ -2,16 +2,24 @@
 
 Une seule page, `index.html` : le CSS et le JavaScript sont intégrés. Elle s'ouvre directement dans un navigateur et se met en ligne sur n'importe quel hébergement statique (Netlify, Vercel, Cloudflare Pages, GitHub Pages).
 
-## Fichiers à placer à côté de `index.html`
+## Fichiers du site
+
+Déjà dans le dépôt : `logo.svg` et `logo-blanc.svg` (le logo : le mot « Animo », avec un triangle de lecture doré à la place du point du « i »), leurs versions `logo.png` et `logo-blanc.png`, `favicon.svg` et `favicon.png` (icône carrée), `apercu.jpg` (image de partage, 1200 × 630 px, tirée de la page), et les pages `confidentialite.html`, `conditions.html` et `404.html`.
+
+Il reste à ajouter :
 
 | Fichier | Format conseillé |
 |---|---|
-| `logo.png` | PNG transparent, environ 112 × 28 px affiché (fourni en 2×). Sans lui, la page affiche « Animo » en texte |
-| `logo-blanc.png` | PNG transparent, pour les fonds sombres (non utilisé pour l'instant) |
-| `favicon.png` | 64 × 64 px |
-| `apercu.jpg` | 1200 × 630 px, image de partage |
 | `exemple-1.mp4` à `exemple-6.mp4` | 9:16, 360 × 640 px minimum, H.264, légères |
 | `exemple-1.jpg` à `exemple-6.jpg` | Première image de chaque vidéo |
+
+Dans la page, le logo est du SVG intégré (net sur tous les écrans, rien à télécharger). Pour l'utiliser ailleurs (réseaux sociaux, documents), prends les fichiers `logo*.svg` ou `logo*.png`.
+
+## Pages confidentialité et conditions
+
+`confidentialite.html` décrit ce que la page fait réellement : aucun cookie ni mesure d'audience, polices Google et bibliothèque d'animation chargées depuis des services tiers, aperçu qui reste dans le navigateur, données de paiement transmises à Moneroo. `conditions.html` pose la structure des conditions d'utilisation.
+
+Tout ce qui dépend de ta société reste en crochets visibles (éditeur, adresse, e-mail, hébergeur, durées de conservation, annulation, propriété des vidéos, droit applicable). **Fais relire ces deux pages par un juriste de ton pays avant la mise en ligne** : ce sont des modèles, pas un avis juridique.
 
 ## Réglages (liens, numéro, paiement)
 
@@ -26,7 +34,7 @@ Tout se règle dans le bloc `<script type="application/json" id="animo-config">`
 | `checkoutEndpoint` | Chemin du service de paiement du site (`/api/checkout`). Vide : pas de formulaire de paiement |
 | `paymentLinks` | Un lien de paiement par nom d'offre (par exemple `Essentiel`, `Boutique`), utilisé si le formulaire de paiement ne s'applique pas. Sans lien, le bouton ouvre WhatsApp avec le nom de l'offre |
 | `plans` | Les trois offres affichées dans « Tarifs » (voir ci-dessous) |
-| `termsUrl`, `privacyUrl` | Pages « Conditions d'utilisation » et « Confidentialité » |
+| `termsUrl`, `privacyUrl` | Pages « Conditions d'utilisation » et « Confidentialité » (`conditions.html` et `confidentialite.html` par défaut) |
 
 Les valeurs sont vérifiées par la page : seules les adresses `https://` sont acceptées (les liens `javascript:` ou `data:` sont ignorés).
 
@@ -85,4 +93,4 @@ Le script recalcule les empreintes dans `index.html`, `_headers` et `vercel.json
 
 ## Textes à compléter
 
-`[+227 XX XX XX XX]`, `[ADRESSE E-MAIL]`, `[AJOUTER LES OPÉRATEURS ACCEPTÉS]`, `[AJOUTER LES MOYENS DE PAIEMENT]`, `[AJOUTER LA POLITIQUE D'ANNULATION]`, `[AJOUTER LES CONDITIONS D'UTILISATION]`, `[URL]`. Les numéros, l'e-mail et les liens légaux se remplissent via le bloc de réglages ; les trois réponses de la FAQ se modifient dans le HTML.
+`[+227 XX XX XX XX]`, `[ADRESSE E-MAIL]`, `[AJOUTER LES OPÉRATEURS ACCEPTÉS]`, `[AJOUTER LES MOYENS DE PAIEMENT]`, `[AJOUTER LA POLITIQUE D'ANNULATION]`, `[AJOUTER LES CONDITIONS D'UTILISATION]`, `[NOM OU RAISON SOCIALE DE L'ÉDITEUR]`, `[ADRESSE]` et les autres crochets des pages légales. Les numéros et l'e-mail se remplissent via le bloc de réglages ; les trois réponses de la FAQ se modifient dans le HTML.

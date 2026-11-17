@@ -6,20 +6,22 @@
 
   <!-- Sécurité : politique de contenu (CSP). Les empreintes (sha256) des blocs de style et de script sont
        recalculées par « python3 tools/update-csp.py » : à relancer après toute modification du CSS ou du JavaScript. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-DemcRBNc/waYzGaipcWmBLuRnKA37JEeIXtVYehhTQI=' https://cdnjs.cloudflare.com; style-src 'sha256-Yk39dBdSG6WhyEsllE/wzhM687X+W4HEGUEl4J7RrCg=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-d1D8zHV2SL4+DuiP3EH0Urd7Cmm2caFzT/WbUSxyWiQ=' https://cdnjs.cloudflare.com; style-src 'sha256-ELFGTCUrSotlbLzlEmyz/uu73Droa562K72ek8EYtOc=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="color-scheme" content="light">
 
-  <title>Animo · Vos photos deviennent des vidéos qui vendent</title>
-  <meta name="description" content="Animo transforme les photos de votre produit, son prix et votre numéro WhatsApp en vidéo animée, prête pour TikTok, WhatsApp et Facebook. Prix en francs CFA, paiement par Mobile Money.">
+  <title>Animo · Tes photos deviennent des vidéos qui vendent</title>
+  <meta name="description" content="Animo transforme les photos de ton produit, son prix et ton numéro WhatsApp en vidéo animée, prête pour TikTok, WhatsApp et Facebook. Prix en francs CFA, paiement par Mobile Money.">
   <meta name="theme-color" content="#F6F2EA">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="favicon.png">
 
   <!-- Partage (Open Graph / Twitter). Mettre une URL absolue pour og:image une fois le domaine connu. -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_FR">
   <meta property="og:site_name" content="Animo">
-  <meta property="og:title" content="Animo · Vos photos deviennent des vidéos qui vendent">
+  <meta property="og:title" content="Animo · Tes photos deviennent des vidéos qui vendent">
   <meta property="og:description" content="Photos, prix et numéro WhatsApp : Animo en fait une vidéo animée prête à publier sur TikTok, WhatsApp et Facebook.">
   <meta property="og:image" content="apercu.jpg">
   <meta property="og:image:alt" content="Aperçu d’Animo : une vidéo verticale de produit avec le prix et le bouton WhatsApp">
@@ -211,13 +213,14 @@
     .btn {
       --fill: var(--gold-light);
       position: relative; isolation: isolate; overflow: hidden;
-      display: inline-flex; align-items: center; justify-content: center; gap: .8em;
-      min-height: 54px; padding: 0 1.7em;
+      display: inline-flex; align-items: center; justify-content: center; gap: 1em;
+      min-height: 58px; padding: 0 7px 0 1.7em;
       border-radius: 999px;
       font: 600 1rem/1 var(--font-text);
       white-space: nowrap;
       transition: color .4s var(--ease-out), border-color .4s;
     }
+    .btn:not(:has(.arr)) { padding-inline: 1.7em; }
     .btn::before {
       content: ""; position: absolute; inset: -1px; z-index: -1; background: var(--fill);
       transform: translateY(102%); border-radius: 50% 50% 0 0 / 100% 100% 0 0;
@@ -229,9 +232,17 @@
     .btn--ghost:hover, .btn--ghost:focus-visible { color: var(--paper); }
     .is-dark .btn--ghost { border-color: rgba(246, 242, 234, .5); --fill: var(--paper); }
     .is-dark .btn--ghost:hover, .is-dark .btn--ghost:focus-visible { color: var(--ink); border-color: var(--paper); }
-    .btn--sm { min-height: 44px; padding: 0 1.3em; font-size: .9375rem; }
-    .btn--lg { min-height: 66px; padding: 0 2.2em; font-size: 1.0625rem; }
-    .btn--block { width: 100%; }
+    .btn--sm { min-height: 46px; padding: 0 5px 0 1.2em; font-size: .9375rem; gap: .8em; }
+    .btn--lg { min-height: 68px; padding: 0 9px 0 2.2em; font-size: 1.0625rem; }
+    .btn--block { width: 100%; justify-content: space-between; }
+    /* La flèche des boutons vit dans une pastille ronde */
+    .btn .arr { width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: var(--paper); }
+    .btn--sm .arr { width: 34px; height: 34px; }
+    .btn--lg .arr { width: 44px; height: 44px; }
+    .btn .arr svg { width: 100%; height: 100%; padding: 9px; }
+    .btn--ghost:hover .arr, .btn--ghost:focus-visible .arr { background: var(--paper); color: var(--ink); }
+    .is-dark .btn--ghost .arr { background: var(--paper); color: var(--ink); }
+    .is-dark .btn--ghost:hover .arr, .is-dark .btn--ghost:focus-visible .arr { background: var(--ink); color: var(--paper); }
 
     /* Flèche qui glisse : une sort, l’autre entre */
     .arr { position: relative; width: 20px; height: 20px; overflow: hidden; flex: none; }
@@ -263,23 +274,34 @@
     .progress { position: fixed; z-index: 80; inset: 0 0 auto 0; height: 2px; pointer-events: none; }
     .progress i { display: block; height: 100%; background: var(--gold); transform-origin: left; transform: scaleX(0); }
 
+    /* En-tête : pastille flottante (le fond se précise quand on défile) */
     .site-header {
       position: fixed; inset: 0 0 auto 0; z-index: 60;
-      height: var(--header-h);
-      display: flex; align-items: center;
-      background: transparent;
-      border-bottom: 1px solid transparent;
-      transition: height .45s var(--ease-out), background-color .3s, border-color .3s;
+      height: var(--header-h); padding-top: 12px;
+      display: flex; align-items: flex-start; justify-content: center;
+      pointer-events: none;
+      transition: padding .45s var(--ease-out);
     }
-    .site-header.is-scrolled, .site-header.is-open { height: 60px; background: var(--paper); border-bottom-color: var(--line); }
+    .site-header .bar {
+      pointer-events: auto;
+      width: min(100% - 2 * var(--gutter), 1180px); min-height: 60px;
+      padding: 7px 8px 7px 22px;
+      background: rgba(246, 242, 234, .84);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      border: 1px solid var(--line); border-radius: 24px;
+      box-shadow: 0 0 0 5px rgba(235, 212, 154, .26);
+      transition: background-color .3s, min-height .45s var(--ease-out);
+    }
+    .site-header.is-scrolled, .site-header.is-open { padding-top: 8px; }
+    .site-header.is-scrolled .bar, .site-header.is-open .bar { background: rgba(246, 242, 234, .96); min-height: 56px; }
     .bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-    .brand { display: inline-flex; align-items: center; min-height: 44px; }
+    .brand { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); }
     .brand .logo { height: 28px; width: auto; }
     .wordmark { font: 800 1.5rem/1 var(--font-display); letter-spacing: -.04em; }
 
     .nav { display: none; }
     .head-cta { display: none; }
-    .burger { position: relative; width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--ink); }
+    .burger { position: relative; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--ink); }
     .burger i { position: absolute; left: 14px; right: 14px; height: 1.5px; background: var(--ink); transition: transform .5s var(--ease-out); }
     .burger i:nth-child(1) { top: 19px; }
     .burger i:nth-child(2) { top: 27px; }
@@ -972,6 +994,17 @@
        Icônes (traits fins de 1,5 px) et illustrations produit réutilisables
        ===================================================================== -->
   <svg class="sprite" aria-hidden="true" focusable="false">
+    <!-- Logo Animo : mot en lettres rondes, le point du « i » est un triangle de lecture -->
+    <symbol id="logo-wordmark" viewBox="0 0 334 100">
+      <g fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 90 L42 14 L72 90 M25 64 H59"/>
+        <path d="M97 90 V52 C97 34 131 34 131 52 V90"/>
+        <path d="M158 40 V90"/>
+        <path d="M182 90 V52 C182 34 212 34 212 52 V90 M212 52 C212 34 242 34 242 52 V90"/>
+        <circle cx="292" cy="64" r="26"/>
+      </g>
+      <path d="M149 5 L149 25 L167 15 Z" fill="#C9A14A" stroke="#C9A14A" stroke-width="5" stroke-linejoin="round"/>
+    </symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path class="ic" d="M4 12h15M13.5 6.5 19 12l-5.5 5.5"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path class="ic" d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path class="ic" d="M6 6l12 12M18 6 6 18"/></symbol>
@@ -1066,7 +1099,7 @@
   <header class="site-header" id="header">
     <div class="wrap bar">
       <a class="brand" href="#top" aria-label="Animo, retour en haut de la page">
-        <img class="logo" src="logo.png" alt="" width="112" height="28">
+        <svg class="logo" viewBox="0 0 334 100" width="94" height="28" aria-hidden="true" focusable="false"><use href="#logo-wordmark"/></svg>
       </a>
 
       <nav class="nav" aria-label="Navigation principale">
@@ -1101,7 +1134,7 @@
         <span class="btn-t">Créer ma vidéo</span>
         <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
       </a>
-      <p class="label">Niamey, Niger</p>
+      <p class="label">Afrique francophone</p>
     </div>
   </div>
 
@@ -1118,7 +1151,7 @@
           <p class="label label--rule" data-hero="eyebrow">Vidéos animées · pour les commerçants</p>
 
           <h1 class="display hero-title" id="hero-title">
-            <span class="w"><span>Vos</span></span>
+            <span class="w"><span>Tes</span></span>
             <span class="w"><span>photos</span></span>
             <span class="w"><span>deviennent</span></span>
             <span class="w"><span>des</span></span>
@@ -1129,7 +1162,7 @@
             </span></span>
           </h1>
 
-          <p class="lead" data-hero="lead">Ajoutez vos photos, votre prix et votre numéro WhatsApp. Animo en fait une vidéo animée, prête pour TikTok, WhatsApp et Facebook. Sans savoir monter.</p>
+          <p class="lead" data-hero="lead">Ajoute tes photos, ton prix et ton numéro WhatsApp. Animo en fait une vidéo animée, prête pour TikTok, WhatsApp et Facebook. Sans savoir monter.</p>
 
           <div class="hero-actions" data-hero="actions">
             <a class="btn btn--gold" data-act="app" data-magnetic href="#creer">
@@ -1150,7 +1183,7 @@
             <figure class="fl fl--a" aria-hidden="true"><span class="fl-in"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></span></figure>
             <figure class="fl fl--b" aria-hidden="true"><span class="fl-in"><svg viewBox="8 36 74 80"><use href="#art-phone" width="90" height="160"/></svg></span></figure>
 
-            <div class="phone" role="img" aria-label="Démonstration animée : vous ajoutez trois photos, un prix et un numéro, puis Animo construit la vidéo. Le prix 15 000 F tombe en grand, trois mots-clés s’affichent, et un bouton WhatsApp s’allume.">
+            <div class="phone" role="img" aria-label="Démonstration animée : tu ajoutes trois photos, un prix et un numéro, puis Animo construit la vidéo. Le prix 15 000 F tombe en grand, trois mots-clés s’affichent, et un bouton WhatsApp s’allume.">
               <div class="phone-screen" id="hero-screen">
                 <!-- Scène vidéo (état final par défaut) -->
                 <div class="vs" data-style="creme" id="hero-scene">
@@ -1175,7 +1208,7 @@
                 <!-- Écran de l’application : s’affiche au début de la démonstration -->
                 <div class="ui ui--hero" id="hero-app">
                   <p class="ui-cap">Nouvelle vidéo</p>
-                  <p class="ui-title">Vos photos</p>
+                  <p class="ui-title">Tes photos</p>
                   <div class="ui-photos">
                     <div class="ui-photo"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></div>
                     <div class="ui-photo ui-photo--2"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></div>
@@ -1236,15 +1269,15 @@
     <section class="section studio is-dark" id="essayer" aria-labelledby="studio-title" data-fab-hide>
       <div class="wrap">
         <div class="head-row grid">
-          <p class="label label--rule" data-reveal>Essayez maintenant</p>
-          <h2 class="h2" id="studio-title" data-split>Tapez un prix, regardez la vidéo se <em class="k">construire</em>.</h2>
-          <p class="head-side" data-reveal>Cet aperçu simplifié tourne dans votre navigateur. La vraie vidéo est générée par Animo, avec vos photos.</p>
+          <p class="label label--rule" data-reveal>Essaie maintenant</p>
+          <h2 class="h2" id="studio-title" data-split>Tape un prix, regarde la vidéo se <em class="k">construire</em>.</h2>
+          <p class="head-side" data-reveal>Cet aperçu simplifié tourne dans ton navigateur. La vraie vidéo est générée par Animo, avec tes photos.</p>
         </div>
 
         <div class="studio-grid grid">
           <div class="studio-controls" role="group" aria-label="Réglages de l’aperçu">
             <fieldset class="field">
-              <legend class="label">Votre commerce</legend>
+              <legend class="label">Ton commerce</legend>
               <div class="choices">
                 <label class="choice"><input type="radio" name="product" value="cosmetiques" checked><span><svg viewBox="8 36 74 80" aria-hidden="true"><use href="#art-bottle" width="90" height="160"/></svg>Cosmétiques</span></label>
                 <label class="choice"><input type="radio" name="product" value="telephones"><span><svg viewBox="8 36 74 80" aria-hidden="true"><use href="#art-phone" width="90" height="160"/></svg>Téléphones</span></label>
@@ -1270,7 +1303,7 @@
             </div>
 
             <div class="field">
-              <label class="label" for="in-phone">Votre numéro WhatsApp (facultatif)</label>
+              <label class="label" for="in-phone">Ton numéro WhatsApp (facultatif)</label>
               <input id="in-phone" type="tel" inputmode="tel" maxlength="20" autocomplete="off" spellcheck="false" placeholder="+227 00 00 00 00">
             </div>
 
@@ -1290,7 +1323,7 @@
                 <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
               </a>
             </div>
-            <p class="note">Rien n’est envoyé ni enregistré : tout reste dans votre navigateur.</p>
+            <p class="note">Rien n’est envoyé ni enregistré : tout reste dans ton navigateur.</p>
           </div>
 
           <div class="studio-stage">
@@ -1303,7 +1336,7 @@
               <figure class="ba-video">
                 <div class="phone-wrap studio-phone">
                   <span class="halo halo--dark" aria-hidden="true"></span>
-                  <div class="phone" role="img" aria-label="Aperçu animé de la pub construite à partir de la photo, mis à jour avec vos réglages" id="studio-phone">
+                  <div class="phone" role="img" aria-label="Aperçu animé de la pub construite à partir de la photo, mis à jour avec tes réglages" id="studio-phone">
                     <div class="phone-screen" data-scene-slot data-style="creme" data-product="cosmetiques" data-loop id="studio-slot"></div>
                   </div>
                 </div>
@@ -1325,7 +1358,7 @@
     <section class="statement" aria-labelledby="statement-label">
       <div class="wrap grid">
         <p class="label label--rule statement-label" id="statement-label" data-reveal>Le principe</p>
-        <p class="statement-text" id="statement-text">Sur TikTok et sur WhatsApp, on regarde vite. Animo affiche votre prix dès la <em class="k">première seconde</em>, anime vos photos, sous-titre chaque mot et termine sur votre numéro WhatsApp.</p>
+        <p class="statement-text" id="statement-text">Sur TikTok et sur WhatsApp, on regarde vite. Animo affiche ton prix dès la <em class="k">première seconde</em>, anime tes photos, sous-titre chaque mot et termine sur ton numéro WhatsApp.</p>
       </div>
     </section>
 
@@ -1348,7 +1381,7 @@
                   <!-- Étape 1 -->
                   <div class="ui ui--s1">
                     <p class="ui-cap">Nouvelle vidéo</p>
-                    <p class="ui-title">Vos photos</p>
+                    <p class="ui-title">Tes photos</p>
                     <div class="ui-photos">
                       <div class="ui-photo"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></div>
                       <div class="ui-photo ui-photo--2"><svg viewBox="8 36 74 80"><use href="#art-phone" width="90" height="160"/></svg></div>
@@ -1361,7 +1394,7 @@
                   <!-- Étape 2 -->
                   <div class="ui ui--s2">
                     <p class="ui-cap">Étape 2</p>
-                    <p class="ui-title">Choisissez un style</p>
+                    <p class="ui-title">Choisis un style</p>
                     <div class="ui-styles">
                       <div class="ui-style"><i></i>Modèle 1</div>
                       <div class="ui-style is-pick"><i></i>Modèle 2</div>
@@ -1382,7 +1415,7 @@
                   <div class="ui ui--s4">
                     <div class="phone-slot" data-scene-slot data-style="creme" data-product="mode" data-static></div>
                     <div class="ui-sheet">
-                      <p class="ui-cap">Votre vidéo est prête</p>
+                      <p class="ui-cap">Ta vidéo est prête</p>
                       <div class="ui-btn">Télécharger</div>
                       <div class="ui-chips"><span>TikTok</span><span>WhatsApp</span><span>Facebook</span></div>
                     </div>
@@ -1400,22 +1433,22 @@
             <ol class="how-steps" id="how-steps">
               <li class="step">
                 <span class="step-n" aria-hidden="true">01</span>
-                <h3>Ajoutez vos photos, votre prix et votre numéro.</h3>
-                <p>Prenez les photos de votre produit avec votre téléphone, indiquez son prix et votre numéro WhatsApp.</p>
+                <h3>Ajoute tes photos, ton prix et ton numéro.</h3>
+                <p>Prends les photos de ton produit avec ton téléphone, indique son prix et ton numéro WhatsApp.</p>
               </li>
               <li class="step">
                 <span class="step-n" aria-hidden="true">02</span>
-                <h3>Choisissez un style de vidéo.</h3>
-                <p>Chaque modèle a été conçu par un motion designer. Vous en prenez un, c’est tout.</p>
+                <h3>Choisis un style de vidéo.</h3>
+                <p>Chaque modèle a été conçu par un motion designer. Tu en prends un, c’est tout.</p>
               </li>
               <li class="step">
                 <span class="step-n" aria-hidden="true">03</span>
                 <h3>Animo génère la vidéo.</h3>
-                <p>Le prix s’affiche dès la première seconde, votre numéro à la fin. Vous n’avez rien à monter.</p>
+                <p>Le prix s’affiche dès la première seconde, ton numéro à la fin. Tu n’as rien à monter.</p>
               </li>
               <li class="step">
                 <span class="step-n" aria-hidden="true">04</span>
-                <h3>Téléchargez-la et publiez-la.</h3>
+                <h3>Télécharge-la et publie-la.</h3>
                 <p>La vidéo est verticale, prête pour TikTok, les statuts WhatsApp et Facebook.</p>
               </li>
             </ol>
@@ -1439,7 +1472,7 @@
             <span class="feat-n">01</span>
             <h3 class="feat-name">Vidéo produit</h3>
             <div class="feat-body">
-              <p>Vous ajoutez vos photos, votre prix et votre numéro, Animo construit la vidéo animée. Plus rien à monter.</p>
+              <p>Tu ajoutes tes photos, ton prix et ton numéro, Animo construit la vidéo animée. Plus rien à monter.</p>
             </div>
             <div class="feat-thumb" aria-hidden="true"></div>
             <span class="feat-arrow arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
@@ -1448,7 +1481,7 @@
             <span class="feat-n">02</span>
             <h3 class="feat-name">Sous-titres animés</h3>
             <div class="feat-body">
-              <p>Chaque mot s’affiche au bon moment. Votre message passe même quand on regarde sans le son.</p>
+              <p>Chaque mot s’affiche au bon moment. Ton message passe même quand on regarde sans le son.</p>
             </div>
             <div class="feat-thumb" aria-hidden="true"></div>
             <span class="feat-arrow arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
@@ -1457,18 +1490,16 @@
             <span class="feat-n">03</span>
             <h3 class="feat-name">Voix off</h3>
             <div class="feat-body">
-              <p>Une voix en français lit votre texte, posée sur la vidéo. Vous présentez le produit sans enregistrer votre voix.</p>
-              <p class="label feat-tag">Offres Pro et Business</p>
+              <p>Une voix en français lit ton texte, posée sur la vidéo. Tu présentes le produit sans enregistrer ta voix.</p>
             </div>
             <div class="feat-thumb" aria-hidden="true"></div>
             <span class="feat-arrow arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
           </li>
           <li class="feat" data-fx="3" data-reveal>
             <span class="feat-n">04</span>
-            <h3 class="feat-name">Fin à votre marque</h3>
+            <h3 class="feat-name">Fin à ta marque</h3>
             <div class="feat-body">
-              <p>Votre logo, vos couleurs et votre bouton WhatsApp ferment chaque vidéo. Le client sait qui vous êtes et où vous écrire.</p>
-              <p class="label feat-tag">Numéro dès l’Essentiel · logo et couleurs dès le Pro</p>
+              <p>Ton logo, tes couleurs et ton bouton WhatsApp ferment chaque vidéo. Le client sait qui tu es et où t’écrire.</p>
             </div>
             <div class="feat-thumb" aria-hidden="true"></div>
             <span class="feat-arrow arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
@@ -1492,7 +1523,7 @@
             <p class="label">Voix en français</p>
           </div>
           <div class="fx-scene" data-scene="3">
-            <div class="fx4-logo">Votre<br>logo</div>
+            <div class="fx4-logo">Ton<br>logo</div>
             <div class="fx4-sw"><i class="sw-gold"></i><i class="sw-ink"></i><i class="sw-paper"></i></div>
             <div class="fx4-btn"><svg aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp</div>
           </div>
@@ -1508,7 +1539,7 @@
         <div class="head-row grid">
           <p class="label label--rule" data-reveal>Exemples</p>
           <h2 class="h2" id="ex-title" data-split>Des vidéos faites pour TikTok et les statuts <em class="k">WhatsApp</em>.</h2>
-          <p class="head-side" data-reveal>Le prix dès la première seconde, votre numéro à la fin. Touchez une vidéo pour la voir en grand.</p>
+          <p class="head-side" data-reveal>Le prix dès la première seconde, ton numéro à la fin. Touche une vidéo pour la voir en grand.</p>
         </div>
 
         <div class="gallery" id="gallery">
@@ -1586,7 +1617,7 @@
         <div class="head-row grid">
           <p class="label label--rule" data-reveal>Tarifs</p>
           <h2 class="h2" id="price-title" data-split>Trois façons de <em class="k">commencer</em>.</h2>
-          <p class="head-side" data-reveal>Deux offres en libre-service, et des vidéos sur mesure faites avec vous.</p>
+          <p class="head-side" data-reveal>Deux offres en libre-service, et des vidéos sur mesure faites avec toi.</p>
         </div>
 
         <div class="plans" id="plans"></div>
@@ -1615,7 +1646,7 @@
           <div class="faq-list" id="faq" data-reveal>
             <div class="faq-item">
               <h3><button class="faq-q" type="button" id="q1" aria-expanded="true" aria-controls="a1"><span>Faut-il savoir monter des vidéos&nbsp;?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
-              <div class="faq-panel is-open" id="a1" role="region" aria-labelledby="q1"><div><p>Non. Vous ajoutez vos photos, votre prix et votre numéro, Animo s’occupe du reste.</p></div></div>
+              <div class="faq-panel is-open" id="a1" role="region" aria-labelledby="q1"><div><p>Non. Tu ajoutes tes photos, ton prix et ton numéro, Animo s’occupe du reste.</p></div></div>
             </div>
             <div class="faq-item">
               <h3><button class="faq-q" type="button" id="q2" aria-expanded="false" aria-controls="a2"><span>Comment je paie&nbsp;?</span><span class="plus" aria-hidden="true"><svg><use href="#i-plus"/></svg></span></button></h3>
@@ -1644,9 +1675,9 @@
     <section class="cta is-dark clip" id="creer" aria-labelledby="cta-title" data-fab-hide>
       <div class="wrap cta-grid grid">
         <div class="cta-main">
-          <p class="label label--rule" data-reveal>Votre première vidéo</p>
-          <h2 class="display cta-title" id="cta-title" data-split>Essayez avec votre prochain <em class="k">produit</em>.</h2>
-          <p class="lead" data-reveal>Ajoutez vos photos, votre prix et votre numéro. Animo fait le reste.</p>
+          <p class="label label--rule" data-reveal>Ta première vidéo</p>
+          <h2 class="display cta-title" id="cta-title" data-split>Essaie avec ton prochain <em class="k">produit</em>.</h2>
+          <p class="lead" data-reveal>Ajoute tes photos, ton prix et ton numéro. Animo fait le reste.</p>
           <a class="btn btn--gold btn--lg" data-act="app" data-reveal href="#creer">
             <span class="btn-t">Créer ma première vidéo</span>
             <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
@@ -1675,8 +1706,8 @@
     <div class="wrap">
       <div class="foot-grid grid">
         <div class="foot-brand">
-          <img class="logo" src="logo.png" alt="Animo" width="112" height="30" loading="lazy">
-          <p>Des vidéos animées pour les commerçants d’Afrique francophone. Niamey, Niger.</p>
+          <svg class="logo" viewBox="0 0 334 100" width="100" height="30" role="img" aria-label="Animo"><use href="#logo-wordmark"/></svg>
+          <p>Des vidéos animées pour les commerçants d’Afrique francophone.</p>
         </div>
 
         <nav class="foot-col foot-col--nav" aria-label="Pied de page">
@@ -1730,7 +1761,7 @@
       </div>
       <div class="field"><label class="label" for="co-email">Adresse e-mail</label><input id="co-email" name="email" type="email" maxlength="120" autocomplete="email" inputmode="email" required></div>
       <fieldset class="field">
-        <legend class="label">Votre zone</legend>
+        <legend class="label">Ta zone</legend>
         <div class="choices choices--zones">
           <label class="choice"><input type="radio" name="zone" value="ouest" checked><span>Afrique de l’Ouest</span></label>
           <label class="choice"><input type="radio" name="zone" value="centre"><span>Afrique centrale</span></label>
@@ -1741,7 +1772,7 @@
         <span class="btn-t" id="co-submit-t">Payer</span>
         <span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span>
       </button>
-      <p class="modal-fine">Vous serez redirigé vers la page de paiement de notre prestataire, Moneroo, pour choisir votre moyen de paiement. <a class="ulink" id="co-wa" href="#creer" hidden>Un souci&nbsp;? Écrivez-nous sur WhatsApp.</a></p>
+      <p class="modal-fine">Tu seras redirigé vers la page de paiement de notre prestataire, Moneroo, pour choisir ton moyen de paiement. <a class="ulink" id="co-wa" href="#creer" hidden>Un souci&nbsp;? Écris-nous sur WhatsApp.</a></p>
     </form>
   </dialog>
 
@@ -1792,10 +1823,10 @@
     "plans": [
       { "id": "essentiel", "nom": "Essentiel", "type": "libre-service", "description": "Pour essayer : un petit nombre de vidéos par mois et les gabarits de base.", "prix_fcfa": "", "videos_par_mois": "", "avantages": [], "mis_en_avant": false },
       { "id": "boutique", "nom": "Boutique", "type": "libre-service", "description": "Pour publier régulièrement : plus de vidéos par mois et tous les gabarits.", "prix_fcfa": "", "videos_par_mois": "", "avantages": [], "mis_en_avant": true },
-      { "id": "sur-mesure", "nom": "Animo pour toi", "type": "sur-mesure", "description": "Des vidéos sur mesure, faites avec vous : on en parle d’abord, puis on les prépare ensemble.", "prix_fcfa": "", "videos_par_mois": "", "avantages": [], "mis_en_avant": false }
+      { "id": "sur-mesure", "nom": "Animo pour toi", "type": "sur-mesure", "description": "Des vidéos sur mesure, faites avec toi : on en parle d’abord, puis on les prépare ensemble.", "prix_fcfa": "", "videos_par_mois": "", "avantages": [], "mis_en_avant": false }
     ],
-    "termsUrl": "",
-    "privacyUrl": ""
+    "termsUrl": "conditions.html",
+    "privacyUrl": "confidentialite.html"
   }
   </script>
 
@@ -1854,7 +1885,7 @@
       const DEFAULT_PLANS = [
         { id: 'essentiel', nom: 'Essentiel', type: 'libre-service', description: 'Pour essayer : un petit nombre de vidéos par mois et les gabarits de base.', prix: 0, videos: 0, avantages: [], hot: false },
         { id: 'boutique', nom: 'Boutique', type: 'libre-service', description: 'Pour publier régulièrement : plus de vidéos par mois et tous les gabarits.', prix: 0, videos: 0, avantages: [], hot: true },
-        { id: 'sur-mesure', nom: 'Animo pour toi', type: 'sur-mesure', description: 'Des vidéos sur mesure, faites avec vous : on en parle d’abord, puis on les prépare ensemble.', prix: 0, videos: 0, avantages: [], hot: false }
+        { id: 'sur-mesure', nom: 'Animo pour toi', type: 'sur-mesure', description: 'Des vidéos sur mesure, faites avec toi : on en parle d’abord, puis on les prépare ensemble.', prix: 0, videos: 0, avantages: [], hot: false }
       ];
       cfg.plans = (Array.isArray(raw.plans) ? raw.plans : []).slice(0, 3).map(p => ({
         id: clean(p && p.id, 32), nom: clean(p && p.nom, 40),
@@ -1931,7 +1962,7 @@
          1. LIENS D’ACTION (WhatsApp, application, paiement)
          ================================================================= */
       const MSG = {
-        waitlist: "Bonjour, je veux créer ma première vidéo avec Animo. Pouvez-vous m'inscrire sur la liste d'attente ?",
+        waitlist: "Bonjour, je veux créer ma première vidéo avec Animo. Peux-tu m'inscrire sur la liste d'attente ?",
         question: "Bonjour, j'ai une question sur Animo",
         custom: "Bonjour, je voudrais réserver un échange pour des vidéos sur mesure avec Animo",
         plan: n => "Bonjour, je veux l'offre " + n + " d'Animo"
@@ -2367,9 +2398,9 @@
           e.preventDefault();
           if (busy) return;
           const f = first.value.trim(), l = last.value.trim(), m = email.value.trim();
-          if (!NAME_RE.test(f)) return setError('Indiquez votre prénom.', first);
-          if (!NAME_RE.test(l)) return setError('Indiquez votre nom.', last);
-          if (m.length > 120 || !EMAIL_RE.test(m)) return setError('Indiquez une adresse e-mail valide.', email);
+          if (!NAME_RE.test(f)) return setError('Indique ton prénom.', first);
+          if (!NAME_RE.test(l)) return setError('Indique ton nom.', last);
+          if (m.length > 120 || !EMAIL_RE.test(m)) return setError('Indique une adresse e-mail valide.', email);
           setError('', null); setBusy(true);
           try {
             const zone = ($('input[name="zone"]:checked', form) || {}).value || 'ouest';
@@ -2385,7 +2416,7 @@
             window.location.assign(u.href);
           } catch (x) {
             setBusy(false);
-            setError('Le paiement n’a pas pu démarrer. Réessayez dans un instant' + (cfg.wa ? ', ou écrivez-nous sur WhatsApp.' : '.'), null);
+            setError('Le paiement n’a pas pu démarrer. Réessaie dans un instant' + (cfg.wa ? ', ou écris-nous sur WhatsApp.' : '.'), null);
           }
         });
 
@@ -2404,20 +2435,20 @@
             .then(d => {
               if (d.status === 'success' && d.matches) {
                 head.textContent = 'Paiement confirmé';
-                text.textContent = 'Offre ' + d.plan + ' : merci. Gardez cette référence et envoyez-la-nous sur WhatsApp pour que nous activions votre offre.';
+                text.textContent = 'Offre ' + d.plan + ' : merci. Garde cette référence et envoie-la-nous sur WhatsApp pour que nous activions ton offre.';
                 ref.textContent = 'Référence : ' + pid; ref.hidden = false;
                 if (cfg.wa) { setExternal(wa, waUrl("Bonjour, j'ai payé l'offre " + d.plan + " d'Animo. Ma référence de paiement : " + pid)); wa.hidden = false; }
               } else if (d.status === 'pending' || d.status === 'initiated') {
                 head.textContent = 'Paiement en attente';
-                text.textContent = 'Votre opérateur n’a pas encore confirmé le paiement. Si vous avez validé sur votre téléphone, patientez un instant puis rechargez cette page.';
+                text.textContent = 'Ton opérateur n’a pas encore confirmé le paiement. Si tu as validé sur ton téléphone, patiente un instant puis recharge cette page.';
               } else {
                 head.textContent = 'Le paiement n’a pas abouti';
-                text.textContent = 'Aucun montant n’a été confirmé. Vous pouvez réessayer depuis la section Tarifs.';
+                text.textContent = 'Aucun montant n’a été confirmé. Tu peux réessayer depuis la section Tarifs.';
               }
             })
             .catch(() => {
               head.textContent = 'Vérification impossible';
-              text.textContent = 'Nous n’avons pas pu vérifier ce paiement. Si vous avez payé, conservez votre message de confirmation et écrivez-nous.';
+              text.textContent = 'Nous n’avons pas pu vérifier ce paiement. Si tu as payé, garde ton message de confirmation et écris-nous.';
             });
         }
       })();

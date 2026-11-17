@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Met à jour la politique de sécurité (CSP) d'index.html et régénère _headers et vercel.json.
+"""Met à jour la politique de sécurité (CSP) des pages et régénère _headers et vercel.json.
 
-À lancer après toute modification du CSS ou du JavaScript intégrés à index.html :
+À lancer après toute modification du CSS ou du JavaScript intégrés à une page :
 
     python3 tools/update-csp.py
 
-La CSP autorise uniquement les blocs <style> et <script> dont l'empreinte (sha256) est connue.
+La CSP n'autorise que les blocs <style> et <script> dont l'empreinte (sha256) est connue.
 Modifier les textes, les liens ou le bloc JSON « animo-config » ne demande pas de relancer ce script.
+Pages traitées : index.html, confidentialite.html, conditions.html, 404.html (si elles existent).
 """
 import base64
 import hashlib
@@ -16,25 +17,28 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-INDEX = ROOT / "index.html"
+PAGES = ["index.html", "confidentialite.html", "conditions.html", "404.html"]
 
 
 def sha256(text: str) -> str:
     return "'sha256-" + base64.b64encode(hashlib.sha256(text.encode("utf-8")).digest()).decode() + "'"
 
 
-def build_csp(html: str, for_header: bool) -> str:
+def blocks(html: str):
     # on ignore les commentaires HTML, qui peuvent citer des balises sans en être
     visible = re.sub(r"<!--.*?-->", "", html, flags=re.S)
     styles = re.findall(r"<style>(.*?)</style>", visible, re.S)
     # scripts exécutables : sans attribut src et sans type (donc ni JSON, ni JSON-LD)
     scripts = re.findall(r"<script>(.*?)</script>", visible, re.S)
-    if len(styles) != 1:
-        sys.exit("Attendu : exactement un bloc <style>, trouvé %d" % len(styles))
-    directives = [
-        "default-src 'none'",
-        "script-src " + " ".join(sha256(s) for s in scripts) + " https://cdnjs.cloudflare.com",
-        "style-src " + sha256(styles[0]) + " https://fonts.googleapis.com",
+    return styles, scripts
+
+
+def csp(style_hashes, script_hashes, for_header: bool) -> str:
+    directives = ["default-src 'none'"]
+    if script_hashes:
+        directives.append("script-src " + " ".join(script_hashes) + " https://cdnjs.cloudflare.com")
+    directives += [
+        "style-src " + " ".join(style_hashes) + " https://fonts.googleapis.com",
         "font-src https://fonts.gstatic.com",
         "img-src 'self' data:",
         "media-src 'self'",
@@ -44,8 +48,7 @@ def build_csp(html: str, for_header: bool) -> str:
         "form-action 'none'",
     ]
     if for_header:
-        directives.append("frame-ancestors 'none'")
-        directives.append("upgrade-insecure-requests")
+        directives += ["frame-ancestors 'none'", "upgrade-insecure-requests"]
     return "; ".join(directives)
 
 
@@ -61,18 +64,31 @@ HEADERS = {
 
 
 def main() -> None:
-    html = INDEX.read_text(encoding="utf-8")
-    meta_csp = build_csp(html, for_header=False)
-    html, n = re.subn(
-        r'(<meta http-equiv="Content-Security-Policy" content=")[^"]*(")',
-        lambda m: m.group(1) + meta_csp + m.group(2),
-        html,
-    )
-    if n != 1:
-        sys.exit("Balise meta Content-Security-Policy introuvable")
-    INDEX.write_text(html, encoding="utf-8")
+    all_styles, all_scripts, texts = [], [], {}
+    for name in PAGES:
+        path = ROOT / name
+        if not path.exists():
+            continue
+        html = path.read_text(encoding="utf-8")
+        styles, scripts = blocks(html)
+        if len(styles) != 1:
+            sys.exit("%s : attendu exactement un bloc <style>, trouvé %d" % (name, len(styles)))
+        sh = [sha256(s) for s in styles]
+        ch = [sha256(s) for s in scripts]
+        all_styles += sh
+        all_scripts += ch
+        meta = csp(sh, ch, for_header=False)
+        html, n = re.subn(
+            r'(<meta http-equiv="Content-Security-Policy" content=")[^"]*(")',
+            lambda m: m.group(1) + meta + m.group(2),
+            html,
+        )
+        if n != 1:
+            sys.exit("%s : balise meta Content-Security-Policy introuvable" % name)
+        path.write_text(html, encoding="utf-8")
+        texts[name] = meta
 
-    header_csp = build_csp(html, for_header=True)
+    header_csp = csp(sorted(set(all_styles)), sorted(set(all_scripts)), for_header=True)
     lines = ["# Généré par tools/update-csp.py (Netlify, Cloudflare Pages)", "/*", "  Content-Security-Policy: " + header_csp]
     lines += ["  %s: %s" % (k, v) for k, v in HEADERS.items()]
     lines += ["", "/*.mp4", "  Cache-Control: public, max-age=31536000, immutable", "", "/*.jpg", "  Cache-Control: public, max-age=31536000, immutable", ""]
@@ -88,7 +104,7 @@ def main() -> None:
         ]
     }
     (ROOT / "vercel.json").write_text(json.dumps(vercel, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print("CSP mise à jour :", meta_csp[:120], "...")
+    print("CSP mise à jour pour :", ", ".join(texts))
 
 
 if __name__ == "__main__":
