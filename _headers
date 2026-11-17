@@ -1,6 +1,6 @@
 # Généré par tools/update-csp.py (Netlify, Cloudflare Pages)
 /*
-  Content-Security-Policy: default-src 'none'; script-src 'sha256-8EqBhbtV+QRgpEKKj0tEvSjNJLh7E6Q0tEHqFbG+gWk=' 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-YlnWV/OjL5lhcSZrpxgJa+6ZQ5dtLk+T+/Ms9CeQTqI=' https://cdnjs.cloudflare.com; style-src 'sha256-6nxxIlLP0cBDCH2jAOzTos2LX4o0dzKAQ2khNse7x64=' 'sha256-MJfw5AM3CUKIvJourDKhHLWQQTE38eqr87r2GqTe0bE=' 'sha256-cBJOW5JVF8fZ7dugwJG+gZOsJwRaaHVmskyYhiMu0aI=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-YlnWV/OjL5lhcSZrpxgJa+6ZQ5dtLk+T+/Ms9CeQTqI=' 'sha256-neaBiMx57lNMVIb04ivSKlIUEPXyPZPJIlu418wQ2BA=' https://cdnjs.cloudflare.com; style-src 'sha256-CRECbqbBZxsibccGx26bjkc/IUvlJtRTv4qo4a/K7cM=' 'sha256-kNsKorDIj/QlIzP6nUSLZ46nq5WnYmIoy3kFxMVTTRg=' 'sha256-z7AHn5X6omv/lYiy0kubP+jIwPOaOFvZNFbe0tA9cTw=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY

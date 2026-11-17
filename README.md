@@ -4,7 +4,7 @@ Une seule page, `index.html` : le CSS et le JavaScript sont intégrés. Elle s'o
 
 ## Fichiers du site
 
-Déjà dans le dépôt : `logo.svg` et `logo-blanc.svg` (le logo : le mot « Animo », avec un triangle de lecture doré à la place du point du « i »), leurs versions `logo.png` et `logo-blanc.png`, `favicon.svg` et `favicon.png` (icône carrée), `apercu.jpg` (image de partage, 1200 × 630 px, tirée de la page), et les pages `affiliation.html`, `confidentialite.html`, `conditions.html` et `404.html`.
+Déjà dans le dépôt : `logo.svg` et `logo-blanc.svg` (le logo : le mot « Animo », avec un triangle de lecture orange à la place du point du « i »), leurs versions `logo.png` et `logo-blanc.png`, `favicon.svg` et `favicon.png` (icône carrée), `apercu.jpg` (image de partage, 1200 × 630 px, tirée de la page), et les pages `affiliation.html`, `confidentialite.html`, `conditions.html` et `404.html`.
 
 Facultatif, pour remplacer les scènes animées des exemples par de vraies vidéos (puis mettre `videosExemples` à `true`) :
 
@@ -50,9 +50,17 @@ Tout est dans le bloc `animo-config` (près de la fin de `index.html`).
 
 - **Numéro WhatsApp** : `whatsappNumber` (chiffres seulement, indicatif compris). Vide : « Réserver un échange » fait défiler jusqu'à l'appel final, où figure le numéro à compléter.
 - **Offres** : `plans`, trois offres au maximum. Chacune a `id`, `nom`, `type` (`libre-service` ou `sur-mesure`), `description`, `prix_fcfa`, `videos_par_mois`, `avantages` (liste de textes) et `mis_en_avant` (une seule offre, affichée en noir).
-- **Tant que `prix_fcfa` est vide**, la carte affiche « Prix annoncé en décembre » et son bouton devient « Rejoindre la liste d'attente ». Un prix renseigné (en chiffres, par exemple `15000`) s'affiche « 15 000 F par mois ».
-- **Offre `sur-mesure`** : jamais de prix affiché, bouton « Réserver un échange » vers WhatsApp.
-- **Paiement en ligne** : le formulaire de paiement ne s'ouvre que si le nom et le prix de l'offre correspondent à ceux de `lib/payments.mjs` (`PLANS`). Quand vos prix sont décidés, mettez-les aussi à cet endroit. Sinon, les boutons ouvrent WhatsApp ou le lien de `paymentLinks`.
+- **Tarifs actuels** :
+
+| Offre | Prix | Vidéos par mois | Paiement |
+|---|---|---|---|
+| Essentiel | 10 000 F par mois | 10 | En ligne (Moneroo) |
+| Boutique (mise en avant) | 20 000 F par mois | 30 | En ligne (Moneroo) |
+| Animo pour toi (sur mesure) | À partir de 30 000 F par mois | 80 | Sur WhatsApp, après échange |
+
+- **Changer un prix** : le modifier à **deux** endroits, `prix_fcfa` dans `animo-config` et `PLANS` dans `lib/payments.mjs` (plus `SERVER_PRICES` dans le JavaScript de `index.html`, puis `python3 tools/update-csp.py`). Si les deux ne correspondent pas, la page ne propose pas le paiement en ligne pour cette offre : le client ne peut jamais payer un autre montant que celui affiché.
+- **Sans prix** (`prix_fcfa` vide), la carte affiche « Prix annoncé en décembre » et le bouton devient « Rejoindre la liste d'attente ».
+- **Offre `sur-mesure`** : affiche « À partir de » si un prix est renseigné, « Sur mesure » sinon ; bouton « Réserver un échange » vers WhatsApp.
 
 ## Page d'affiliation
 
@@ -70,30 +78,33 @@ Tant que rien n'est renseigné, les boutons font défiler jusqu'au bas de la pag
 
 ## Module de paiement (Moneroo)
 
+**Le paiement ne peut pas « échouer en silence »** : au chargement, la page demande au serveur `GET /api/checkout?ping=1`. Les boutons deviennent « Payer l'offre … » seulement si la réponse est `{ "ready": true }`, c'est-à-dire si la clé Moneroo et l'adresse `https://` du site sont bien configurées. Sinon (pas de serveur, pas de clé, GitHub Pages, aperçu local), ils restent « Choisir l'offre … » et mènent à WhatsApp ou à la liste d'attente.
+
 Les boutons « Payer l'offre … » ouvrent un formulaire (prénom, nom, e-mail, zone). La page l'envoie à `/api/checkout`, une petite fonction serveur qui crée le paiement chez [Moneroo](https://docs.moneroo.io/payments/standard-integration) puis redirige le client vers la page de paiement de Moneroo (Mobile Money, carte, selon ce que vous activez dans votre compte). Au retour, la page demande au serveur le vrai statut du paiement : elle ne lit jamais le résultat dans l'adresse.
 
-**Mise en route**
+**Mise en route (Moneroo demande l'adresse du site : on la crée d'abord, gratuitement, avec Vercel)**
 
-1. Créez un compte Moneroo et récupérez la clé secrète de **test**.
-2. Mettez ces deux variables d'environnement chez votre hébergeur (jamais dans la page) :
+1. **Mettre le site en ligne** : sur [vercel.com](https://vercel.com), se connecter avec GitHub, « Add New… → Project », choisir le dépôt `Empire-digital-`, ne rien changer, « Deploy ». Vercel donne une adresse du type `https://empire-digital-xxxx.vercel.app` : c'est l'adresse du site. Un nom de domaine (par exemple `animo.africa`) pourra être branché plus tard dans Vercel → Settings → Domains.
+2. **Moneroo** : créer le compte, déclarer cette adresse comme site, récupérer la clé secrète de **test**.
+3. **Variables d'environnement** (Vercel → Settings → Environment Variables), jamais dans la page :
    - `MONEROO_SECRET_KEY` : la clé secrète ;
-   - `SITE_ORIGIN` : l'adresse du site, sans barre finale (par exemple `https://animo.example`).
-3. Déployez. La fonction est fournie pour les trois hébergeurs :
-   - Vercel : `api/checkout.js`
-   - Cloudflare Pages : `functions/api/checkout.js`
-   - Netlify : `netlify/functions/checkout.mjs`
-4. Faites un paiement de test, puis passez à la clé de production.
+   - `SITE_ORIGIN` : l'adresse exacte du site, sans barre finale (par exemple `https://empire-digital-xxxx.vercel.app`).
+   Puis Deployments → « Redeploy ».
+4. **Vérifier** : ouvrir `https://…vercel.app/api/checkout?ping=1` doit afficher `{"ready":true}`, et les boutons de la page doivent dire « Payer l'offre … ». Faire un paiement de test.
+5. Quand Moneroo a validé le compte, remplacer la clé de test par la clé de production, et redéployer.
 
-GitHub Pages ne peut pas exécuter de fonction : le bouton y affiche un message d'erreur. Pour désactiver le formulaire, mettez `"checkoutEndpoint": ""` dans les réglages : les boutons reviennent alors aux liens de paiement ou à WhatsApp.
+La fonction est fournie pour les trois hébergeurs : Vercel `api/checkout.js`, Cloudflare Pages `functions/api/checkout.js`, Netlify `netlify/functions/checkout.mjs`.
 
-**Ce que fait la fonction** : les montants (10 000, 20 000 et 30 000) sont fixés dans `lib/payments.mjs`, le navigateur n'envoie que le nom de l'offre ; elle valide chaque champ, n'accepte que les appels venant de `SITE_ORIGIN`, ne renvoie jamais le détail d'une erreur de Moneroo et vérifie que le montant payé correspond à l'offre.
+GitHub Pages ne peut pas exécuter de fonction : le ping n'y répond pas, donc les boutons restent sur WhatsApp. Pour désactiver le formulaire, mettez `"checkoutEndpoint": ""` dans les réglages : les boutons reviennent alors aux liens de paiement ou à WhatsApp.
+
+**Ce que fait la fonction** : les montants (10 000 et 20 000) sont fixés dans `lib/payments.mjs`, le navigateur n'envoie que le nom de l'offre ; elle valide chaque champ, n'accepte que les appels venant de `SITE_ORIGIN`, ne renvoie jamais le détail d'une erreur de Moneroo et vérifie que le montant payé correspond à l'offre.
 
 **Ce qui n'existe pas encore**
 - Le paiement est **unique pour un mois** : aucun renouvellement automatique (les réseaux Mobile Money demandent une validation du client à chaque fois).
 - Aucune activation automatique de l'offre : il n'y a ni application ni base de données. Après un paiement confirmé, le client reçoit une référence à vous envoyer sur WhatsApp. Moneroo envoie aussi un webhook `payment.success` (signé avec l'en-tête `X-Moneroo-Signature`, HMAC-SHA256) à brancher quand l'application existera.
 - Pas de limitation du nombre d'essais : activez-la chez l'hébergeur (par exemple les règles de limitation de Cloudflare).
 
-**Tests** : `npm test` lance 10 tests de la fonction contre un faux serveur Moneroo (prix, validation, origine, erreurs, vérification).
+**Tests** : `npm test` lance 11 tests de la fonction contre un faux serveur Moneroo (prix, validation, origine, erreurs, vérification, ping).
 
 ## Sécurité
 
