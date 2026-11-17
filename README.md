@@ -4,7 +4,7 @@ Une seule page, `index.html` : le CSS et le JavaScript sont intégrés. Elle s'o
 
 ## Fichiers du site
 
-Déjà dans le dépôt : `logo.svg` et `logo-blanc.svg` (le logo : le mot « Animo », avec un triangle de lecture doré à la place du point du « i »), leurs versions `logo.png` et `logo-blanc.png`, `favicon.svg` et `favicon.png` (icône carrée), `apercu.jpg` (image de partage, 1200 × 630 px, tirée de la page), et les pages `confidentialite.html`, `conditions.html` et `404.html`.
+Déjà dans le dépôt : `logo.svg` et `logo-blanc.svg` (le logo : le mot « Animo », avec un triangle de lecture doré à la place du point du « i »), leurs versions `logo.png` et `logo-blanc.png`, `favicon.svg` et `favicon.png` (icône carrée), `apercu.jpg` (image de partage, 1200 × 630 px, tirée de la page), et les pages `affiliation.html`, `confidentialite.html`, `conditions.html` et `404.html`.
 
 Il reste à ajouter :
 
@@ -47,6 +47,20 @@ Tout est dans le bloc `animo-config` (près de la fin de `index.html`).
 - **Tant que `prix_fcfa` est vide**, la carte affiche « Prix annoncé en décembre » et son bouton devient « Rejoindre la liste d'attente ». Un prix renseigné (en chiffres, par exemple `15000`) s'affiche « 15 000 F par mois ».
 - **Offre `sur-mesure`** : jamais de prix affiché, bouton « Réserver un échange » vers WhatsApp.
 - **Paiement en ligne** : le formulaire de paiement ne s'ouvre que si le nom et le prix de l'offre correspondent à ceux de `lib/payments.mjs` (`PLANS`). Quand vos prix sont décidés, mettez-les aussi à cet endroit. Sinon, les boutons ouvrent WhatsApp ou le lien de `paymentLinks`.
+
+## Page d'affiliation
+
+`affiliation.html` présente le programme d'affiliation (à qui il s'adresse, comment ça marche, conditions, règles, questions). Aucun taux, délai ni montant n'est affiché : tout ce qui n'est pas décidé est en crochets visibles (`[TAUX DE COMMISSION]`, `[QUAND ET COMMENT LA COMMISSION EST PAYÉE]`, etc.) à remplir directement dans le fichier.
+
+Le bouton « Devenir affilié » se règle dans le bloc `animo-config` de `affiliation.html` (près de la fin du fichier) :
+
+| Clé | Rôle |
+|---|---|
+| `whatsappNumber` | Le même numéro que dans `index.html` (chiffres seulement, avec l'indicatif). Le bouton ouvre WhatsApp avec le message « Bonjour, je veux devenir affilié Animo » |
+| `displayNumber` | Numéro affiché en clair (facultatif) |
+| `affiliationUrl` | Lien `https://` d'un formulaire d'inscription. S'il est renseigné, il remplace WhatsApp |
+
+Tant que rien n'est renseigné, les boutons font défiler jusqu'au bas de la page. Le suivi des recommandations et le versement des commissions n'existent pas encore : la page décrit le programme, elle ne le fait pas fonctionner. `confidentialite.html` a une section « Si tu deviens affilié » à compléter.
 
 ## Module de paiement (Moneroo)
 

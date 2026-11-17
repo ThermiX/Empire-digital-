@@ -7,7 +7,7 @@
 
 La CSP n'autorise que les blocs <style> et <script> dont l'empreinte (sha256) est connue.
 Modifier les textes, les liens ou le bloc JSON « animo-config » ne demande pas de relancer ce script.
-Pages traitées : index.html, confidentialite.html, conditions.html, 404.html (si elles existent).
+Pages traitées : index.html, affiliation.html, confidentialite.html, conditions.html, 404.html (si elles existent).
 """
 import base64
 import hashlib
@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = ["index.html", "confidentialite.html", "conditions.html", "404.html"]
+PAGES = ["index.html", "affiliation.html", "confidentialite.html", "conditions.html", "404.html"]
 
 
 def sha256(text: str) -> str:
@@ -33,10 +33,11 @@ def blocks(html: str):
     return styles, scripts
 
 
-def csp(style_hashes, script_hashes, for_header: bool) -> str:
+def csp(style_hashes, script_hashes, for_header: bool, cdn: bool = True) -> str:
     directives = ["default-src 'none'"]
     if script_hashes:
-        directives.append("script-src " + " ".join(script_hashes) + " https://cdnjs.cloudflare.com")
+        # l'hôte cdnjs n'est autorisé que sur les pages qui y chargent un script
+        directives.append("script-src " + " ".join(script_hashes) + (" https://cdnjs.cloudflare.com" if cdn else ""))
     directives += [
         "style-src " + " ".join(style_hashes) + " https://fonts.googleapis.com",
         "font-src https://fonts.gstatic.com",
@@ -77,7 +78,7 @@ def main() -> None:
         ch = [sha256(s) for s in scripts]
         all_styles += sh
         all_scripts += ch
-        meta = csp(sh, ch, for_header=False)
+        meta = csp(sh, ch, for_header=False, cdn="cdnjs.cloudflare.com" in html)
         html, n = re.subn(
             r'(<meta http-equiv="Content-Security-Policy" content=")[^"]*(")',
             lambda m: m.group(1) + meta + m.group(2),

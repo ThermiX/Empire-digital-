@@ -6,7 +6,7 @@
 
   <!-- Sécurité : politique de contenu (CSP). Les empreintes (sha256) des blocs de style et de script sont
        recalculées par « python3 tools/update-csp.py » : à relancer après toute modification du CSS ou du JavaScript. -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-d1D8zHV2SL4+DuiP3EH0Urd7Cmm2caFzT/WbUSxyWiQ=' https://cdnjs.cloudflare.com; style-src 'sha256-ELFGTCUrSotlbLzlEmyz/uu73Droa562K72ek8EYtOc=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-M167eT2M1eDSsrtCJlmXuuEtL2YfksOQ7KfnCXmBBkE=' 'sha256-d1D8zHV2SL4+DuiP3EH0Urd7Cmm2caFzT/WbUSxyWiQ=' https://cdnjs.cloudflare.com; style-src 'sha256-znGM/J0h9ZJ8k6GM21nbg6gbxMmVWcPkq1WPFVLQdMs=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="color-scheme" content="light">
 
@@ -328,7 +328,8 @@
     .menu.is-open li:nth-child(2) { transition-delay: .21s; }
     .menu.is-open li:nth-child(3) { transition-delay: .27s; }
     .menu.is-open li:nth-child(4) { transition-delay: .33s; }
-    .menu.is-open .menu-foot { transition-delay: .42s; }
+    .menu.is-open li:nth-child(5) { transition-delay: .39s; }
+    .menu.is-open .menu-foot { transition-delay: .48s; }
     .menu-foot { display: grid; gap: 18px; padding-top: 28px; }
     .menu-foot .label { margin-top: 6px; }
 
@@ -1108,6 +1109,7 @@
           <li><a class="ulink" href="#exemples" data-nav="exemples">Exemples</a></li>
           <li><a class="ulink" href="#tarifs" data-nav="tarifs">Tarifs</a></li>
           <li><a class="ulink" href="#questions" data-nav="questions">Questions</a></li>
+          <li><a class="ulink" href="affiliation.html">Affiliation</a></li>
         </ul>
       </nav>
 
@@ -1128,6 +1130,7 @@
       <li><a href="#exemples"><small>02</small>Exemples</a></li>
       <li><a href="#tarifs"><small>03</small>Tarifs</a></li>
       <li><a href="#questions"><small>04</small>Questions</a></li>
+      <li><a href="affiliation.html"><small>05</small>Affiliation</a></li>
     </ul>
     <div class="menu-foot">
       <a class="btn btn--gold btn--block" data-act="app" href="#creer">
@@ -1684,7 +1687,7 @@
           </a>
           <div class="cta-phone-num" data-reveal>
             <p class="label">WhatsApp</p>
-            <p class="cta-num"><span class="todo" data-wa-display>[+227 XX XX XX XX]</span></p>
+            <p class="cta-num"><span class="todo" data-wa-display>[NUMÉRO WHATSAPP]</span></p>
           </div>
         </div>
         <div class="cta-visual">
@@ -1718,11 +1721,12 @@
           <a class="ulink" href="#exemples">Exemples</a>
           <a class="ulink" href="#tarifs">Tarifs</a>
           <a class="ulink" href="#questions">Questions</a>
+          <a class="ulink" href="affiliation.html">Affiliation</a>
         </nav>
 
         <div class="foot-col foot-col--contact">
           <h2>Contact</h2>
-          <a class="ulink" data-act="wa:question" href="#creer"><span class="todo" data-wa-display>[+227 XX XX XX XX]</span></a>
+          <a class="ulink" data-act="wa:question" href="#creer"><span class="todo" data-wa-display>[NUMÉRO WHATSAPP]</span></a>
           <a class="ulink" id="foot-mail" href="#creer"><span class="todo" data-mail-display>[ADRESSE E-MAIL]</span></a>
           <a class="ulink" href="https://www.tiktok.com/@animo.studioo" target="_blank" rel="noopener noreferrer">TikTok @animo.studioo</a>
         </div>
