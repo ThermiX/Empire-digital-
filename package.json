@@ -1,0 +1,11 @@
+{
+  "name": "animo-landing",
+  "private": true,
+  "type": "module",
+  "description": "Landing page Animo et module de paiement (Moneroo)",
+  "scripts": {
+    "test": "node --test tests/payments.test.mjs",
+    "csp": "python3 tools/update-csp.py"
+  },
+  "engines": { "node": ">=18" }
+}

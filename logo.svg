@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 334 100" role="img" aria-label="Animo">
+  <g fill="none" stroke="#0E0E10" stroke-width="15" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 90 L42 14 L72 90 M25 64 H59"/>
+    <path d="M97 90 V52 C97 34 131 34 131 52 V90"/>
+    <path d="M158 40 V90"/>
+    <path d="M182 90 V52 C182 34 212 34 212 52 V90 M212 52 C212 34 242 34 242 52 V90"/>
+    <circle cx="292" cy="64" r="26"/>
+  </g>
+  <path d="M149 5 L149 25 L167 15 Z" fill="#D4380C" stroke="#D4380C" stroke-width="5" stroke-linejoin="round"/>
+</svg>

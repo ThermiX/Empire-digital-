@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-YlnWV/OjL5lhcSZrpxgJa+6ZQ5dtLk+T+/Ms9CeQTqI='; style-src 'sha256-z7AHn5X6omv/lYiy0kubP+jIwPOaOFvZNFbe0tA9cTw=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="color-scheme" content="light">
+  <title>Programme d’affiliation · Animo</title>
+  <meta name="description" content="Tu connais des commerçants ? Recommande Animo, qui transforme une photo de produit en vidéo animée, et reçois une commission quand l’un d’eux s’abonne.">
+  <meta name="theme-color" content="#FFFFFF">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:site_name" content="Animo">
+  <meta property="og:title" content="Programme d’affiliation · Animo">
+  <meta property="og:description" content="Recommande Animo à des commerçants et reçois une commission quand l’un d’eux s’abonne.">
+  <meta property="og:image" content="apercu.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --paper: #FFFFFF; --paper-alt: #F6F6F8; --ink: #0E0E10; --ink-soft: #A1A1AA; --gold: #D4380C; --gold-dark: #D4380C; --gold-ink: #B3330D; --gold-light: #FFE6DC; --line: #E8E8EC; --ink-mute: #5B5B66;
+      --font-display: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; --font-serif: "Instrument Serif", Georgia, "Times New Roman", serif; --font-text: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; --font-mono: var(--font-text);
+      --gutter: clamp(20px, 5vw, 80px); --ease: cubic-bezier(.16, 1, .3, 1); }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.0625rem/1.65 var(--font-text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+    h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
+    ul, ol { padding: 0; list-style: none; }
+    a { color: inherit; }
+    svg { display: block; max-width: 100%; }
+    ::selection { background: var(--gold-light); }
+    :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; box-shadow: 0 0 0 6px rgba(212, 56, 12, .45); }
+    .dark :focus-visible { outline-color: var(--gold-light); }
+    .sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .ic { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .wrap { width: min(100% - 2 * var(--gutter), 1180px); margin-inline: auto; }
+    .skip { position: fixed; left: 16px; top: -80px; z-index: 100; background: var(--ink); color: var(--paper); padding: 12px 18px; border-radius: 999px; font-weight: 600; transition: top .2s; }
+    .skip:focus { top: 16px; }
+
+    /* En-tête : pastille flottante */
+    .top { position: sticky; top: 0; z-index: 50; padding-top: 12px; }
+    .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: min(100% - 2 * var(--gutter), 1180px); margin-inline: auto; min-height: 60px; padding: 7px 8px 7px 22px; background: rgba(255, 255, 255, .9); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 12px 32px -20px rgba(14, 14, 16, .3); }
+    .logo { height: 28px; width: auto; color: var(--ink); }
+    .nav { display: none; }
+    @media (min-width: 900px) { .nav { display: flex; gap: clamp(20px, 3vw, 40px); } .nav a { font-size: .9375rem; font-weight: 500; padding: 12px 0; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .5s var(--ease); } .nav a:hover { background-size: 100% 1px; } }
+
+    /* Boutons : flèche dans une pastille ronde */
+    .btn { --fill: var(--gold-light); position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 1em; min-height: 58px; padding: 0 7px 0 1.7em; border-radius: 999px; font: 600 1rem/1 var(--font-text); white-space: nowrap; text-decoration: none; transition: color .4s var(--ease), border-color .4s; }
+    .btn::before { content: ""; position: absolute; inset: -1px; z-index: -1; background: var(--fill); transform: translateY(102%); border-radius: 50% 50% 0 0 / 100% 100% 0 0; transition: transform .55s var(--ease), border-radius .55s var(--ease); }
+    .btn:hover::before, .btn:focus-visible::before { transform: none; border-radius: 0; }
+    .btn--gold { background: var(--gold); color: #FFFFFF; --fill: #A82C08; }
+    .btn--gold .arr { background: #FFFFFF; color: var(--gold); }
+    .dark .btn--gold { background: #FFFFFF; color: var(--gold); --fill: var(--gold-light); }
+    .dark .btn--gold .arr { background: var(--gold); color: #FFFFFF; }
+    .btn--sm { min-height: 46px; padding: 0 5px 0 1.2em; font-size: .9375rem; gap: .8em; }
+    .btn--lg { min-height: 68px; padding: 0 9px 0 2.2em; font-size: 1.0625rem; }
+    .arr { position: relative; width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: var(--paper); overflow: hidden; flex: none; }
+    .btn--sm .arr { width: 34px; height: 34px; }
+    .btn--lg .arr { width: 44px; height: 44px; }
+    .arr svg { position: absolute; inset: 0; width: 100%; height: 100%; padding: 9px; transition: transform .5s var(--ease); }
+    .arr svg:last-child { transform: translateX(-130%); }
+    .btn:hover .arr svg:first-child, .btn:focus-visible .arr svg:first-child, .link:hover .arr svg:first-child { transform: translateX(130%); }
+    .btn:hover .arr svg:last-child, .btn:focus-visible .arr svg:last-child, .link:hover .arr svg:last-child { transform: none; }
+    .link { display: inline-flex; align-items: center; gap: .7em; min-height: 54px; font-weight: 600; text-decoration: none; }
+    .link > span:first-child { background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; padding-bottom: 3px; transition: background-size .5s var(--ease); }
+    .link:hover > span:first-child { background-size: 0 1px; background-position: 100% 100%; }
+    .link .arr { background: none; color: inherit; width: 20px; height: 20px; }
+    .link .arr svg { padding: 0; }
+
+    /* Type */
+    .label { font: 500 .72rem/1.5 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute); display: inline-flex; align-items: center; gap: 10px; padding: 7px 14px 7px 11px; border: 1px solid var(--line); border-radius: 999px; background: #FFFFFF; }
+    .label::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex: none; }
+    .dark .label { color: rgba(255, 255, 255, .88); background: transparent; border-color: rgba(255, 255, 255, .3); } .dark .label::before { background: #FFFFFF; }
+    .display { font: 700 clamp(2.625rem, 1.2rem + 6.4vw, 6rem)/1 var(--font-display); letter-spacing: -.04em; text-wrap: balance; }
+    h2 { font: 700 clamp(2.125rem, 1.2rem + 3.6vw, 4rem)/1.02 var(--font-display); letter-spacing: -.04em; text-wrap: balance; }
+    .k { font-style: normal; color: var(--gold); }
+    .dark .k { color: #FFFFFF; text-decoration: underline; text-decoration-thickness: .07em; text-underline-offset: .14em; }
+    .lead { font-size: clamp(1.0625rem, 1rem + .35vw, 1.3125rem); line-height: 1.55; max-width: 34em; text-wrap: pretty; }
+    p { max-width: 65ch; text-wrap: pretty; }
+    .todo { background: rgba(212, 56, 12, .26); border-radius: 3px; padding: 0 .25em; }
+    .dark .todo { color: var(--gold-light); }
+
+    /* En-tête de page */
+    .hero { padding-block: clamp(48px, 8vw, 104px) clamp(56px, 8vw, 112px); background-image: radial-gradient(40% 50% at 50% 20%, rgba(255, 214, 196, .55), transparent 72%); overflow-x: clip; }
+    .hero .wrap { display: grid; gap: 40px; justify-items: center; text-align: center; }
+    .hero-copy { display: grid; gap: 26px; justify-items: center; }
+    .hero .lead { margin-inline: auto; color: var(--ink-mute); }
+    .hero h1 { max-width: 9.5em; }
+    .actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 32px; }
+    .stack { position: relative; width: min(78%, 340px); aspect-ratio: 1; margin-inline: auto; }
+    .stack::before { content: ""; position: absolute; inset: -20%; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 214, 196, .7), rgba(255, 214, 196, 0)); z-index: -1; }
+    .pol { position: absolute; width: 56%; padding: 3.4%; background: #FFFDF8; border-radius: 10px; box-shadow: 0 10px 22px -12px rgba(14, 14, 16, .35); animation: float 6s ease-in-out infinite; }
+    .pol svg { width: 100%; height: auto; aspect-ratio: 74 / 80; border-radius: 6px; background: var(--gold-light); }
+    .pol--2 svg { background: var(--paper-alt); } .pol--3 svg { background: #EDEDF1; }
+    .pol--1 { left: 0; top: 4%; rotate: -8deg; }
+    .pol--2 { right: 0; top: 24%; rotate: 7deg; animation-delay: -2s; }
+    .pol--3 { left: 18%; bottom: 0; rotate: -3deg; animation-delay: -4s; }
+    @keyframes float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -9px; } }
+    .stack { width: min(70%, 300px); }
+
+    /* Sections */
+    section.s { padding-block: clamp(64px, 9vw, 128px); border-top: 1px solid var(--line); }
+    .head { display: grid; gap: 18px; margin-bottom: clamp(32px, 5vw, 64px); justify-items: center; text-align: center; }
+    .head h2 { max-width: 14em; }
+    .gains { margin-inline: auto; text-align: center; }
+    .rows { border-top: 1px solid var(--ink); }
+    .row { display: grid; gap: 8px 24px; padding-block: clamp(24px, 3vw, 40px); border-bottom: 1px solid var(--line); }
+    .row h3 { font: 700 clamp(1.5rem, 1.1rem + 1.6vw, 2.5rem)/1.08 var(--font-display); letter-spacing: -.035em; text-wrap: balance; }
+    .row p { color: var(--ink-mute); }
+    .row .n { font: 700 clamp(3rem, 2rem + 4vw, 5rem)/.9 var(--font-display); letter-spacing: -.05em; color: var(--gold-light); }
+    @media (min-width: 900px) { .row { grid-template-columns: 1.2fr 3fr 4fr; align-items: baseline; } .row--plain { grid-template-columns: 4fr 5fr; } }
+    dl.rows dt { font: 500 .72rem/1.5 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); }
+    dl.rows dd { font-size: 1.125rem; }
+    .rules li { display: flex; gap: 16px; align-items: baseline; padding-block: 16px; border-bottom: 1px solid var(--line); max-width: 52em; }
+    .rules li::before { content: ""; width: 14px; height: 1.5px; background: var(--gold-dark); flex: none; transform: translateY(-.3em); }
+    .rules { border-top: 1px solid var(--ink); max-width: 52em; margin-inline: auto; }
+
+    details { border-bottom: 1px solid var(--line); }
+    .faq { border-top: 1px solid var(--ink); max-width: 52em; margin-inline: auto; }
+    summary { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 0; cursor: pointer; list-style: none; font: 700 clamp(1.25rem, 1rem + 1vw, 1.75rem)/1.2 var(--font-display); letter-spacing: -.03em; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; flex: none; width: 36px; height: 36px; border: 1px solid var(--ink); border-radius: 50%; display: grid; place-items: center; font: 400 1.5rem/1 var(--font-text); letter-spacing: 0; transition: transform .5s var(--ease), background-color .3s; }
+    details[open] summary::after { transform: rotate(45deg); background: var(--gold); border-color: var(--gold); }
+    details p { padding: 0 60px 26px 0; color: var(--ink-mute); }
+
+    .dark { background: var(--gold); color: #FFFFFF; }
+    .cta { padding-block: clamp(80px, 11vw, 160px); }
+    .cta .wrap { display: grid; gap: clamp(24px, 3vw, 40px); justify-items: center; text-align: center; }
+    .cta h2 { font-size: clamp(2.5rem, 1.4rem + 5.6vw, 6rem); max-width: 11em; }
+    .cta .lead { color: rgba(255, 255, 255, .92); }
+    .cta-num[hidden] { display: none; }
+    .cta-num { padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, .3); width: min(100%, 460px); display: grid; gap: 6px; justify-items: center; }
+    .cta-num b { font: 700 clamp(1.75rem, 1.2rem + 2.4vw, 2.75rem)/1.1 var(--font-display); letter-spacing: -.03em; user-select: all; -webkit-user-select: all; }
+
+    footer { background: var(--paper-alt); padding-block: 28px 36px; color: var(--ink-mute); font-size: .9rem; }
+    footer .row2 { width: min(100% - 2 * var(--gutter), 1180px); margin-inline: auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 32px; }
+    footer nav { display: flex; gap: 24px; flex-wrap: wrap; }
+    footer a { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#contenu">Aller au contenu</a>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path class="ic" d="M4 12h15M13.5 6.5 19 12l-5.5 5.5"/></symbol>
+    <symbol id="art-bottle" viewBox="0 0 90 160">
+      <ellipse cx="45" cy="108" rx="24" ry="3.6" fill="#111" opacity=".16"/>
+      <rect x="40" y="52" width="10" height="9" fill="#2a2a2a"/>
+      <rect x="37" y="38" width="16" height="15" rx="2.5" fill="#D4380C"/>
+      <rect x="37" y="38" width="16" height="4" rx="2" fill="#FF8A5C"/>
+      <rect x="29" y="60" width="32" height="48" rx="6" fill="#0E0E10"/>
+      <rect x="32" y="63" width="3.2" height="42" rx="1.6" fill="#fff" opacity=".16"/>
+      <rect x="35" y="74" width="20" height="22" rx="1.5" fill="#FFE6DC"/>
+      <rect x="38" y="79" width="14" height="1.4" fill="#B3330D"/>
+      <rect x="40" y="83" width="10" height="1.4" fill="#B3330D"/>
+      <rect x="38" y="88" width="14" height="1.4" fill="#B3330D"/>
+    </symbol>
+    <symbol id="art-phone" viewBox="0 0 90 160">
+      <ellipse cx="45" cy="113" rx="22" ry="3.2" fill="#111" opacity=".16"/>
+      <rect x="62" y="58" width="1.2" height="9" rx=".6" fill="#2a2a2a"/>
+      <rect x="28" y="40" width="34" height="71" rx="6.5" fill="#0E0E10"/>
+      <rect x="30.2" y="42.2" width="29.6" height="66.6" rx="4.6" fill="#FFE6DC"/>
+      <rect x="30.2" y="42.2" width="29.6" height="66.6" rx="4.6" fill="#D4380C" opacity=".35"/>
+      <circle cx="45" cy="46" r="1.1" fill="#0E0E10"/>
+      <rect x="36.5" y="54" width="17" height="6" rx="1.4" fill="#111" opacity=".82"/>
+      <g fill="#111">
+        <rect x="33" y="70" width="5.4" height="5.4" rx="1.4" opacity=".8"/><rect x="42.3" y="70" width="5.4" height="5.4" rx="1.4" opacity=".55"/><rect x="51.6" y="70" width="5.4" height="5.4" rx="1.4" opacity=".8"/>
+        <rect x="33" y="79" width="5.4" height="5.4" rx="1.4" opacity=".55"/><rect x="42.3" y="79" width="5.4" height="5.4" rx="1.4" opacity=".8"/><rect x="51.6" y="79" width="5.4" height="5.4" rx="1.4" opacity=".55"/>
+        <rect x="33" y="88" width="5.4" height="5.4" rx="1.4" opacity=".8"/><rect x="42.3" y="88" width="5.4" height="5.4" rx="1.4" opacity=".55"/><rect x="51.6" y="88" width="5.4" height="5.4" rx="1.4" opacity=".8"/>
+      </g>
+      <rect x="39" y="102" width="12" height="1.6" rx=".8" fill="#111" opacity=".5"/>
+    </symbol>
+    <symbol id="art-burger" viewBox="0 0 90 160">
+      <ellipse cx="45" cy="111" rx="27" ry="3.4" fill="#111" opacity=".16"/>
+      <path d="M19 76 Q19 54 45 54 Q71 54 71 76 Z" fill="#E8A33D"/>
+      <g fill="#FFF1D0">
+        <ellipse cx="33" cy="65" rx="1.7" ry=".9" transform="rotate(-20 33 65)"/><ellipse cx="45" cy="60.5" rx="1.7" ry=".9"/>
+        <ellipse cx="57" cy="65" rx="1.7" ry=".9" transform="rotate(20 57 65)"/><ellipse cx="39" cy="70" rx="1.7" ry=".9" transform="rotate(10 39 70)"/>
+        <ellipse cx="52" cy="70" rx="1.7" ry=".9" transform="rotate(-10 52 70)"/>
+      </g>
+      <path d="M17 78 q4.5 -5 9 0 t9 0 t9 0 t9 0 t9 0 t9 0 v4 H17 Z" fill="#7C9A5B"/>
+      <rect x="21" y="82" width="48" height="4.6" rx="2.3" fill="#B5472D"/>
+      <rect x="19" y="87" width="52" height="9" rx="4.5" fill="#3A2A20"/>
+      <path d="M20 86.5 H70 L64 92 L58 87.5 L52 93 L46 87.5 H20 Z" fill="#F6C445"/>
+      <path d="M20 98 H70 V101 Q70 107.5 62 107.5 H28 Q20 107.5 20 101 Z" fill="#E8A33D"/>
+    </symbol>
+  </svg>
+
+  <header class="top">
+    <div class="bar">
+      <a href="./" aria-label="Animo, retour à l’accueil"><svg class="logo" viewBox="0 0 334 100" width="94" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"><path d="M12 90 L42 14 L72 90 M25 64 H59"/><path d="M97 90 V52 C97 34 131 34 131 52 V90"/><path d="M158 40 V90"/><path d="M182 90 V52 C182 34 212 34 212 52 V90 M212 52 C212 34 242 34 242 52 V90"/><circle cx="292" cy="64" r="26"/></g><path d="M149 5 L149 25 L167 15 Z" fill="#D4380C" stroke="#D4380C" stroke-width="5" stroke-linejoin="round"/></svg></a>
+      <nav class="nav" aria-label="Navigation de la page">
+        <a href="#comment">Comment ça marche</a>
+        <a href="#gains">Ce que tu gagnes</a>
+        <a href="#questions">Questions</a>
+      </nav>
+      <a class="btn btn--gold btn--sm" data-affil href="#devenir"><span>Devenir affilié</span><span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span></a>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section class="hero" aria-labelledby="titre">
+      <div class="wrap">
+        <div class="hero-copy">
+          <p class="label">Affiliation</p>
+          <h1 class="display" id="titre">Tu connais des commerçants&nbsp;? <em class="k">Recommande</em> Animo.</h1>
+          <p class="lead">Animo transforme la photo d’un produit en vidéo animée. Le programme d’affiliation s’adresse aux créateurs de contenu, aux agences et à toute personne qui accompagne de petits commerces : tu reçois une commission quand un commerçant s’abonne grâce à toi.</p>
+          <div class="actions">
+            <a class="btn btn--gold btn--lg" data-affil href="#devenir"><span>Devenir affilié</span><span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span></a>
+            <a class="link" href="#comment"><span>Voir comment ça marche</span><span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span></a>
+          </div>
+        </div>
+        <div class="stack" aria-hidden="true">
+          <figure class="pol pol--1"><svg viewBox="8 36 74 80"><use href="#art-bottle" width="90" height="160"/></svg></figure>
+          <figure class="pol pol--2"><svg viewBox="8 36 74 80"><use href="#art-phone" width="90" height="160"/></svg></figure>
+          <figure class="pol pol--3"><svg viewBox="8 36 74 80"><use href="#art-burger" width="90" height="160"/></svg></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="s" id="comment" aria-labelledby="t-comment">
+      <div class="wrap">
+        <div class="head"><p class="label">Comment ça marche</p><h2 id="t-comment">Trois étapes.</h2></div>
+        <ol class="rows">
+          <li class="row"><span class="n" aria-hidden="true">01</span><h3>Tu t’inscris.</h3><p>Écris-nous : on t’explique le programme et on te donne ton lien de recommandation.</p></li>
+          <li class="row"><span class="n" aria-hidden="true">02</span><h3>Tu recommandes Animo.</h3><p>Tu montres les vidéos que fait Animo à des commerçants que tu connais : boutiques, restaurants, vendeurs en ligne. Tu dis ce qu’Animo fait, sans rien promettre de plus.</p></li>
+          <li class="row"><span class="n" aria-hidden="true">03</span><h3>Tu reçois ta commission.</h3><p>Quand un commerçant s’abonne avec ton lien, tu reçois une commission.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="s" id="pour-qui" aria-labelledby="t-qui">
+      <div class="wrap">
+        <div class="head"><p class="label">Pour qui</p><h2 id="t-qui">Si tu parles déjà à des <em class="k">commerçants</em>.</h2></div>
+        <ul class="rows">
+          <li class="row row--plain"><h3>Créateurs de contenu</h3><p>Tu parles à des vendeurs sur TikTok ou sur WhatsApp : Animo est un outil de plus à leur montrer.</p></li>
+          <li class="row row--plain"><h3>Agences</h3><p>Tu gères les réseaux sociaux de petits commerces : tu peux leur recommander Animo.</p></li>
+          <li class="row row--plain"><h3>Toute personne qui connaît des commerçants</h3><p>Boutique de téléphones, mode, cosmétiques, restaurant, chaussures, vente en ligne : si tu en connais, tu peux en parler.</p></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="s" id="gains" aria-labelledby="t-gains">
+      <div class="wrap">
+        <div class="head"><p class="label">Ce que tu gagnes</p><h2 id="t-gains">Les conditions, <em class="k">clairement</em>.</h2></div>
+        <p class="lead gains">Le taux de commission, sa durée, le suivi des recommandations et les dates de paiement seront annoncés à l’ouverture du programme. Écris-nous pour être prévenu.</p>
+      </div>
+    </section>
+
+    <section class="s" id="regles" aria-labelledby="t-regles">
+      <div class="wrap">
+        <div class="head"><p class="label">Les règles</p><h2 id="t-regles">Dire la <em class="k">vérité</em> sur Animo.</h2></div>
+        <ul class="rules">
+          <li>Pas de promesse de résultat, pas de faux avis, pas de faux chiffres.</li>
+          <li>Les vidéos d’exemple se présentent comme des exemples.</li>
+          <li>Pas de message envoyé en masse à des gens qui ne t’ont rien demandé.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="s" id="questions" aria-labelledby="t-questions">
+      <div class="wrap">
+        <div class="head"><p class="label">Questions</p><h2 id="t-questions">Les réponses avant de <em class="k">commencer</em>.</h2></div>
+        <div class="faq">
+          <details><summary>Combien je peux gagner&nbsp;?</summary><p>Le taux sera annoncé à l’ouverture du programme. Aucun montant n’est promis : cela dépend du nombre de commerçants qui s’abonnent.</p></details>
+          <details><summary>Comment sont suivies mes recommandations&nbsp;?</summary><p>Avec ton lien de recommandation personnel, que tu reçois à l’inscription.</p></details>
+          <details><summary>Quand suis-je payé&nbsp;?</summary><p>Les dates et le moyen de paiement seront annoncés à l’ouverture du programme.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="s cta dark" id="devenir" aria-labelledby="t-devenir">
+      <div class="wrap">
+        <p class="label">Rejoindre le programme</p>
+        <h2 id="t-devenir">Prêt à recommander <em class="k">Animo</em>&nbsp;?</h2>
+        <p class="lead">Écris-nous pour rejoindre le programme.</p>
+        <a class="btn btn--gold btn--lg" data-affil href="#devenir"><span>Devenir affilié</span><span class="arr" aria-hidden="true"><svg><use href="#i-arrow"/></svg><svg><use href="#i-arrow"/></svg></span></a>
+        <div class="cta-num" hidden><p class="label">WhatsApp</p><b><span data-wa-display></span></b></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="row2">
+      <p>© <span id="y">2026</span> Animo. Tous droits réservés.</p>
+      <nav aria-label="Informations légales">
+        <a href="./">Accueil</a>
+        <a href="conditions.html">Conditions d’utilisation</a>
+        <a href="confidentialite.html">Confidentialité</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Réglages de la page (données uniquement). Le numéro WhatsApp est le même que celui de index.html. -->
+  <script type="application/json" id="animo-config">
+  { "whatsappNumber": "", "displayNumber": "", "affiliationUrl": "" }
+  </script>
+  <script>
+    (function () {
+      var raw = {};
+      try { raw = JSON.parse(document.getElementById('animo-config').textContent) || {}; } catch (e) { raw = {}; }
+      var digits = String(raw.whatsappNumber || '').replace(/[\s+().-]/g, '');
+      var wa = /^\d{8,15}$/.test(digits) ? digits : '';
+      var url = typeof raw.affiliationUrl === 'string' && /^https:\/\/[^\s<>"']+$/i.test(raw.affiliationUrl.trim()) ? raw.affiliationUrl.trim() : '';
+      var display = typeof raw.displayNumber === 'string' && raw.displayNumber.trim() ? raw.displayNumber.trim().slice(0, 24) : (wa ? '+' + wa : '');
+      var href = url || (wa ? 'https://wa.me/' + wa + '?text=' + encodeURIComponent("Bonjour, je veux devenir affilié Animo") : '');
+      Array.prototype.forEach.call(document.querySelectorAll('[data-affil]'), function (a) {
+        if (!href) return;
+        a.setAttribute('href', href); a.setAttribute('target', '_blank'); a.setAttribute('rel', 'noopener noreferrer');
+      });
+      if (display) { Array.prototype.forEach.call(document.querySelectorAll('[data-wa-display]'), function (el) { el.textContent = display; }); var cn = document.querySelector('.cta-num'); if (cn) cn.hidden = false; }
+      var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>

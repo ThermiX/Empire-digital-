@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-CRECbqbBZxsibccGx26bjkc/IUvlJtRTv4qo4a/K7cM=' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="color-scheme" content="light">
+  <title>Confidentialité · Animo</title>
+  <meta name="description" content="Ce que la page d’Animo collecte, ce que font ses prestataires, et comment exercer tes droits.">
+  <meta name="theme-color" content="#FFFFFF">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --paper: #FFFFFF; --paper-alt: #F6F6F8; --ink: #0E0E10; --gold: #D4380C; --gold-light: #FFE6DC; --gold-ink: #B3330D; --line: #E8E8EC; --ink-mute: #5B5B66;
+      --font-display: "Inter Tight", "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; --font-text: "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif; --font-mono: var(--font-text);
+      --gutter: clamp(20px, 5vw, 80px); --ease: cubic-bezier(.16, 1, .3, 1); }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 400 1.0625rem/1.65 var(--font-text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+    h1, h2, p, ul { margin: 0; }
+    ul { padding: 0; list-style: none; }
+    a { color: inherit; }
+    svg { display: block; }
+    ::selection { background: var(--gold-light); }
+    :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 4px; box-shadow: 0 0 0 6px rgba(212, 56, 12, .45); }
+    .wrap { width: min(100% - 2 * var(--gutter), 760px); margin-inline: auto; }
+    .top { padding-top: 14px; }
+    .bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: min(100% - 2 * var(--gutter), 1180px); margin-inline: auto; min-height: 60px; padding: 7px 8px 7px 22px; background: rgba(255, 255, 255, .9); border: 1px solid var(--line); border-radius: 24px; box-shadow: 0 12px 32px -20px rgba(14, 14, 16, .3); }
+    .logo { height: 28px; width: auto; color: var(--ink); }
+    .back { display: inline-flex; align-items: center; gap: .6em; min-height: 46px; padding: 0 1.2em; border-radius: 999px; border: 1px solid var(--ink); font-weight: 600; font-size: .9375rem; text-decoration: none; transition: background-color .3s var(--ease), color .3s; }
+    .back:hover { background: var(--ink); color: var(--paper); }
+    main { padding-block: clamp(48px, 8vw, 104px) clamp(64px, 9vw, 120px); }
+    .label { font: 500 .72rem/1.5 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-mute); display: flex; align-items: center; gap: 14px; }
+    .label { display: inline-flex; padding: 7px 14px 7px 11px; border: 1px solid var(--line); border-radius: 999px; gap: 10px; letter-spacing: .08em; }
+    .label::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+    h1 { font: 700 clamp(2.5rem, 1.4rem + 5vw, 4.75rem)/1 var(--font-display); letter-spacing: -.04em; text-wrap: balance; margin-top: 20px; }
+    .lead { font-size: 1.25rem; line-height: 1.55; margin-top: 24px; max-width: 34em; text-wrap: pretty; }
+    .upd { margin-top: 20px; color: var(--ink-mute); font-size: .9375rem; }
+    section { margin-top: clamp(40px, 6vw, 64px); padding-top: 28px; border-top: 1px solid var(--line); }
+    h2 { font: 700 clamp(1.5rem, 1.2rem + 1.2vw, 2rem)/1.15 var(--font-display); letter-spacing: -.03em; text-wrap: balance; }
+    section p, section ul { margin-top: 14px; max-width: 65ch; text-wrap: pretty; }
+    section ul { display: grid; gap: 8px; }
+    section li { display: flex; gap: 14px; align-items: baseline; }
+    section li::before { content: ""; width: 14px; height: 1.5px; background: var(--gold-ink); flex: none; transform: translateY(-.3em); }
+    .todo { background: rgba(212, 56, 12, .26); border-radius: 3px; padding: 0 .25em; }
+    .ulink { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    footer { background: var(--paper-alt); padding-block: 28px 36px; color: var(--ink-mute); font-size: .9rem; }
+    footer .row { width: min(100% - 2 * var(--gutter), 1180px); margin-inline: auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 32px; }
+    footer nav { display: flex; gap: 24px; flex-wrap: wrap; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="bar">
+      <a href="./" aria-label="Animo, retour à l’accueil"><svg class="logo" viewBox="0 0 334 100" width="94" height="28" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"><path d="M12 90 L42 14 L72 90 M25 64 H59"/><path d="M97 90 V52 C97 34 131 34 131 52 V90"/><path d="M158 40 V90"/><path d="M182 90 V52 C182 34 212 34 212 52 V90 M212 52 C212 34 242 34 242 52 V90"/><circle cx="292" cy="64" r="26"/></g><path d="M149 5 L149 25 L167 15 Z" fill="#D4380C" stroke="#D4380C" stroke-width="5" stroke-linejoin="round"/></svg></a>
+      <a class="back" href="./">Retour à l’accueil</a>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <div class="wrap">
+      <p class="label">Confidentialité</p>
+      <h1>Tes données, en clair.</h1>
+      <p class="lead">Cette page en collecte très peu. Voici ce qui se passe, point par point, sans jargon.</p>
+      <p class="upd">Dernière mise à jour : 17 novembre 2026</p>
+
+      <section>
+        <h2>Qui est responsable</h2>
+        <p>Animo est responsable des données décrites sur cette page. Pour toute question, écris-nous sur WhatsApp ou par e-mail : nos coordonnées sont en bas de la page d’accueil.</p>
+      </section>
+
+      <section>
+        <h2>Ce que la page collecte</h2>
+        <p>Rien de ton côté : pas de compte pour la visiter, pas de cookie, pas d’outil de mesure d’audience, pas de publicité.</p>
+        <p>Pour s’afficher, la page demande des éléments à des services tiers. Ils reçoivent donc ton adresse IP et les informations techniques habituelles d’un navigateur :</p>
+        <ul>
+          <li>Google Fonts, pour les polices d’écriture (fonts.googleapis.com et fonts.gstatic.com).</li>
+          <li>cdnjs, géré par Cloudflare, pour la bibliothèque d’animation.</li>
+          <li>L’hébergeur du site, qui sert la page et garde des journaux techniques.</li>
+        </ul>
+        <p>Chacun de ces services a sa propre politique de confidentialité.</p>
+      </section>
+
+      <section>
+        <h2>L’aperçu interactif</h2>
+        <p>Ce que tu tapes dans l’aperçu (produit, prix, mots-clés, numéro) reste dans ton navigateur. Rien n’est envoyé, rien n’est enregistré.</p>
+      </section>
+
+      <section>
+        <h2>Quand tu nous écris sur WhatsApp</h2>
+        <p>Les boutons WhatsApp ouvrent une conversation avec nous. Tes messages passent par WhatsApp. Nous voyons ton numéro et ton message, et nous les utilisons pour te répondre. Nous les gardons le temps de te répondre et de suivre ta demande.</p>
+      </section>
+
+      <section>
+        <h2>Quand tu paies en ligne</h2>
+        <p>Si le paiement en ligne est ouvert, tu nous donnes ton prénom, ton nom et ton adresse e-mail, et tu choisis ta zone. Notre serveur les transmet à notre prestataire de paiement, <a class="ulink" href="https://moneroo.io" target="_blank" rel="noopener noreferrer">Moneroo</a>, qui crée le paiement et affiche sa propre page.</p>
+        <p>Ton numéro de téléphone, tes identifiants Mobile Money et ta carte sont saisis chez Moneroo. Nous ne les voyons pas et notre serveur ne les enregistre pas.</p>
+        <p>De Moneroo, nous recevons la référence du paiement, son statut, le montant et l’offre choisie, pour confirmer ton paiement. Nous les gardons le temps de suivre ton abonnement et de respecter nos obligations comptables.</p>
+      </section>
+
+      <section>
+        <h2>L’application Animo</h2>
+        <p>L’application n’est pas encore ouverte. Quand elle ouvrira, cette page indiquera quelles données elle traite (photos, prix, numéros) et combien de temps elles sont gardées.</p>
+      </section>
+
+      <section>
+        <h2>Tes droits</h2>
+        <p>Tu peux demander à voir, corriger ou supprimer les données que nous avons sur toi, ou t’opposer à leur usage : écris-nous, nos coordonnées sont en bas de la page d’accueil.</p>
+        <p>Si tu penses que tes droits ne sont pas respectés, tu peux t’adresser à l’autorité de protection des données de ton pays.</p>
+      </section>
+
+      <section>
+        <h2>Si tu deviens affilié</h2>
+        <p>Pour rejoindre le <a class="ulink" href="affiliation.html">programme d’affiliation</a>, tu nous écris. Nous gardons ton nom, ton moyen de contact, ton lien de recommandation et les commissions qui te sont dues, pour pouvoir te payer. Nous les gardons le temps de ta participation au programme et de nos obligations comptables.</p>
+      </section>
+
+      <section>
+        <h2>Les liens vers d’autres sites</h2>
+        <p>Les boutons WhatsApp, TikTok et le paiement mènent vers des sites qui ont leurs propres règles. Lis-les avant d’y laisser des informations.</p>
+      </section>
+
+      <section>
+        <h2>Si cette page change</h2>
+        <p>La date en haut de la page change aussi.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="row">
+      <p>© <span id="y">2026</span> Animo. Tous droits réservés.</p>
+      <nav aria-label="Informations légales">
+        <a class="ulink" href="affiliation.html">Affiliation</a>
+        <a class="ulink" href="conditions.html">Conditions d’utilisation</a>
+        <a class="ulink" href="confidentialite.html">Confidentialité</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
