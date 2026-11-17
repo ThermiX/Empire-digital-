@@ -2,7 +2,7 @@
 <%- include('partials/haut') %>
 <div class="connexion">
   <div class="connexion-marque">
-    <img src="/img/logo.svg" alt="" width="60" height="60">
+    <%- include('partials/logo', { taille: 60 }) %>
     <h1><%= parametres.nom_marque %> <span class="pastille-admin">admin</span></h1>
     <p>Espace réservé à l'administrateur.</p>
   </div>

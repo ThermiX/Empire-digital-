@@ -70,6 +70,17 @@ const config = {
     voix: 'Voix off',
   },
 
+  // Palettes de couleurs proposées dans Paramètres → Apparence.
+  // Les couleurs elles-mêmes sont dans public/css/style.css (blocs data-palette) ;
+  // ici : le nom affiché + 2 couleurs pour la pastille d'aperçu.
+  palettes: {
+    or: { nom: 'Or Animo', fond: '#0b0a08', accent: '#c9a14a' },
+    violet: { nom: 'Violet électrique', fond: '#0b0a0f', accent: '#6d28ff' },
+    orange: { nom: 'Orange vif', fond: '#0a0a0a', accent: '#ff6a2b' },
+    emeraude: { nom: 'Émeraude', fond: '#080b0a', accent: '#2fbf87' },
+    bleu: { nom: 'Bleu', fond: '#080a0f', accent: '#2a5ce6' },
+  },
+
   // Formats vidéo proposés pour les gabarits
   formats: ['Vertical 9:16', 'Carré 1:1', 'Horizontal 16:9'],
 

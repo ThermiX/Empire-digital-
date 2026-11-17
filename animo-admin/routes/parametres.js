@@ -2,6 +2,7 @@
 //  routes/parametres.js — PAGE 7 : Paramètres
 //   GET  /parametres                  formulaire
 //   POST /parametres                  marque, WhatsApp, message auto
+//   POST /parametres/apparence        choisir la palette de couleurs
 //   POST /parametres/mot-de-passe     changer le mot de passe
 //   POST /parametres/sessions/fermer  déconnecter les autres appareils
 //   POST /parametres/demo/charger     ajouter les données DÉMO
@@ -9,6 +10,7 @@
 // =============================================================
 const express = require('express');
 const db = require('../db/database');
+const config = require('../config');
 const demo = require('../db/demo');
 const f = require('../lib/format');
 const securite = require('../lib/securite');
@@ -78,6 +80,19 @@ router.post('/', (req, res) => {
   noter(req, 'Paramètres modifiés');
   flash(req, 'succes', 'Paramètres enregistrés.');
   res.redirect(303, '/parametres');
+});
+
+// ---------- Apparence (palette de couleurs) ----------
+router.post('/apparence', (req, res) => {
+  const palette = String(req.body.palette || '');
+  if (!Object.hasOwn(config.palettes, palette)) {
+    flash(req, 'erreur', 'Palette inconnue.');
+  } else {
+    enregistrerParametres({ palette });
+    noter(req, 'Palette changée', config.palettes[palette].nom);
+    flash(req, 'succes', `Palette « ${config.palettes[palette].nom} » appliquée.`);
+  }
+  res.redirect(303, '/parametres#apparence');
 });
 
 // ---------- Mot de passe ----------

@@ -57,4 +57,71 @@ function serieJournaliere(lignes, { nbJours = 30, entier = true, unite = f.nombr
   };
 }
 
-module.exports = { serieJournaliere };
+/**
+ * Revenus CUMULÉS du mois en cours, comparés au mois précédent.
+ *   courant, precedent : [{ jour: '2026-11-03', valeur: 15000 }, …] (paiements validés par jour)
+ * Une "case" par jour du mois (1, 2, 3…) : le mois en cours s'arrête à aujourd'hui,
+ * le mois précédent est tracé en entier pour voir où l'on se situe.
+ */
+function serieCumulMois(courant, precedent) {
+  const auj = f.aujourdhui();
+  const debutMois = f.debutDuMois();
+  const debutPrec = f.debutMoisPrecedent(auj);
+  const jourActuel = Number(auj.slice(8, 10));
+  const joursDansMois = (debut) => f.ecartJours(debut, f.debutMoisPrecedent(f.ajouterJours(debut, 62))); // 28 à 31
+  const nbCourant = joursDansMois(debutMois);
+  const nbPrecedent = joursDansMois(debutPrec);
+  const nbCases = Math.max(nbCourant, nbPrecedent);
+
+  const parJour = (lignes) => new Map(lignes.map((l) => [String(l.jour), Number(l.valeur) || 0]));
+  const mapCourant = parJour(courant);
+  const mapPrecedent = parJour(precedent);
+  const nomCourant = f.moisCourt(debutMois);
+  const nomPrecedent = f.moisCourt(debutPrec);
+
+  let cumulCourant = 0;
+  let cumulPrecedent = 0;
+  const cases = [];
+  for (let j = 1; j <= nbCases; j++) {
+    const c = { jour: j, x: ((j - 1) * 100) / nbCases, largeur: 100 / nbCases, aujourdhui: j === jourActuel, courant: null, precedent: null };
+    if (j <= jourActuel) {
+      const duJour = mapCourant.get(f.ajouterJours(debutMois, j - 1)) || 0;
+      cumulCourant += duJour;
+      c.courant = { cumul: cumulCourant, duJour };
+    }
+    if (j <= nbPrecedent) {
+      cumulPrecedent += mapPrecedent.get(f.ajouterJours(debutPrec, j - 1)) || 0;
+      c.precedent = { cumul: cumulPrecedent };
+    }
+    cases.push(c);
+  }
+
+  const echelle = maximumRond(Math.max(cumulCourant, cumulPrecedent), false);
+  for (const c of cases) {
+    if (c.courant) c.courant.proportion = c.courant.cumul / echelle;
+    if (c.precedent) c.precedent.proportion = c.precedent.cumul / echelle;
+    // Textes de la bulle
+    if (c.courant) {
+      c.texte = f.fcfa(c.courant.cumul);
+      c.libelle = `${c.aujourdhui ? "Aujourd'hui" : `${c.jour} ${nomCourant}`} · ${c.courant.duJour ? `+${f.fcfa(c.courant.duJour)} ce jour` : 'rien ce jour'}`;
+      c.extra = c.precedent ? `Au ${c.jour} ${nomPrecedent} : ${f.fcfa(c.precedent.cumul)}` : '';
+    } else {
+      c.texte = c.precedent ? f.fcfa(c.precedent.cumul) : '—';
+      c.libelle = `Au ${c.jour} ${nomPrecedent} (mois précédent)`;
+      c.extra = c.jour <= nbCourant ? `${c.jour} ${nomCourant} : à venir` : '';
+    }
+  }
+
+  return {
+    cases,
+    nbCases,
+    jourActuel,
+    nomCourant,
+    nomPrecedent,
+    totalCourant: cumulCourant,
+    totalPrecedent: cumulPrecedent,
+    graduations: { haut: f.compact(echelle), milieu: f.compact(echelle / 2) },
+  };
+}
+
+module.exports = { serieJournaliere, serieCumulMois };

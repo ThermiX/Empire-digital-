@@ -18,14 +18,14 @@ const NAV = [
 // il y a toujours le texte et une icône.
 const STATUTS = {
   client: {
-    essai: ['Essai', 'violet', 'horloge'],
+    essai: ['Essai', 'accent', 'horloge'],
     actif: ['Actif', 'vert', 'check'],
     expire: ['Expiré', 'gris', 'calendrier'],
     suspendu: ['Suspendu', 'rouge', 'pause'],
   },
   commande: {
     en_attente: ['En attente', 'ambre', 'horloge'],
-    en_cours: ['En cours', 'violet', 'relancer'],
+    en_cours: ['En cours', 'accent', 'relancer'],
     terminee: ['Terminée', 'vert', 'check'],
     echec: ['Échec', 'rouge', 'alerte'],
   },

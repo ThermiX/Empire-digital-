@@ -1,10 +1,12 @@
 # Animo — espace administrateur
 
 Admin du SaaS **Animo** (vidéos promo animées pour commerces et créateurs d'Afrique francophone).
-Thème sombre (inspiration tableaux de bord SaaS type Whop), identité Animo : violet électrique + corail, police Inter.
+Thème sombre (inspiration tableaux de bord SaaS type Whop), noir & or par défaut, 5 palettes au choix dans Paramètres → Apparence, police Inter.
 Pensé d’abord pour le téléphone, puis l’ordinateur. Tout en français, montants en FCFA.
 
 ![Aperçu téléphone](docs/apercu-telephone.png)
+
+![Les 5 palettes](docs/apercu-palettes.png)
 
 ---
 
@@ -191,7 +193,7 @@ Conventions : montants en **nombres entiers FCFA** ; dates en texte `AAAA-MM-JJ 
 | **4. Gabarits** | Ajouter, modifier, activer / désactiver ; nom, miniature, durée, champs client | `routes/gabarits.js` · `views/gabarits/` |
 | **5. Paiements** | Liste FCFA, **Valider le paiement** avec capture de preuve, refuser | `routes/paiements.js` · `views/paiements/` |
 | **6. Offres** | Créer / modifier : nom, prix FCFA, vidéos par mois, durée | `routes/offres.js` · `views/offres/` |
-| **7. Paramètres** | Nom de marque, WhatsApp de contact, message automatique (avec aperçu), mot de passe, données DÉMO, journal | `routes/parametres.js` · `views/parametres.ejs` |
+| **7. Paramètres** | Nom de marque, **palette de couleurs**, WhatsApp de contact, message automatique (avec aperçu), mot de passe, données DÉMO, journal | `routes/parametres.js` · `views/parametres.ejs` |
 
 ### Règles d'abonnement (`lib/abonnements.js`)
 
@@ -241,7 +243,7 @@ envoie directement le MP4.
 
 | Je veux changer… | Où |
 |---|---|
-| Les couleurs | `public/css/style.css`, variables en haut (`--violet`, `--corail`…) |
+| Les couleurs | Page **Paramètres → Apparence** (5 palettes). Pour créer la vôtre : `public/css/style.css` (blocs `data-palette`) + `config.js` → `palettes` |
 | La liste des moyens de paiement | `config.js` → `moyensPaiement` |
 | Les types de champs des gabarits / formats | `config.js` → `typesChamps`, `formats` |
 | La durée avant déconnexion | `.env` → `DECONNEXION_APRES_MINUTES` |

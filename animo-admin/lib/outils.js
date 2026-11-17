@@ -11,6 +11,7 @@ const f = require('./format');
 // Valeurs utilisées tant que l'admin n'a rien changé dans Paramètres
 const PARAMETRES_PAR_DEFAUT = {
   nom_marque: 'Animo',
+  palette: 'or', // couleurs de l'admin (voir config.palettes)
   whatsapp_contact: '',
   indicatif_pays: '225',
   duree_essai_jours: '3',
@@ -25,7 +26,9 @@ const PARAMETRES_PAR_DEFAUT = {
 /** Renvoie tous les paramètres { cle: valeur } */
 function lireParametres() {
   const enregistres = Object.fromEntries(db.tous('SELECT cle, valeur FROM parametres').map((l) => [l.cle, l.valeur]));
-  return { ...PARAMETRES_PAR_DEFAUT, ...enregistres };
+  const parametres = { ...PARAMETRES_PAR_DEFAUT, ...enregistres };
+  if (!Object.hasOwn(config.palettes, parametres.palette)) parametres.palette = PARAMETRES_PAR_DEFAUT.palette;
+  return parametres;
 }
 
 /** Enregistre plusieurs paramètres d'un coup */

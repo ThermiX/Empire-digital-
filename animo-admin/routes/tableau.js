@@ -6,7 +6,7 @@
 const express = require('express');
 const db = require('../db/database');
 const f = require('../lib/format');
-const { serieJournaliere } = require('../lib/graphique');
+const { serieJournaliere, serieCumulMois } = require('../lib/graphique');
 
 const router = express.Router();
 
@@ -102,6 +102,39 @@ router.get('/', (req, res) => {
     debut30Jours,
   );
 
+  // ---- Courbe principale : revenus cumulés du mois vs mois précédent ----
+  const revenusParJour = (debut, fin) =>
+    db.tous(
+      `SELECT substr(date_paiement, 1, 10) AS jour, SUM(montant_fcfa) AS valeur
+       FROM paiements WHERE statut = 'valide' AND date_paiement >= ? AND date_paiement < ? ${sansDemo}
+       GROUP BY jour`,
+      debut,
+      fin,
+    );
+
+  // ---- Abonnés actifs par offre + revenu mensuel récurrent estimé ----
+  const parOffre = db.tous(
+    `SELECT o.id, o.nom, o.prix_fcfa, o.duree_jours, o.est_demo, COUNT(c.id) AS abonnes
+     FROM offres o JOIN clients c ON c.offre_id = o.id AND c.statut = 'actif' ${avecDemo ? '' : 'AND c.est_demo = 0'}
+     GROUP BY o.id ORDER BY abonnes DESC, o.prix_fcfa DESC`,
+  );
+  // Ramené à 30 jours pour les offres d'une autre durée
+  const revenuRecurrent = Math.round(parOffre.reduce((somme, o) => somme + (o.abonnes * o.prix_fcfa * 30) / o.duree_jours, 0));
+
+  // ---- Activité récente ----
+  const derniersPaiements = db.tous(
+    `SELECT p.id, p.montant_fcfa, p.statut, p.date_paiement, p.moyen, p.est_demo, c.nom AS client_nom
+     FROM paiements p JOIN clients c ON c.id = p.client_id
+     WHERE 1 = 1 ${avecDemo ? '' : 'AND p.est_demo = 0'}
+     ORDER BY p.date_paiement DESC, p.id DESC LIMIT 5`,
+  );
+  const dernieresCommandes = db.tous(
+    `SELECT c.id, c.statut, c.cree_le, c.est_demo, cl.nom AS client_nom, g.nom AS gabarit_nom, g.miniature AS gabarit_miniature
+     FROM commandes c JOIN clients cl ON cl.id = c.client_id LEFT JOIN gabarits g ON g.id = c.gabarit_id
+     WHERE 1 = 1 ${avecDemo ? '' : 'AND c.est_demo = 0'}
+     ORDER BY c.cree_le DESC, c.id DESC LIMIT 5`,
+  );
+
   // ---- Premiers pas (tant que rien n'est configuré) ----
   const demarrage = {
     offres: db.valeur('SELECT COUNT(*) FROM offres WHERE est_demo = 0'),
@@ -119,6 +152,11 @@ router.get('/', (req, res) => {
     moisPrecedent: f.moisCourt(debutMoisPrec),
     aTraiter,
     demarrage,
+    parOffre,
+    revenuRecurrent,
+    derniersPaiements,
+    dernieresCommandes,
+    graphiqueCumul: serieCumulMois(revenusParJour(debutMois, demain), revenusParJour(debutMoisPrec, debutMois)),
     graphiqueVideos: serieJournaliere(videos30, { entier: true, unite: (n) => f.pluriel(n, 'vidéo') }),
     graphiqueRevenus: serieJournaliere(revenus30, { entier: false, unite: f.fcfa }),
   });

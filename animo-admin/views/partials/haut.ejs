@@ -5,11 +5,11 @@
 %>
 <% const modeAdmin = locals.admin && !locals.pagePublique; %>
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-palette="<%= parametres.palette %>">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0B0A0F">
+  <meta name="theme-color" content="<%= config.palettes[parametres.palette].fond %>">
   <meta name="robots" content="noindex, nofollow">
   <% if (modeAdmin) { %><meta name="csrf" content="<%= csrf %>"><% } %>
   <title><%= titre %> · <%= parametres.nom_marque %><%= locals.pagePublique ? '' : ' admin' %></title>
@@ -26,7 +26,7 @@
 <div class="appli">
   <aside class="barre-laterale">
     <a class="marque" href="/">
-      <img src="/img/logo.svg" alt="" width="32" height="32">
+      <%- include('logo', { taille: 32 }) %>
       <span class="marque-textes"><span><%= parametres.nom_marque %></span><small>Espace admin</small></span>
     </a>
     <nav aria-label="Menu principal">
@@ -51,7 +51,7 @@
   <div class="contenu">
     <header class="entete">
       <a class="marque" href="/">
-        <img src="/img/logo.svg" alt="" width="32" height="32">
+        <%- include('logo', { taille: 32 }) %>
         <span class="marque-textes"><span><%= parametres.nom_marque %></span><small>Espace admin</small></span>
       </a>
       <a class="avatar-admin" href="/parametres" title="Paramètres — <%= admin.email %>" aria-label="Paramètres du compte"><%= admin.email.slice(0, 1).toUpperCase() %></a>

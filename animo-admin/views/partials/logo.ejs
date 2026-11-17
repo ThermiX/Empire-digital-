@@ -1,0 +1,7 @@
+<%# Logo Animo dessiné en SVG : il prend les couleurs de la palette (voir .logo-* dans style.css). Variable : taille (px). %>
+<svg class="logo" viewBox="0 0 64 64" width="<%= locals.taille || 32 %>" height="<%= locals.taille || 32 %>" aria-hidden="true" focusable="false">
+  <rect class="logo-fond" width="64" height="64" rx="18"/>
+  <path class="logo-reflet" d="M0 18A18 18 0 0 1 18 0h28a18 18 0 0 1 18 18v4C44 30 20 30 0 22z"/>
+  <path class="logo-lecture" d="M25 20.2v23.6a2.2 2.2 0 0 0 3.3 1.9l19.4-11.8a2.2 2.2 0 0 0 0-3.8L28.3 18.3a2.2 2.2 0 0 0-3.3 1.9z"/>
+  <circle class="logo-point" cx="48" cy="16" r="6.5"/>
+</svg>

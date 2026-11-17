@@ -163,6 +163,8 @@
     const repere = $('.graph-repere', graphique);
     const point = $('.graph-point', graphique);
     const colonnes = $$('.colonne', graphique);
+    // Colonne mise en avant au repos : aujourd'hui (data-defaut) ou la dernière
+    const parDefaut = $('.colonne[data-defaut]', graphique) || colonnes[colonnes.length - 1];
     let active = null;
 
     // Centre horizontal d'une colonne, en pixels dans la zone du graphique
@@ -173,6 +175,10 @@
     // Place le point sur la courbe (la courbe va de 0 en bas à 1 en haut)
     const placerPoint = (colonne) => {
       if (!point || !colonne) return;
+      if (colonne.dataset.proportion === undefined) {
+        point.hidden = true; // jour à venir : pas de valeur sur la courbe
+        return;
+      }
       point.style.left = `${centre(colonne)}px`;
       point.style.top = `${trace.offsetHeight * (1 - Number(colonne.dataset.proportion || 0))}px`;
       point.hidden = false;
@@ -189,6 +195,12 @@
       const jour = document.createElement('span');
       jour.textContent = colonne.dataset.libelle;
       bulle.replaceChildren(valeur, jour);
+      if (colonne.dataset.extra) {
+        // 3e ligne facultative (ex. : valeur du mois précédent)
+        const extra = document.createElement('span');
+        extra.textContent = colonne.dataset.extra;
+        bulle.append(extra);
+      }
       bulle.hidden = false;
       const demi = bulle.offsetWidth / 2;
       const x = centre(colonne);
@@ -204,11 +216,11 @@
       active = null;
       bulle.hidden = true;
       if (repere) repere.hidden = true;
-      placerPoint(colonnes[colonnes.length - 1]); // le point revient sur aujourd'hui
+      placerPoint(parDefaut); // le point revient sur aujourd'hui
     };
-    // Au chargement (et si l'écran tourne) : point sur la dernière valeur
-    placerPoint(colonnes[colonnes.length - 1]);
-    window.addEventListener('resize', () => (active ? placerPoint(active) : placerPoint(colonnes[colonnes.length - 1])));
+    // Au chargement (et si l'écran tourne) : point sur la valeur du jour
+    placerPoint(parDefaut);
+    window.addEventListener('resize', () => placerPoint(active || parDefaut));
 
     $$('.colonne', graphique).forEach((colonne) => {
       colonne.addEventListener('focus', () => montrer(colonne));
@@ -322,6 +334,13 @@
       });
     });
   }
+
+  // ---------- Apparence : aperçu immédiat de la palette choisie ----------
+  $$('[data-choix-palette]').forEach((choix) => {
+    choix.addEventListener('change', () => {
+      if (choix.checked) document.documentElement.dataset.palette = choix.value;
+    });
+  });
 
   // ---------- Menu "Plus" : se ferme en touchant ailleurs ----------
   const menuPlus = $('.barre-bas details');

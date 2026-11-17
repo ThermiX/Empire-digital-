@@ -1,0 +1,67 @@
+<%#
+  Revenus CUMULÉS du mois, comparés au mois précédent (style Whop / Stripe).
+  Variable : g (voir serieCumulMois dans lib/graphique.js).
+  - trait plein + aire : mois en cours (s'arrête à aujourd'hui)
+  - trait pointillé    : mois précédent (en entier)
+  - la légende, la bulle au toucher et le tableau donnent les valeurs sans dépendre des couleurs
+%>
+<% const H = 140; const L = 300; const n = g.nbCases;
+   const X = (jour) => (((jour - 0.5) * L) / n).toFixed(2);
+   const Y = (proportion) => (H - proportion * H).toFixed(2);
+   const ptsCourant = g.cases.filter((c) => c.courant).map((c) => `${X(c.jour)},${Y(c.courant.proportion)}`);
+   const ptsPrecedent = g.cases.filter((c) => c.precedent).map((c) => `${X(c.jour)},${Y(c.precedent.proportion)}`); %>
+<div data-graph>
+  <div class="graph-legende">
+    <span><i class="cle-trait" aria-hidden="true"></i><%= g.nomCourant %> (en cours)</span>
+    <span><i class="cle-trait pointille" aria-hidden="true"></i><%= g.nomPrecedent %></span>
+  </div>
+  <div class="graph-zone">
+    <div class="graph-axe" aria-hidden="true">
+      <span class="graduation haut"><%= g.graduations.haut %></span>
+      <span class="graduation milieu"><%= g.graduations.milieu %></span>
+      <span class="graduation bas">0</span>
+    </div>
+    <div class="graph-trace">
+      <svg class="graph-courbe" viewBox="0 0 <%= L %> <%= H %>" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="degrade-cumul" x1="0" y1="0" x2="0" y2="1">
+            <stop class="degrade-haut" offset="0"/>
+            <stop class="degrade-bas" offset="1"/>
+          </linearGradient>
+        </defs>
+        <% if (ptsCourant.length > 1) { %>
+        <path fill="url(#degrade-cumul)" d="M<%= X(1) %>,<%= H %> L<%= ptsCourant.join(' L') %> L<%= X(g.jourActuel) %>,<%= H %> Z"/>
+        <% } %>
+        <% if (ptsPrecedent.length > 1) { %><path class="trait-precedent" d="M<%= ptsPrecedent.join(' L') %>"/><% } %>
+        <% if (ptsCourant.length > 1) { %><path class="trait" d="M<%= ptsCourant.join(' L') %>"/><% } %>
+      </svg>
+      <svg class="graph-svg" width="100%" height="<%= H %>" role="img" aria-label="Revenus cumulés : <%= f.fcfa(g.totalCourant) %> en <%= g.nomCourant %>, contre <%= f.fcfa(g.totalPrecedent) %> sur tout le mois de <%= g.nomPrecedent %>">
+        <line class="grille" x1="0" x2="100%" y1="0.5" y2="0.5"/>
+        <line class="grille" x1="0" x2="100%" y1="<%= H / 2 %>" y2="<%= H / 2 %>"/>
+        <line class="ligne-base" x1="0" x2="100%" y1="<%= H - 0.5 %>" y2="<%= H - 0.5 %>"/>
+        <% g.cases.forEach((c) => { %>
+        <g class="colonne" tabindex="0" data-libelle="<%= c.libelle %>" data-texte="<%= c.texte %>" data-extra="<%= c.extra %>"<% if (c.courant) { %> data-proportion="<%= c.courant.proportion.toFixed(4) %>"<% } %><%= c.aujourdhui ? ' data-defaut' : '' %> aria-label="<%= c.libelle %> : <%= c.texte %>">
+          <rect class="zone" x="<%= c.x.toFixed(3) %>%" y="0" width="<%= c.largeur.toFixed(3) %>%" height="<%= H %>"/>
+        </g>
+        <% }) %>
+      </svg>
+      <span class="graph-repere" hidden></span>
+      <span class="graph-point" hidden></span>
+      <div class="graph-bulle" hidden></div>
+    </div>
+    <div class="graph-dates" aria-hidden="true">
+      <span>1<sup>er</sup></span><span><%= Math.round(n / 2) %></span><span><%= n %></span>
+    </div>
+  </div>
+  <details class="graph-tableau">
+    <summary>Voir les chiffres jour par jour</summary>
+    <table>
+      <thead><tr><th scope="col">Jour</th><th scope="col">Cumul <%= g.nomCourant %></th><th scope="col">Cumul <%= g.nomPrecedent %></th></tr></thead>
+      <tbody>
+        <% g.cases.forEach((c) => { %>
+        <tr><td><%= c.jour %></td><td><%= c.courant ? f.fcfa(c.courant.cumul) : '—' %></td><td><%= c.precedent ? f.fcfa(c.precedent.cumul) : '—' %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </details>
+</div>

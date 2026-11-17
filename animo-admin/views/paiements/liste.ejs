@@ -42,7 +42,7 @@
 <section class="carte liste">
   <% paiements.forEach((p) => { %>
   <a class="ligne" href="/paiements/<%= p.id %>">
-    <span class="avatar <%= p.statut === 'en_attente' ? 'corail' : '' %>"><%- icone('paiements') %></span>
+    <span class="avatar <%= p.statut === 'en_attente' ? 'attention' : '' %>"><%- icone('paiements') %></span>
     <span class="ligne-corps">
       <span class="ligne-titre"><span class="nom"><%= p.client_nom %></span><%- badgeDemo(p.est_demo) %></span>
       <span class="ligne-sous"><%= p.moyen %><%= p.reference ? ` · réf. ${p.reference}` : '' %><%= p.offre_nom ? ` · ${p.offre_nom}` : '' %></span>
