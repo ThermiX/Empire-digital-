@@ -7,7 +7,7 @@
 <meta name="description" content="Crée des vidéos TikTok animées sans caméra, sans montage. 3 leçons vidéo, un guide PDF de 30 pages et le skill à importer dans Claude. 5 000 F CFA, accès immédiat, paiement Mobile Money ou carte bancaire.">
 <meta name="author" content="Argent Clair">
 <meta name="robots" content="index, follow">
-<meta name="theme-color" content="#F3E5D0">
+<meta name="theme-color" content="#4A1F10">
 <meta name="format-detection" content="telephone=no">
 
 <!-- Open Graph : aperçu lors du partage sur WhatsApp, Facebook, Telegram -->
@@ -60,6 +60,8 @@
   --m:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --ease:cubic-bezier(.2,.7,.2,1);
   --gut:20px;
+  --grad:linear-gradient(180deg,#FCC48F 0%,#EF8F57 46%,#D0613A 100%);
+  --grad-btn:linear-gradient(180deg,#F5A26B 0%,#DE7B52 55%,#C9603C 100%);
   --max:1160px;
 }
 
@@ -88,7 +90,7 @@ svg{display:block}
 .mono{font-family:var(--m);font-weight:500;letter-spacing:0}
 .eyebrow{font-family:var(--m);font-weight:500;font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--or-texte)}
 .o{color:var(--or)}
-.mark{background:linear-gradient(transparent 60%,rgba(217,119,87,.5) 60%,rgba(217,119,87,.5) 92%,transparent 92%);-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .04em}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 
 /* ---------- Structure ---------- */
 .wrap{width:100%;max-width:calc(var(--max) + var(--gut)*2);margin-inline:auto;padding-inline:var(--gut)}
@@ -96,17 +98,37 @@ svg{display:block}
 .sec-head{display:grid;gap:16px;max-width:780px;margin-bottom:clamp(32px,5vw,56px)}
 .sec-head .lead{max-width:46ch}
 
-/* ---------- Bandeau du haut ---------- */
+/* ---------- Haut de page sombre ---------- */
+.night{
+  position:relative;overflow:hidden;color:var(--sur-nuit);
+  background:
+    radial-gradient(55% 38% at 10% 0%,rgba(217,119,87,.46),transparent 72%),
+    radial-gradient(42% 34% at 94% 10%,rgba(169,83,47,.4),transparent 72%),
+    radial-gradient(70% 38% at 50% 100%,rgba(217,119,87,.32),transparent 72%),
+    #120F0D;
+  border-radius:0 0 var(--r-xl) var(--r-xl);
+}
+.bandeau{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 14px;padding:10px var(--gut);background:linear-gradient(90deg,#3E190C,#7A3418 50%,#3E190C);border-bottom:1px solid rgba(217,119,87,.35);font-size:14px;line-height:1.35;color:#F6E7D3;text-align:center}
+.bandeau b{font-weight:800;color:#FFF8EE}
+.bandeau__chip{padding:5px 12px;border-radius:999px;background:rgba(0,0,0,.35);font-weight:800;font-size:13px;color:#FFF8EE}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:18px}
-.brand{display:inline-flex;align-items:center;gap:10px;font-weight:900;font-size:18px;letter-spacing:-.02em;text-decoration:none}
-.brand svg{width:30px;height:30px}
-.handle{font-family:var(--m);font-weight:500;font-size:12.5px;color:var(--texte-doux);text-decoration:none;padding:8px 12px;border:1px solid var(--ligne);border-radius:999px;transition:background .2s}
-.handle:hover{background:var(--creme-clair)}
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:900;font-size:20px;letter-spacing:-.025em;text-decoration:none;color:#FFF8EE}
+.brand svg{width:32px;height:32px;filter:drop-shadow(0 4px 14px rgba(217,119,87,.45))}
+.brand em{font-style:normal}
+.nav__links{display:none;gap:34px}
+.nav__links a{color:rgba(243,229,208,.68);text-decoration:none;font-size:16px;transition:color .2s}
+.nav__links a:hover{color:#FFF8EE}
+.nav__right{display:flex;align-items:center;gap:12px}
+.handle{display:none;font-family:var(--m);font-weight:500;font-size:12.5px;color:rgba(243,229,208,.75);text-decoration:none;padding:10px 14px;border:1px solid rgba(243,229,208,.18);border-radius:999px;transition:background .2s}
+.handle:hover{background:rgba(243,229,208,.07)}
+.nav__cta{display:inline-flex;align-items:center;gap:6px;padding:11px 18px;border-radius:999px;background:var(--grad-btn);color:var(--nuit);font-weight:800;font-size:15px;line-height:1;text-decoration:none;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,225,200,.5),0 10px 28px -8px rgba(217,119,87,.75);transition:transform .15s var(--ease)}
+.nav__cta:hover{transform:translateY(-1px)}
+.nav__cta .mono{font-size:13.5px}
 
 /* ---------- Boutons ---------- */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:62px;
-  padding:19px 30px;border-radius:18px;background:var(--nuit);color:var(--creme);
+  padding:19px 32px;border-radius:999px;background:var(--nuit);color:var(--creme);
   font-family:var(--f);font-weight:800;font-size:19px;letter-spacing:-.01em;line-height:1.1;text-decoration:none;
   box-shadow:0 8px 0 var(--or);
   transition:transform .15s var(--ease),box-shadow .15s var(--ease);
@@ -116,21 +138,84 @@ svg{display:block}
 .btn:hover{transform:translateY(-2px);box-shadow:0 10px 0 var(--or)}
 .btn:hover svg{transform:translateX(3px)}
 .btn:active{transform:translateY(6px);box-shadow:0 2px 0 var(--or)}
+.btn--glow{background:var(--grad-btn);color:var(--nuit);box-shadow:inset 0 1px 0 rgba(255,225,200,.55),0 8px 0 #8E3B1E,0 26px 50px -14px rgba(217,119,87,.8)}
+.btn--glow:hover{box-shadow:inset 0 1px 0 rgba(255,225,200,.55),0 10px 0 #8E3B1E,0 30px 60px -14px rgba(217,119,87,.9)}
+.btn--glow:active{box-shadow:inset 0 1px 0 rgba(255,225,200,.55),0 2px 0 #8E3B1E,0 12px 30px -14px rgba(217,119,87,.6)}
 .note{font-family:var(--m);font-weight:500;font-size:12.5px;line-height:1.5;color:var(--texte-doux)}
 
 /* ---------- Hero ---------- */
-.hero{padding-top:clamp(20px,4vw,48px);padding-bottom:clamp(56px,7vw,88px)}
-.hero__grid{display:grid;grid-template-columns:minmax(0,1fr);gap:56px;align-items:center}
-.hero__grid > *{min-width:0}
-.tag{display:inline-flex;align-items:center;gap:10px;padding:8px 14px 8px 12px;border-radius:999px;background:var(--creme-clair);border:1px solid var(--ligne);font-family:var(--m);font-weight:500;font-size:12.5px;letter-spacing:.02em}
-.tag i{width:8px;height:8px;border-radius:50%;background:var(--or);flex:none}
-.hero h1{margin-top:22px}
-.hero .lead{margin-top:22px;max-width:40ch}
-.cta{margin-top:34px;display:grid;gap:20px;justify-items:start}
+.hero{padding-top:clamp(28px,4.5vw,56px);padding-bottom:clamp(72px,8vw,104px)}
+.hero__copy{display:grid;justify-items:center;text-align:center}
+.kicker{display:inline-flex;align-items:center;gap:12px;padding:5px 16px 5px 5px;border-radius:999px;background:rgba(243,229,208,.06);border:1px solid rgba(243,229,208,.16);font-family:var(--m);font-weight:500;font-size:12.5px;letter-spacing:.02em;color:var(--sur-nuit);white-space:nowrap;box-shadow:0 10px 30px -12px rgba(0,0,0,.6)}
+.cluster{display:flex}
+.cl{width:38px;height:38px;margin-left:-11px;display:grid;place-items:center;border-radius:50%;border:2px solid #17110E}
+.cl:first-child{margin-left:0}
+.cl svg{width:17px;height:17px}
+.cl--1{background:var(--grad-btn);color:var(--nuit)}
+.cl--2{background:#2C2926;color:var(--sur-nuit)}
+.cl--3{background:var(--creme);color:var(--nuit)}
+.cl--4{background:var(--menthe);color:var(--nuit)}
+.hero h1{margin-top:26px;color:#FFF8EE}
+.hero h1 .grad{display:block;padding-bottom:.1em;margin-bottom:-.1em}
+.hero .lead{margin-top:24px;max-width:46ch;color:rgba(243,229,208,.72)}
+.hero .lead strong{color:#FFF8EE;font-weight:800}
+.cta{margin-top:36px;display:grid;gap:18px;justify-items:center}
+.hero .note{color:rgba(243,229,208,.6)}
+
+/* Scène : interface Claude + téléphones */
+.stage{position:relative;margin-top:clamp(52px,6vw,76px);padding-top:31vw}
+.stage .visual{z-index:2;max-width:540px;margin-inline:auto}
+.phone{position:absolute;top:0;z-index:1;width:12.5em;height:26.4em;padding:.42em;border-radius:2.1em;background:#2B2622;font-size:min(3vw,13px);box-shadow:inset 0 0 0 1px rgba(255,255,255,.09),0 1.6em 3em -1em rgba(0,0,0,.7)}
+.phone::after{content:"";position:absolute;top:1em;left:50%;z-index:3;width:3.6em;height:1em;margin-left:-1.8em;border-radius:1em;background:#0B0A09}
+.phone--l{left:-1vw;transform:rotate(-10deg)}
+.phone--r{right:-1vw;top:3vw;transform:rotate(9deg)}
+.ps{position:relative;height:100%;border-radius:1.7em;overflow:hidden}
+.ps--creme{background:#F6EADA}
+.ps--dark{background:radial-gradient(120% 70% at 50% 25%,#3B2216,#141110 70%)}
+.ps__zoom{position:absolute;inset:0;transform-origin:50% 42%}
+.ps__cap{position:absolute;top:2.6em;left:0;right:0;text-align:center;font-weight:900;font-size:1.3em;line-height:1;letter-spacing:-.03em;color:var(--nuit)}
+.ps__cap em{font-style:normal;color:#C2552F}
+.shop{position:absolute;top:6.2em;left:50%;width:9em;margin-left:-4.5em}
+.shop__awn{display:block;height:1.7em;border-radius:.5em .5em .2em .2em;background:repeating-linear-gradient(90deg,var(--or) 0 1.125em,#FFF6EA 1.125em 2.25em);box-shadow:0 .25em 0 rgba(21,20,19,.12)}
+.shop__front{position:relative;display:block;height:5.4em;margin:0 .45em;border-radius:0 0 .4em .4em;background:#E7CBA3}
+.shop__sign{position:absolute;top:.8em;left:50%;transform:translateX(-50%);padding:.25em .7em;border-radius:.35em;background:var(--nuit);color:var(--creme);font-family:var(--m);font-weight:500;font-size:.62em;letter-spacing:.08em}
+.shop__win{position:absolute;bottom:.8em;left:.9em;width:2.8em;height:2.1em;border:.18em solid #FFF6EA;border-radius:.3em;background:repeating-linear-gradient(45deg,var(--or) 0 .35em,var(--menthe) .35em .7em,var(--brique) .7em 1.05em,#F6EADA 1.05em 1.4em)}
+.shop__door{position:absolute;bottom:0;right:1em;width:2em;height:3em;border-radius:.3em .3em 0 0;background:#5A3A28}
+.ps__people{position:absolute;top:14.6em;left:0;right:0;display:flex;align-items:flex-end;justify-content:center;gap:.45em;height:1.9em}
+.ps__people i{position:relative;width:1em;height:1.9em;border-radius:.5em .5em .25em .25em;background:var(--or)}
+.ps__people i::before{content:"";position:absolute;top:-.85em;left:.15em;width:.7em;height:.7em;border-radius:50%;background:#6B4330}
+.ps__people i:nth-child(2){height:1.65em;background:var(--menthe)}
+.ps__people i:nth-child(3){background:var(--nuit)}
+.ps__people i:nth-child(4){height:1.75em;background:var(--brique)}
+.ps__people i:nth-child(5){height:1.6em;background:#E9B44C}
+.ps__sub{position:absolute;bottom:3.3em;left:50%;transform:translateX(-50%);padding:.4em .75em;border-radius:.5em;background:#fff;color:var(--nuit);font-weight:800;font-size:.95em;white-space:nowrap;box-shadow:0 .2em .6em rgba(21,20,19,.15)}
+.ps__sub b{color:#C2552F;font-weight:900}
+.ps__prog{position:absolute;left:1.2em;right:1.2em;bottom:1.5em;height:.25em;border-radius:1em;background:rgba(21,20,19,.12)}
+.ps__prog i{display:block;width:45%;height:100%;border-radius:1em;background:var(--or)}
+.ps--dark .ps__prog{background:rgba(243,229,208,.18)}
+.ps--dark .ps__prog i{width:70%}
+.ps__timer{position:absolute;top:2.7em;left:50%;transform:translateX(-50%);padding:.25em .6em;border:.12em solid var(--brique);border-radius:.4em;background:rgba(184,74,59,.22);color:#FFD7C6;font-family:var(--m);font-weight:500;font-size:1.05em}
+.bars{position:absolute;top:6.6em;left:50%;width:7.6em;height:7em;margin-left:-3.8em;display:flex;align-items:flex-end;gap:.55em;border-bottom:.12em solid rgba(243,229,208,.25)}
+.bars i{flex:1;border-radius:.35em .35em 0 0;background:linear-gradient(180deg,#F39A62,#C9643F);transform-origin:50% 100%}
+.bars i:nth-child(1){height:30%}
+.bars i:nth-child(2){height:50%}
+.bars i:nth-child(3){height:72%}
+.bars i:nth-child(4){height:100%;background:linear-gradient(180deg,#5BE79C,#1FA862)}
+.ps__big{position:absolute;left:.7em;right:.7em;bottom:3.8em;text-align:center;font-weight:900;font-size:1.25em;line-height:1.02;letter-spacing:-.01em;text-transform:uppercase;color:#FFF3E3;text-shadow:0 .12em 0 rgba(0,0,0,.6)}
+.ps__big em{font-style:normal;color:var(--or)}
+@media (prefers-reduced-motion:no-preference){
+  .ps__zoom{animation:zoomv 7s ease-in-out infinite alternate}
+  .bars i{animation:grow 3.6s var(--ease) infinite}
+  .bars i:nth-child(2){animation-delay:.15s}
+  .bars i:nth-child(3){animation-delay:.3s}
+  .bars i:nth-child(4){animation-delay:.45s}
+}
+@keyframes zoomv{to{transform:scale(1.08)}}
+@keyframes grow{0%{transform:scaleY(.15)}35%,85%{transform:scaleY(1)}100%{transform:scaleY(.15)}}
 
 /* Mockup interface */
 .visual{position:relative;padding:0 4px 30px}
-.mock{position:relative;background:var(--nuit);color:var(--sur-nuit);border-radius:var(--r-l);box-shadow:0 14px 0 var(--or),0 34px 60px -24px rgba(21,20,19,.5);overflow:hidden}
+.mock{position:relative;background:#171412;color:var(--sur-nuit);border:1px solid rgba(243,229,208,.14);border-radius:var(--r-l);box-shadow:0 14px 0 var(--or),0 40px 80px -20px rgba(0,0,0,.75),0 0 90px -10px rgba(217,119,87,.35);overflow:hidden}
 .mock__bar{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--ligne-nuit)}
 .dot{width:11px;height:11px;border-radius:50%;flex:none}
 .dot--r{background:var(--brique)}.dot--o{background:var(--or)}.dot--g{background:var(--menthe)}
@@ -156,7 +241,7 @@ svg{display:block}
 .ready{
   position:absolute;right:10px;bottom:0;z-index:2;display:inline-flex;align-items:center;gap:8px;
   padding:12px 18px 12px 14px;border-radius:999px;background:var(--menthe);color:var(--nuit);
-  font-weight:800;font-size:16px;letter-spacing:-.01em;box-shadow:0 6px 0 var(--nuit);
+  font-weight:800;font-size:16px;letter-spacing:-.01em;box-shadow:0 6px 0 #0E6B3A,0 16px 30px -10px rgba(43,212,125,.5);
   transform:rotate(-5deg);
 }
 .ready svg{width:18px;height:18px}
@@ -202,7 +287,7 @@ svg{display:block}
 .x svg{width:16px;height:16px}
 
 /* ---------- Section sombre ---------- */
-.dark{margin-inline:8px;padding-block:clamp(56px,8vw,104px);border-radius:var(--r-xl);background:var(--nuit);color:var(--sur-nuit)}
+.dark{margin-inline:8px;padding-block:clamp(56px,8vw,104px);border-radius:var(--r-xl);background:radial-gradient(60% 45% at 50% 0%,rgba(217,119,87,.22),transparent 72%),var(--nuit);color:var(--sur-nuit);scroll-margin-top:12px}
 .dark .wrap{--gut:18px}
 .dark .eyebrow{color:var(--or)}
 .dark .lead{color:var(--sur-nuit-doux)}
@@ -278,7 +363,7 @@ svg{display:block}
 .need p{color:var(--texte-doux)}
 
 /* ---------- Honnêtement ---------- */
-.honest{display:grid;gap:26px;padding:clamp(30px,5vw,60px) clamp(24px,5vw,60px);border-radius:var(--r-xl);background:var(--nuit);color:var(--sur-nuit)}
+.honest{display:grid;gap:26px;padding:clamp(30px,5vw,60px) clamp(24px,5vw,60px);border-radius:var(--r-xl);background:radial-gradient(50% 70% at 0% 0%,rgba(217,119,87,.24),transparent 70%),var(--nuit);color:var(--sur-nuit)}
 .bang{width:64px;height:64px;display:grid;place-items:center;border-radius:20px;background:var(--or);color:var(--nuit);font-weight:900;font-size:38px;line-height:1;box-shadow:0 6px 0 var(--or-fonce)}
 .honest__body{display:grid;gap:22px}
 .honest__body > p{font-size:clamp(18px,1rem + .5vw,22px);color:var(--sur-nuit-doux);max-width:58ch}
@@ -360,6 +445,11 @@ svg{display:block}
 /* ---------- Tablette et ordinateur ---------- */
 @media (min-width:760px){
   :root{--gut:32px}
+  .handle{display:inline-flex}
+  .stage{padding-top:150px}
+  .phone{font-size:13px}
+  .phone--l{left:5%}
+  .phone--r{right:5%;top:18px}
   .dark{margin-inline:20px}
   .dark .wrap{--gut:32px}
   .stats{grid-template-columns:repeat(3,1fr);padding:8px}
@@ -377,7 +467,11 @@ svg{display:block}
   .faq__a{padding:0 26px 24px}
 }
 @media (min-width:960px){
-  .hero__grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:64px}
+  .nav__links{display:flex}
+  .stage{padding-top:24px;padding-bottom:10px}
+  .phone{font-size:16px;top:56px}
+  .phone--l{left:calc(50% - 452px);transform:rotate(-8deg)}
+  .phone--r{right:calc(50% - 452px);top:104px;transform:rotate(7deg)}
   .steps{grid-template-columns:repeat(3,1fr);gap:18px}
   .step{padding:32px 28px 34px}
   .faq-grid{grid-template-columns:.8fr 1.2fr;gap:64px}
@@ -397,6 +491,15 @@ svg{display:block}
   .tile{padding:10px}
   .tile__label{font-size:14.5px}
   .fab{font-size:14.5px;gap:10px;padding-left:16px}
+  .brand{font-size:18px}
+  .nav__cta{padding:10px 14px}
+}
+@media (max-width:759px){
+  .bandeau__chip,.hide-sm{display:none}
+  .bandeau{font-size:13px}
+  .kicker{gap:10px;padding-right:14px;font-size:12px}
+  .cl{width:32px;height:32px;margin-left:-9px}
+  .cl svg{width:15px;height:15px}
 }
 </style>
 </head>
@@ -415,30 +518,71 @@ svg{display:block}
   <symbol id="i-zip" viewBox="0 0 44 52"><path d="M6 2h22l14 14v30a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V6a4 4 0 0 1 4-4z" fill="currentColor"/><path d="M28 2v10a4 4 0 0 0 4 4h10" fill="#A9532F"/><path d="M16 6h4v4h-4zM20 10h4v4h-4zM16 14h4v4h-4zM20 18h4v4h-4zM16 22h4v4h-4z" fill="#151413"/><rect x="15" y="29" width="10" height="11" rx="2.5" fill="#151413"/></symbol>
 </svg>
 
-<header class="wrap nav">
-  <a class="brand" href="#top" aria-label="Argent Clair, haut de page">
-    <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="18" fill="#151413"/><path d="M25 19v26l21-13z" fill="#D97757"/></svg>
-    <span>Argent Clair</span>
-  </a>
-  <a class="handle" href="https://www.tiktok.com/@automax.ia" rel="noopener">@automax.ia</a>
-</header>
-
 <main id="top">
 
-  <!-- ===== Hero ===== -->
-  <section class="hero">
-    <div class="wrap hero__grid">
-      <div>
-        <p class="tag"><i aria-hidden="true"></i>Formation · 5&nbsp;000&nbsp;F&nbsp;CFA</p>
-        <h1 class="h1">Crée des vidéos TikTok animées <span class="mark">sans caméra, sans montage</span></h1>
-        <p class="lead">Tu dictes une idée à Claude, il écrit le script. Tu colles le script dans ElevenLabs, tu as la voix. Le skill fabrique la vidéo. Tu postes. Pas besoin de montrer ton visage.</p>
+  <!-- ===== Haut de page sombre ===== -->
+  <div class="night">
+    <p class="bandeau"><span>Prix unique <b>5&nbsp;000&nbsp;F&nbsp;CFA</b> · accès immédiat<span class="hide-sm"> après paiement</span></span><span class="bandeau__chip">Garantie 7&nbsp;jours</span></p>
+
+    <header class="wrap nav">
+      <a class="brand" href="#top" aria-label="Argent Clair, haut de page">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F5A26B"/><stop offset="1" stop-color="#C9603C"/></linearGradient></defs><rect width="64" height="64" rx="18" fill="url(#gb)"/><path d="M25 19v26l21-13z" fill="#151413"/></svg>
+        <span>Argent <em class="grad">Clair</em></span>
+      </a>
+      <nav class="nav__links" aria-label="Sections de la page">
+        <a href="#methode">La méthode</a>
+        <a href="#contenu">Le contenu</a>
+        <a href="#programme">Le programme</a>
+        <a href="#acheter">Le prix</a>
+      </nav>
+      <div class="nav__right">
+        <a class="handle" href="https://www.tiktok.com/@automax.ia" rel="noopener">@automax.ia</a>
+        <a class="nav__cta" href="https://argentclair.mychariow.store/prd_wxeqs5ej" rel="noopener">Obtenir · <span class="mono">5&nbsp;000&nbsp;F</span></a>
+      </div>
+    </header>
+
+    <!-- ===== Hero ===== -->
+    <section class="hero" aria-labelledby="t-hero">
+      <div class="wrap hero__copy">
+        <p class="kicker">
+          <span class="cluster" aria-hidden="true">
+            <span class="cl cl--1"><svg><use href="#i-lines"/></svg></span>
+            <span class="cl cl--2"><svg><use href="#i-wave"/></svg></span>
+            <span class="cl cl--3"><svg><use href="#i-film"/></svg></span>
+            <span class="cl cl--4"><svg><use href="#i-check"/></svg></span>
+          </span>
+          Formation · 5&nbsp;000&nbsp;F&nbsp;CFA
+        </p>
+        <h1 class="h1" id="t-hero">Crée des vidéos TikTok animées <span class="grad">sans caméra, sans montage</span></h1>
+        <p class="lead">Tu dictes une idée à Claude, il écrit le script. Tu colles le script dans ElevenLabs, tu as la voix. Le skill fabrique la vidéo. Tu postes. <strong>Pas besoin de montrer ton visage.</strong></p>
         <div class="cta">
-          <a class="btn" href="https://argentclair.mychariow.store/prd_wxeqs5ej" rel="noopener">Je veux la formation<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <a class="btn btn--glow" href="https://argentclair.mychariow.store/prd_wxeqs5ej" rel="noopener">Je veux la formation<svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
           <p class="note">Accès immédiat · Paiement Mobile Money, carte bancaire</p>
         </div>
       </div>
 
-      <div class="visual reveal">
+      <div class="wrap">
+        <div class="stage reveal">
+          <div class="phone phone--l" aria-hidden="true">
+            <div class="ps ps--creme">
+              <div class="ps__zoom">
+                <span class="ps__cap">Ta <em>boutique</em></span>
+                <span class="shop"><span class="shop__awn"></span><span class="shop__front"><span class="shop__sign">PAGNES</span><span class="shop__win"></span><span class="shop__door"></span></span></span>
+                <span class="ps__people"><i></i><i></i><i></i><i></i><i></i></span>
+              </div>
+              <span class="ps__sub">ouverte <b>dès 8&nbsp;h</b></span>
+              <span class="ps__prog"><i></i></span>
+            </div>
+          </div>
+          <div class="phone phone--r" aria-hidden="true">
+            <div class="ps ps--dark">
+              <span class="ps__timer">0:12</span>
+              <span class="bars"><i></i><i></i><i></i><i></i></span>
+              <span class="ps__big">Et le client <em>achète</em></span>
+              <span class="ps__prog"><i></i></span>
+            </div>
+          </div>
+          <div class="visual">
         <div class="mock" role="img" aria-label="Aperçu : Claude fabrique une vidéo en trois étapes, script, voix puis vidéo, prête à poster.">
           <div class="mock__bar" aria-hidden="true">
             <span class="dot dot--r"></span><span class="dot dot--o"></span><span class="dot dot--g"></span>
@@ -471,12 +615,14 @@ svg{display:block}
           </div>
         </div>
         <span class="ready" aria-hidden="true"><svg><use href="#i-check"/></svg>Prêt à poster</span>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </div>
 
   <!-- ===== Chiffres clés ===== -->
-  <section class="wrap" aria-label="La formation en chiffres">
+  <section class="wrap" style="margin-top:clamp(28px,4vw,48px)" aria-label="La formation en chiffres">
     <div class="stats reveal">
       <p class="stat"><span class="stat__n">3</span><span class="stat__l">Leçons vidéo</span></p>
       <p class="stat"><span class="stat__n">30</span><span class="stat__l">Pages de guide PDF</span></p>
@@ -512,7 +658,7 @@ svg{display:block}
   </section>
 
   <!-- ===== Méthode ===== -->
-  <section class="dark" aria-labelledby="t-st">
+  <section class="dark" id="methode" aria-labelledby="t-st">
     <div class="wrap">
       <header class="sec-head reveal">
         <p class="eyebrow">02 — La méthode</p>
@@ -540,7 +686,7 @@ svg{display:block}
   </section>
 
   <!-- ===== Ce que tu reçois ===== -->
-  <section class="section" aria-labelledby="t-of">
+  <section class="section" id="contenu" aria-labelledby="t-of">
     <div class="wrap">
       <header class="sec-head reveal">
         <p class="eyebrow">03 — Le contenu</p>
@@ -589,7 +735,7 @@ svg{display:block}
   </section>
 
   <!-- ===== Programme ===== -->
-  <section class="section" style="padding-top:0" aria-labelledby="t-pg">
+  <section class="section" id="programme" style="padding-top:0" aria-labelledby="t-pg">
     <div class="wrap">
       <header class="sec-head reveal">
         <p class="eyebrow">04 — Le programme</p>
